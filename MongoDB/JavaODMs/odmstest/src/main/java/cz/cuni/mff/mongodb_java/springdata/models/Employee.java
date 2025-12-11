@@ -15,17 +15,19 @@ public class Employee {
     private ObjectId id;
 
     private String name;
-    private int age;
+    private Object age;
 
     @DBRef
     private Employee manager;
 
-    private List<String> emails;
+    private List<Object> emails;
     private Double salary;
 
     private Address address;
 
-    public Employee(String name, int age, Employee manager, List<String> emails, Double salary, Address address) {
+    public Employee() {}
+
+    public Employee(String name, Object age, Employee manager, List<Object> emails, Double salary, Address address) {
         this.name = name;
         this.age = age;
         this.manager = manager;
@@ -33,6 +35,13 @@ public class Employee {
         this.salary = salary;
         this.address = address;
     }
+
+    public Employee(String name, Object age, Employee manager) {
+        this.name = name;
+        this.age = age;
+        this.manager = manager;
+    }
+
 
     public String getName() { return name; }
 

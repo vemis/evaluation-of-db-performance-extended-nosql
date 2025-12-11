@@ -14,4 +14,8 @@ public interface EmployeeRepository extends MongoRepository<Employee, ObjectId> 
     List<Employee> findByNameIn(List<String> names);
 
     Employee findTopByOrderByAgeAsc();
+
+    List<Employee> findByAge(Object age);
+
+    List<Employee> findByEmailsIn(List<Object> emails);
 }

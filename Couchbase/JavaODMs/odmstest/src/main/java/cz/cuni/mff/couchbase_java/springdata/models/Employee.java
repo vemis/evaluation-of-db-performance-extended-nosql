@@ -12,18 +12,23 @@ public class Employee {
     private String id;
 
     private String name;
-    private int age;
+
+    private Object age;
 
     // Couchbase does not use @DBRef — CRDT references must be manual
     private String managerId;
 
-    private List<String> emails;
+    private List<Object> emails;
     private Double salary;
 
     @Field
     private Address address;
 
-    public Employee(String id, String name, int age, String managerId, List<String> emails, Double salary, Address address) {
+    private Object TestToRecompile;
+
+    public Employee() {}
+
+    public Employee(String id, String name, Object age, String managerId, List<Object> emails, Double salary, Address address) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -31,6 +36,13 @@ public class Employee {
         this.emails = emails;
         this.salary = salary;
         this.address = address;
+    }
+
+    public Employee(String id, String name, Object age, String managerId) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.managerId = managerId;
     }
 
     public String getId() {

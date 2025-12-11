@@ -11,23 +11,29 @@ public class Employee {
     @Id
     private ObjectId id;
     private String name;
-    private int age;
+    private Object age;
     @Reference
     private Employee manager;
-    private ArrayList<String> emails;
+    private ArrayList<Object> emails;
     private Double salary;
     private Address address;
 
     // Morphia needs this no-arg constructor
     public Employee() {}
 
-    public Employee(String name, int age, Employee manager, ArrayList<String> emails, Double salary,  Address address) {
+    public Employee(String name, Object age, Employee manager, ArrayList<Object> emails, Double salary,  Address address) {
         this.name = name;
         this.age = age;
         this.manager = manager;
         this.emails = emails;
         this.salary = salary;
         this.address = address;
+    }
+
+    public Employee(String name, Object age, Employee manager) {
+        this.name = name;
+        this.age = age;
+        this.manager = manager;
     }
 
     public String getName() { return name; }

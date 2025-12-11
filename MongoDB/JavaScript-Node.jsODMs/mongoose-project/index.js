@@ -38,11 +38,52 @@ async function run() {
     });
 
     console.log("Jane Doe saved!");
-  
+    
+    // Mixed Types
+    const joeDoeNothing1 = await Employee.create({
+      name: "Joe Doe Mixed Nothing1",
+      age: "thirty one",
+      manager: null,
+    });
+
+    const joeDoeNothing2 = await Employee.create({
+      name: "Joe Doe Mixed Nothing2",
+      age: null,
+      manager: null,
+    });
+
+    const joeDoeNothing3 = await Employee.create({
+      name: "Joe Doe Mixed Nothing3",
+      manager: null
+    });
+
+    const joeDoeNothing4 = await Employee.create({
+      name: "Joe Doe Mixed Nothing4",
+      manager: null,
+      emails: ["abc@email.com", 123]
+    });
+
+    // Querying Mixed Types and Null Representation
+
+    //case 1 & 2: same key, different data types and missing keys 
+
+    const youngest = await Employee.find().sort({ age: 1 });
+    console.log("Employees by age:", youngest.map((emp) => emp.name));
+    
+    const age31 = await Employee.find({ age: 31 });
+    console.log("age31 employee:", age31.map((emp) => emp.name));
+    
+    // case 3: Heterogeneous array
+    const emails = await Employee.find({ emails: "abc@email.com" });
+    console.log("emails employee:", emails.map((emp) => emp.name));
+    
+
+    
+    /*
     // Query youngest employee
     const youngest = await Employee.findOne().sort({ age: 1 });
     console.log("Youngest employee:", youngest.name);
-
+    
     // Query employees living in NYC
     const employeesInNYC = await Employee.find({ "address.city": "NYC" });
 
@@ -58,7 +99,7 @@ async function run() {
 
     console.log("Joe Doe and Jane Doe deleted!");
 
-    
+    */
 
     // Close connection
     await mongoose.disconnect();
