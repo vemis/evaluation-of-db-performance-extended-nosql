@@ -6,15 +6,29 @@ import org.bson.types.ObjectId;
 
 @Entity
 public class LineitemR {
+
+    // does not exist, should be composite key
+    //private int l_id;
+
     @Id
-    private int l_id;
+    private String l_id;
+
     private int l_orderkey;
-    private int l_ps_id;
+
+    private int l_partkey;
+    private int l_suppkey;
+
+    // should be composite
+    //private int l_ps_id;
+
 
     private int l_linenumber;
     private int l_quantity;
-    private int l_extendedprice;
 
+    //@Id
+    //private String l_id;
+
+    private double l_extendedprice;
     private double  l_discount;
     private double l_tax;
     private String l_returnflag;
@@ -28,10 +42,14 @@ public class LineitemR {
 
     public LineitemR() {}
 
-    public LineitemR(int l_id, int l_orderkey, int l_ps_id, int l_linenumber, int l_quantity, int l_extendedprice, double l_discount, double l_tax, String l_returnflag, String l_linestatus, String l_shipdate, String l_commitdate, String l_receiptdate, String l_shipinstruct, String l_shipmode, String l_comment) {
-        this.l_id = l_id;
+    public LineitemR(int l_orderkey, int l_partkey, int l_suppkey,  int l_linenumber, int l_quantity, double l_extendedprice, double l_discount, double l_tax, String l_returnflag, String l_linestatus, String l_shipdate, String l_commitdate, String l_receiptdate, String l_shipinstruct, String l_shipmode, String l_comment) {
+        this.l_id = Integer.toString(l_orderkey) + Integer.toString(l_linenumber);
         this.l_orderkey = l_orderkey;
-        this.l_ps_id = l_ps_id;
+        //this.l_ps_id = l_ps_id;
+
+        this.l_partkey = l_partkey;
+        this.l_suppkey = l_suppkey;
+
         this.l_linenumber = l_linenumber;
         this.l_quantity = l_quantity;
         this.l_extendedprice = l_extendedprice;

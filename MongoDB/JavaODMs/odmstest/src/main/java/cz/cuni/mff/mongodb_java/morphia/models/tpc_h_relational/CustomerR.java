@@ -17,12 +17,14 @@ public class CustomerR {
 
     public CustomerR() {}
 
-    public CustomerR(int c_custkey, String c_name,  String c_address,
-     int c_nationkey,
-     String c_phone,
-     double c_acctbal,
-     String c_mktsegment,
-     String c_commen) {
+    public CustomerR(int c_custkey,
+                     String c_name,
+                     String c_address,
+                     int c_nationkey,
+                     String c_phone,
+                     double c_acctbal,
+                     String c_mktsegment,
+                     String c_commen) {
         this.c_custkey = c_custkey;
         this.c_name = c_name;
         this.c_address = c_address;
