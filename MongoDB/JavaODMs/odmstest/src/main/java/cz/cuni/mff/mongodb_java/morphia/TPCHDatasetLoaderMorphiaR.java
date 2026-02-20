@@ -1,21 +1,35 @@
 package cz.cuni.mff.mongodb_java.morphia;
 
-import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.InsertManyOptions;
 import cz.cuni.mff.mongodb_java.TPCHDatasetLoader;
 import cz.cuni.mff.mongodb_java.morphia.models.tpc_h_relational.*;
 import dev.morphia.Datastore;
+import org.springframework.core.annotation.Order;
 
 
-import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import java.util.concurrent.atomic.LongAdder;
 
-
+/**
+ * Loading could be done using constructor, but having doubts abour the performance
+ */
 public class TPCHDatasetLoaderMorphiaR extends TPCHDatasetLoader {
+
+
+    public static <T> T loadTable(Class<T> clazz, String[] row) {
+
+        try {
+            Constructor<T> constructor = clazz.getConstructor(String[].class);
+            return constructor.newInstance((Object) row);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not create instance of " + clazz.getName(), e);
+        }
+    }
 
     public static void loadRegions(String filePath, Datastore datastore) {
 
@@ -84,8 +98,57 @@ public class TPCHDatasetLoaderMorphiaR extends TPCHDatasetLoader {
         datastore.save(customerInstances);
     }
 
-
     public static void loadOrders(String filePath, Datastore datastore) {
+
+        List<String[]> orders = readDataFromCustomSeparator(filePath);
+
+        LongAdder counter = new LongAdder();
+        int total = orders.size();
+
+        List<OrdersR> orderInstances = orders
+                .parallelStream()
+                .map(row ->
+                {
+                    counter.increment();
+                    long current = counter.sum();
+
+                    if (current % 10_000 == 0) {
+                        System.out.println("Processed " + current + " / " + total);
+                    }
+
+                    return new OrdersR(
+                            Integer.parseInt(row[0]),
+                            Integer.parseInt(row[1]),
+                            row[2],
+                            row[4],
+                            LocalDate.parse(row[4]),
+                            row[5],
+                            row[6],
+                            row[7],
+                            row[8]
+                    );
+                })
+                .toList();
+
+        /*
+        // Can be saved like this, but very slow
+        // Disclaimer - datastore.save(List<>...) is not working - the instance is missing the annotation!
+        // Needs to be ArrayList<>
+        */
+
+        // Faster approach, but collection needs to be dropped beforehand!
+        MongoCollection<OrdersR> collection =
+                datastore.getDatabase()
+                        .getCollection("ordersR", OrdersR.class);
+
+        System.out.println("Inserting many orderInstances!");
+        collection.insertMany(orderInstances, new InsertManyOptions().ordered(false));
+
+        System.out.println("orders inserted!");
+    }
+
+    @Deprecated
+    public static void loadOrdersDEPRECATED(String filePath, Datastore datastore) {
 
         List<String[]> orders = readDataFromCustomSeparator(filePath);
 
@@ -99,8 +162,8 @@ public class TPCHDatasetLoaderMorphiaR extends TPCHDatasetLoader {
                     Integer.parseInt(row[0]),
                     Integer.parseInt(row[1]),
                     row[2],
-                    row[3],
                     row[4],
+                    LocalDate.parse(row[4]),
                     row[5],
                     row[6],
                     row[7],
@@ -227,13 +290,146 @@ public class TPCHDatasetLoaderMorphiaR extends TPCHDatasetLoader {
         datastore.save(lineitemInstances);
     }
 
-    /*public static void test(){
-        Datastore datastore;
-        MongoCollection<LineitemR> collection =
+    public static void loadPartsupps(String filePath, Datastore datastore) {
+
+        List<String[]> partsupps = readDataFromCustomSeparator(filePath);
+
+        LongAdder counter = new LongAdder();
+        int total = partsupps.size();
+
+        List<PartsuppR> partsuppInstances = partsupps
+                .parallelStream()
+                .map(row ->
+                {
+                    counter.increment();
+                    long current = counter.sum();
+
+                    if (current % 10_000 == 0) {
+                        System.out.println("Processed " + current + " / " + total);
+                    }
+
+                    return new PartsuppR(
+                            row[0] + "|" + row[1],
+                            Integer.parseInt(row[0]),
+                            Integer.parseInt(row[1]),
+                            Integer.parseInt(row[2]),
+                            Double.parseDouble(row[3]),
+                            row[4]
+                    );
+                })
+                .toList();
+
+        /*
+        // Can be saved like this, but very slow
+        // Disclaimer - datastore.save(List<>...) is not working - the instance is missing the annotation!
+        // Needs to be ArrayList<>
+        */
+
+        // Faster approach, but collection needs to be dropped beforehand!
+        MongoCollection<PartsuppR> collection =
                 datastore.getDatabase()
-                        .getCollection("myCollection", LineitemR.class);
+                        .getCollection("partsuppR", PartsuppR.class);
 
-        collection.insertMany(listOfEntities);
+        System.out.println("Inserting many partsuppInstances!");
+        collection.insertMany(partsuppInstances, new InsertManyOptions().ordered(false));
 
-    }*/
+        System.out.println("partsupp inserted!");
+    }
+
+    public static void loadParts(String filePath, Datastore datastore) {
+
+        List<String[]> parts = readDataFromCustomSeparator(filePath);
+
+        LongAdder counter = new LongAdder();
+        int total = parts.size();
+
+        List<PartR> partInstances = parts
+                .parallelStream()
+                .map(row ->
+                {
+                    counter.increment();
+                    long current = counter.sum();
+
+                    if (current % 10_000 == 0) {
+                        System.out.println("Processed " + current + " / " + total);
+                    }
+
+                    return new PartR(
+                            Integer.parseInt(row[0]),
+                            row[1],
+                            row[2],
+                            row[3],
+                            row[4],
+                            Integer.parseInt(row[5]),
+                            row[6],
+                            Double.parseDouble(row[7]),
+                            row[8]
+                    );
+                })
+                .toList();
+
+        /*
+        // Can be saved like this, but very slow
+        // Disclaimer - datastore.save(List<>...) is not working - the instance is missing the annotation!
+        // Needs to be ArrayList<>
+        */
+
+        // Faster approach, but collection needs to be dropped beforehand!
+        MongoCollection<PartR> collection =
+                datastore.getDatabase()
+                        .getCollection("partR", PartR.class);
+
+        System.out.println("Inserting many partInstances!");
+        collection.insertMany(partInstances, new InsertManyOptions().ordered(false));
+
+        System.out.println("part inserted!");
+    }
+
+    public static void loadSuppliers(String filePath, Datastore datastore) {
+
+        List<String[]> suppliers = readDataFromCustomSeparator(filePath);
+
+        LongAdder counter = new LongAdder();
+        int total = suppliers.size();
+
+        List<SupplierR> supplierInstances = suppliers
+                .parallelStream()
+                .map(row ->
+                {
+                    counter.increment();
+                    long current = counter.sum();
+
+                    if (current % 10_000 == 0) {
+                        System.out.println("Processed " + current + " / " + total);
+                    }
+
+                    return new SupplierR(
+                            Integer.parseInt(row[0]),
+                            row[1],
+                            row[2],
+                            Integer.parseInt(row[3]),
+                            row[4],
+                            Double.parseDouble(row[5]),
+                            row[6]
+                    );
+                })
+                .toList();
+
+        /*
+        // Can be saved like this, but very slow
+        // Disclaimer - datastore.save(List<>...) is not working - the instance is missing the annotation!
+        // Needs to be ArrayList<>
+        */
+
+        // Faster approach, but collection needs to be dropped beforehand!
+        MongoCollection<SupplierR> collection =
+                datastore.getDatabase()
+                        .getCollection("supplierR", SupplierR.class);
+
+        System.out.println("Inserting many supplierInstances!");
+        collection.insertMany(supplierInstances, new InsertManyOptions().ordered(false));
+
+        System.out.println("suppliers inserted!");
+    }
+
 }

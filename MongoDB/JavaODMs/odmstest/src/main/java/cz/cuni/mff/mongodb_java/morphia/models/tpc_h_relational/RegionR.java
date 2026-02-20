@@ -22,4 +22,11 @@ public class RegionR {
         this.r_name = r_name;
         this.r_comment = r_comment;
     }
+
+    @Deprecated
+    public RegionR(String[] row) {
+        this.r_regionkey = Integer.parseInt(row[0]);
+        this.r_name = row[1];
+        this.r_comment = row[2];
+    }
 }

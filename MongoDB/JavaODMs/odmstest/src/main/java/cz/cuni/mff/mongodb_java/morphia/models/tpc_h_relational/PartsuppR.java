@@ -6,7 +6,7 @@ import dev.morphia.annotations.Id;
 @Entity
 public class PartsuppR {
     @Id
-    private int ps_id;
+    private String ps_id;
     private int ps_partKey;
     private int ps_suppKey;
 
@@ -16,7 +16,7 @@ public class PartsuppR {
 
     public PartsuppR() {}
 
-    public PartsuppR(int ps_id, int ps_partKey, int ps_suppKey, int ps_availqty, double ps_supplycost, String ps_comment) {
+    public PartsuppR(String ps_id, int ps_partKey, int ps_suppKey, int ps_availqty, double ps_supplycost, String ps_comment) {
         this.ps_id = ps_id;
         this.ps_partKey = ps_partKey;
         this.ps_suppKey = ps_suppKey;
