@@ -2,6 +2,7 @@ package cz.cuni.mff.mongodb_java.morphia.models.tpc_h_relational;
 
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Indexed;
 
 import java.time.LocalDate;
 
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 public class OrdersR {
     @Id
     private int o_orderkey;
+    @Indexed
     private int o_custkey;
     private String o_orderstatus;
     private String o_totalprice;

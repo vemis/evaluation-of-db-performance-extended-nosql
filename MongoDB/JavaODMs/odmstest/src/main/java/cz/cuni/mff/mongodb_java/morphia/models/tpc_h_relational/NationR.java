@@ -3,6 +3,7 @@ package cz.cuni.mff.mongodb_java.morphia.models.tpc_h_relational;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Indexed;
 
 import java.util.ArrayList;
 
@@ -13,6 +14,7 @@ public class NationR {
 
     private String n_name;
 
+    @Indexed
     private int n_regionkey; //foreign key
 
     private String n_comment;

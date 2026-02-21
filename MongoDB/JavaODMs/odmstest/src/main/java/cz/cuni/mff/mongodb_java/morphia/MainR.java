@@ -2,6 +2,7 @@ package cz.cuni.mff.mongodb_java.morphia;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import cz.cuni.mff.mongodb_java.morphia.benchmarks.QueriesR;
 import cz.cuni.mff.mongodb_java.morphia.models.tpc_h_relational.LineitemR;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
@@ -52,7 +53,7 @@ public class MainR {
 
 
         // Insert Partsupp
-        TPCHDatasetLoaderMorphiaR.loadPartsupp("..\\..\\..\\dataset\\TPC-H\\tpch-data\\partsupp.tbl", datastore);
+        TPCHDatasetLoaderMorphiaR.loadPartsupps("..\\..\\..\\dataset\\TPC-H\\tpch-data\\partsupp.tbl", datastore);
         System.out.println("partsuppRs saved!");
 
         // Insert Part
@@ -62,10 +63,10 @@ public class MainR {
         // Insert Suppliers
         TPCHDatasetLoaderMorphiaR.loadSuppliers("..\\..\\..\\dataset\\TPC-H\\tpch-data\\supplier.tbl", datastore);
         System.out.println("supplierRs saved!");
-        */
+*/
 
         // Queries
-        int runs;
+        /*int runs;
         long total;
         long start;
         long end;
@@ -88,7 +89,9 @@ public class MainR {
 
         System.out.println("Average time (ms): " + (total / runs) / 1_000_000);
         System.out.println("A1 size: " + lSize);
-        System.out.println("Query A1 finished");
+        System.out.println("Query A1 finished");*/
+
+
 
     }
 

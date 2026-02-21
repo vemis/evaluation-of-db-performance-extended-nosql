@@ -309,7 +309,7 @@ public class TPCHDatasetLoaderMorphiaR extends TPCHDatasetLoader {
                     }
 
                     return new PartsuppR(
-                            row[0] + "|" + row[1],
+                            //row[0] + "|" + row[1],
                             Integer.parseInt(row[0]),
                             Integer.parseInt(row[1]),
                             Integer.parseInt(row[2]),

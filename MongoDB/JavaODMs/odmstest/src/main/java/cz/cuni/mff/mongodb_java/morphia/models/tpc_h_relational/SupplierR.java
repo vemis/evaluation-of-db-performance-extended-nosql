@@ -2,6 +2,7 @@ package cz.cuni.mff.mongodb_java.morphia.models.tpc_h_relational;
 
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Indexed;
 
 @Entity
 public class SupplierR {
@@ -9,6 +10,7 @@ public class SupplierR {
     private int s_suppkey;
     private String s_name;
     private String s_address;
+    @Indexed
     private int s_nationkey;
     private String s_phone;
     private double s_acctbal;
