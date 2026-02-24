@@ -15,6 +15,9 @@ import SupplierR from "./models/tpc_h_r/supplier-r.js";
 import LineitemR from "./models/tpc_h_r/lineitem-r.js";
 
 import * as loadDataTPCH from "./load-data-tpc-h.js";
+import * as queriesR from "./benchmarks/queries-r.js";
+
+import * as benchmarksR from "./benchmarks/benchmarks-r.js";
 
 async function run() {
     // Connect to MongoDB
@@ -51,8 +54,24 @@ async function run() {
     console.log("Parts loaded")
 */
 
+    // Queries
+    //console.log("Start A1")
+    //const a1 = await queriesR.A1()
+    //console.log(a1.length)
+    //console.log("A1 finished")
 
-
+    benchmarksR.benchmarkQuery(
+        //queriesR.A1,
+        //queriesR.A2,
+        queriesR.B1
+    )
+    console.log("Start qeury")
+    const c = await queriesR.B1()
+    //c.forEach(query =>{
+    //    console.log("test");
+    //})
+    console.log(c.length)
+    console.log("end query")
     /*
         // Insert Joe Doe
         const customer1 = await CustomerR.insertMany([
