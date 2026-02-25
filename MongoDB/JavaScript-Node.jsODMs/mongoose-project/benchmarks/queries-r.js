@@ -86,8 +86,73 @@ function B1() {
     return b1
 }
 
+/**
+ * ### C2) Indexed Columns
+ *
+ * This query gives customer names, order dates, and total prices for all customers
+ * ```sql
+ * SELECT c.c_name, o.o_orderdate, o.o_totalprice
+ * FROM customer c
+ * JOIN orders o ON c.c_custkey = o.o_custkey;
+ * ```
+ */
+async function C2() {
+    /*
+    Ops/sec: 0.16
+    Average time per op: 6240.673 ms
+    */
+    const c2 = CustomerR.aggregate()
+        .lookup({
+            from: "OrdersR",
+            localField: "_id",
+            foreignField: "o_custkey",
+            as: "orders"
+        })
+        .unwind("$orders")
+        .project({
+            _id: 0,
+            c_name: 1,
+            o_orderdate: "$orders.o_orderdate",
+            o_totalprice: "$orders.o_totalprice"
+        })
+        .exec();
+    return c2;
+}
+
+/**
+ * ### D1) UNION
+ *
+ * This query combines customer and supplier nation keys
+ * ```sql
+ * (SELECT c_nationkey FROM customer)
+ * UNION
+ * (SELECT s_nationkey FROM supplier);
+ * ```
+ */
+async function D1() {
+    /*
+    Ops/sec: 22.03
+    Average time per op: 45.390 ms
+    */
+    const d1 = CustomerR.aggregate()
+        .project({ nationkey: "$c_nationkey", _id: 0 })
+        .unionWith({
+            coll: "SupplierR", // must be the collection name
+            pipeline: [
+                { $project: { nationkey: "$s_nationkey", _id: 0 } }
+            ]
+        })
+        .group({ _id: "$nationkey" })
+        .project({ _id: 0, nationkey: "$_id" })
+        .exec();
+    return d1;
+}
+
+
 export {
     A1,
     A2,
-    B1
+    B1,
+    C2,
+    D1
 }

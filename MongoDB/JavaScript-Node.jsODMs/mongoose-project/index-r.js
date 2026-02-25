@@ -24,7 +24,7 @@ async function run() {
     await mongoose.connect("mongodb://localhost:27017/mongoose_database_r");
     
     console.log("Connected to MongoDB.");
-    /*
+/*
     await loadDataTPCH.loadRegions("..\\..\\..\\dataset\\TPC-H\\tpch-data\\region.tbl")
     console.log("Regions loaded")
 
@@ -55,23 +55,26 @@ async function run() {
 */
 
     // Queries
-    //console.log("Start A1")
-    //const a1 = await queriesR.A1()
-    //console.log(a1.length)
-    //console.log("A1 finished")
+    /*console.log("Start D1")
+    const d1 = await queriesR.D1()
+    console.log(d1.length)
+    console.log("D1 finished")
+    console.log(d1)*/
 
     benchmarksR.benchmarkQuery(
         //queriesR.A1,
         //queriesR.A2,
-        queriesR.B1
+        //queriesR.B1,
+        //queriesR.C2,
+        //queriesR.D1
     )
-    console.log("Start qeury")
-    const c = await queriesR.B1()
+    //console.log("Start qeury")
+    //const c = await queriesR.B1()
     //c.forEach(query =>{
     //    console.log("test");
     //})
-    console.log(c.length)
-    console.log("end query")
+    //console.log(c.length)
+    //console.log("end query")
     /*
         // Insert Joe Doe
         const customer1 = await CustomerR.insertMany([
