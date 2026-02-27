@@ -43,39 +43,60 @@ namespace MongoDBEntities
 
             Console.WriteLine("MongoDB.Entities initialized!");
 
-            var lineitems = new[]
+            /*var lineitems = new[]
             {
                 new LineitemR{ l_id = "1" },
                 new LineitemR{ l_id = "2" },
                 new LineitemR{ l_id = "3" }
             };
 
-            await DB.SaveAsync(lineitems);
-
+            await DB.SaveAsync(lineitems);*/
 
             /*await DB.Index<TestR>()
                 .Key(b => b.r_indexed, KeyType.Ascending)
                 .CreateAsync();
             */
+            
+
+            await DB.Index<OrdersR>()
+                .Key(c => c.o_custkey, KeyType.Ascending)
+                .CreateAsync();
+
+
+
             /*
-                        // LineitemsR indexes
-                        await DB.Index<LineitemR>()
-                            .Key(c => c.l_orderkey, KeyType.Ascending)
-                            .Key(c => c.l_partkey, KeyType.Ascending)
-                            .Key(c => c.l_suppkey, KeyType.Ascending)
-                            .Key(c => c.l_ps_id, KeyType.Ascending)
-                            .CreateAsync();
+            await DB.Index<CustomerR>()
+                .Key(c => c.c_nationkey, KeyType.Ascending)
+                .CreateAsync();
+            await TPCHDatasetLoader.LoadDatasetAsync<CustomerR>("..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\customer.tbl");
+            Console.WriteLine("Customers loaded!");
+
+            
+            // Nation Indexes
+            await DB.Index<NationR>()
+                .Key(c => c.n_regionkey, KeyType.Ascending)
+                .CreateAsync();
+
+            await TPCHDatasetLoader.LoadDatasetAsync<NationR>("..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\nation.tbl");
+            Console.WriteLine("Nations loaded!");
 
 
-                        TPCHDatasetLoader.LoadDatasetAsync("..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\lineitem.tbl");
+            await TPCHDatasetLoader.LoadDatasetAsync<RegionR>("..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\region.tbl");
+            Console.WriteLine("Regions loaded!");
+
+  
+            // LineitemsR indexes
+            await DB.Index<LineitemR>()
+                .Key(c => c.l_orderkey, KeyType.Ascending)
+                .Key(c => c.l_partkey, KeyType.Ascending)
+                .Key(c => c.l_suppkey, KeyType.Ascending)
+                .Key(c => c.l_ps_id, KeyType.Ascending)
+                .CreateAsync();
+
+            
+            await TPCHDatasetLoader.LoadDatasetAsync<LineitemR>("..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\lineitem.tbl");
+            Console.WriteLine("Lineitems loaded!");
             */
-
-            /*var reg = TPCHDatasetLoader.ReadDataFromCustomSeparator("..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\region.tbl");
-            foreach (var arr in reg) { 
-                Console.WriteLine($"[{string.Join(',', arr)}]");
-            }*/
-
-
         }
     }
 }

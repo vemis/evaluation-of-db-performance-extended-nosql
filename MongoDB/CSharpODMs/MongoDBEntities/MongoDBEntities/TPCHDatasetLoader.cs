@@ -38,13 +38,13 @@ namespace MongoDBEntities
             return null;
         }
 
-        public static async Task LoadDatasetAsync(string filePath)
+        public static async Task LoadDatasetAsync<T>(string filePath) where T : class, IEntity
         {
             List<string[]> dataset = ReadDataFromCustomSeparator(filePath);
 
-            dataset = dataset.Take(10).ToList();
+            //dataset = dataset.Take(1_000_000).ToList();
 
-            List<LineitemR> entities = new List<LineitemR>();
+            List<T> entities = new List<T>();
 
 
             for (int i = 0; i < dataset.Count; i++)
@@ -54,18 +54,24 @@ namespace MongoDBEntities
                     Console.WriteLine("Processed " + i + " / " + dataset.Count);
                 }
 
+
+                entities.Add((T)Activator.CreateInstance(
+                    typeof(T),
+                    new object[] { dataset[i] }
+                )!);
+                /*
                 entities.Add
                     (
-                        new LineitemR(dataset[i])
+                        //new T(dataset[i])//maybe all entities are the same? check it!!!
                     );
+                */
             }
 
-            Console.WriteLine($"entities.Count:{entities.Count}");
+            //Console.WriteLine($"entities.Count:{entities.Count}");
 
-            entities.ForEach(x => Console.WriteLine(x));
+            //entities.ForEach(x => Console.WriteLine(x));
 
-            await DB.InsertAsync(entities.ToArray());
-
+            await DB.InsertAsync(entities);
         }
     } 
 }

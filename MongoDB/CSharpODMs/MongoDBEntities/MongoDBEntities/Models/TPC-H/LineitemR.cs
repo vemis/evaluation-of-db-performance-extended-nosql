@@ -47,9 +47,28 @@ namespace MongoDBEntities.Models.TPC_H
 
         public LineitemR() { }
 
-        public LineitemR(string[] row) {
+        public LineitemR(string[] row) : this
+            (
+                Convert.ToInt32(row[0]),
+                Convert.ToInt32(row[1]),
+                Convert.ToInt32(row[2]),
+                Convert.ToInt32(row[3]),
+                Convert.ToInt32(row[4]),
+                Convert.ToDouble(row[5]),
+                Convert.ToDouble(row[6]),
+                Convert.ToDouble(row[7]),
+                row[8],
+                row[9],
+                row[10],
+                row[11],
+                row[12],
+                row[13],
+                row[14],
+                row[15]
+            ) 
+        {
             // synthetic keys
-            this.l_ps_id = l_partkey.ToString() + "|" + l_suppkey.ToString();
+            /*this.l_ps_id = l_partkey.ToString() + "|" + l_suppkey.ToString();
             this.l_id = l_orderkey.ToString() + l_linenumber.ToString();
 
 
@@ -70,13 +89,32 @@ namespace MongoDBEntities.Models.TPC_H
             this.l_receiptdate = row[12];
             this.l_shipinstruct = row[13];
             this.l_shipmode = row[14];
-            this.l_comment = row[15];
+            this.l_comment = row[15];*/
+
         }
+        /*
+         Convert.ToInt32(row[0]),
+         Convert.ToInt32(row[1]),
+         Convert.ToInt32(row[2]),
+         Convert.ToInt32(row[3]),
+         Convert.ToInt32(row[4]),
+         Convert.ToDouble(row[5]),
+         Convert.ToDouble( row[6]),
+         Convert.ToDouble( row[7]),
+         row[8],
+         row[9],
+         row[10],
+         row[11],
+         row[12],
+         row[13],
+         row[14],
+         row[15]
+         */
 
         public LineitemR(int l_orderkey, int l_partkey, int l_suppkey, int l_linenumber, int l_quantity, double l_extendedprice, double l_discount, double l_tax, string l_returnflag, string l_linestatus, string l_shipdate, string l_commitdate, string l_receiptdate, string l_shipinstruct, string l_shipmode, string l_comment)
         {
             this.l_ps_id = l_partkey.ToString() + "|" + l_suppkey.ToString();
-            this.l_id = l_orderkey.ToString() + l_linenumber.ToString();
+            this.l_id = l_orderkey.ToString() + "|" + l_linenumber.ToString();
             this.l_orderkey = l_orderkey;
             //this.l_ps_id = l_ps_id;
 
