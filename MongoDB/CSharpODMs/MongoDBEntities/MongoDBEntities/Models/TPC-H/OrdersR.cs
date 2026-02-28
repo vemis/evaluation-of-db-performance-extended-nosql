@@ -25,9 +25,11 @@ namespace MongoDBEntities.Models.TPC_H
                 Convert.ToInt32(row[1]),
                 row[2],
                 row[3],
-                new DateTime(row[4]),//Problems!!!
-
-
+                new Date( DateTime.Parse(row[4]) ),
+                row[5],
+                row[6],
+                row[7],
+                row[8]
             )
         { }
 

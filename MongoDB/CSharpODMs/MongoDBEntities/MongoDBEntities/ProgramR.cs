@@ -56,15 +56,37 @@ namespace MongoDBEntities
                 .Key(b => b.r_indexed, KeyType.Ascending)
                 .CreateAsync();
             */
-            
 
-            await DB.Index<OrdersR>()
-                .Key(c => c.o_custkey, KeyType.Ascending)
-                .CreateAsync();
+
 
 
 
             /*
+            await TPCHDatasetLoader.LoadDatasetAsync<PartR>("..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\part.tbl");
+            Console.WriteLine("Parts loaded!");
+            
+            await DB.Index<SupplierR>()
+                .Key(c => c.s_nationkey, KeyType.Ascending)
+                .CreateAsync();
+            await TPCHDatasetLoader.LoadDatasetAsync<SupplierR>("..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\supplier.tbl");
+            Console.WriteLine("Suppliers loaded!");
+
+            
+            await DB.Index<PartsuppR>()
+                .Key(c => c.ps_partKey, KeyType.Ascending)
+                .Key(c => c.ps_suppKey, KeyType.Ascending)
+                .CreateAsync();
+            await TPCHDatasetLoader.LoadDatasetAsync<PartsuppR>("..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\partsupp.tbl");
+            Console.WriteLine("Partsupps loaded!");
+
+            
+            await DB.Index<OrdersR>()
+                .Key(c => c.o_custkey, KeyType.Ascending)
+                .CreateAsync();
+            await TPCHDatasetLoader.LoadDatasetAsync<OrdersR>("..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl");
+            Console.WriteLine("Orders loaded!");
+
+
             await DB.Index<CustomerR>()
                 .Key(c => c.c_nationkey, KeyType.Ascending)
                 .CreateAsync();
