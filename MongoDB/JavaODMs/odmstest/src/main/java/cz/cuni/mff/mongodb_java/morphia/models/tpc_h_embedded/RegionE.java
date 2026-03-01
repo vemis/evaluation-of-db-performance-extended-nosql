@@ -7,6 +7,7 @@ import dev.morphia.annotations.Reference;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class RegionE {
@@ -18,12 +19,12 @@ public class RegionE {
     private String r_comment;
 
     //@Reference
-    private ArrayList<NationE> nations;
+    private List<NationE> nations;
 
     // Morphia needs this no-arg constructor
     public RegionE() {}
 
-    public RegionE(int r_regionkey, String r_name, String r_comment, ArrayList<NationE> nations) {
+    public RegionE(int r_regionkey, String r_name, String r_comment, List<NationE> nations) {
         this.r_regionkey = r_regionkey;
         this.r_name = r_name;
         this.r_comment = r_comment;
