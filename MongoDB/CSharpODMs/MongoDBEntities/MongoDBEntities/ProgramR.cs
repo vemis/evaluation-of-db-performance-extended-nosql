@@ -71,9 +71,12 @@ namespace MongoDBEntities
             //var a2 = await QueriesRMongoDBEntities.A2();
             //Console.WriteLine(a2.Count);
 
-            var b1 = await QueriesRMongoDBEntities.B1();
-            Console.WriteLine(b1.Count);
-            b1.ForEach(x => Console.WriteLine(x));
+            //var b1 = await QueriesRMongoDBEntities.B1();
+            //Console.WriteLine(b1.Count);
+            //b1.ForEach(x => Console.WriteLine(x));
+            var c2 = await QueriesRMongoDBEntities.C2();
+            Console.WriteLine(c2.Count);
+
 
 
             /*

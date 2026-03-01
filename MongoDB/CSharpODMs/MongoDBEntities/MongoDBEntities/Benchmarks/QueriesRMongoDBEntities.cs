@@ -85,11 +85,71 @@ namespace MongoDBEntities.Benchmarks
             return b1;
         }
 
-        public static async Task<List<BsonDocument>> B1()
+        /*
+        ### C2) Indexed Columns
+        
+        This query gives customer names, order dates, and total prices for all customers
+        ```sql
+        SELECT c.c_name, o.o_orderdate, o.o_totalprice
+        FROM customer c
+        JOIN orders o ON c.c_custkey = o.o_custkey;
+        ```
+        */
+        public static async Task<List<BsonDocument>> C2()
         {
-            
+            /* ALTERNATIVE SOLUTION USING INTERMEDIATE-CLASSES
+             * NOT TESTED, BUT SHOULD WORK WITH SMALL CHANGES
+             * public class Order : Entity
+            {
+                public int o_custkey { get; set; }
+                public DateTime o_orderdate { get; set; }
+                public decimal o_totalprice { get; set; }
+            }
 
-            return null;
+            public class CustomerWithOrders : CustomerR
+            {
+                public Order Orders { get; set; }
+            }
+
+            public class CustomerOrderResult
+            {
+                public string c_name { get; set; }
+                public DateTime o_orderdate { get; set; }
+                public decimal o_totalprice { get; set; }
+            }
+                         * 
+                         * var result = await DB.Fluent<CustomerR>()
+                .Lookup<Order, CustomerWithOrders>(
+                    DB.Collection<Order>(),
+                    c => c.c_custkey,
+                    o => o.o_custkey,
+                    x => x.Orders)
+                .Unwind(x => x.Orders)
+                .Project<CustomerOrderResult>(x => new CustomerOrderResult
+                {
+                    c_name = x.c_name,
+                    o_orderdate = x.Orders.o_orderdate,
+                    o_totalprice = x.Orders.o_totalprice
+                })
+                .ToListAsync();*/
+
+            var result = await DB.Fluent<CustomerR>()
+                .Lookup(
+                    foreignCollectionName: "OrdersR",
+                    localField: "c_custkey",
+                    foreignField: "o_custkey",
+                    @as: "orders")
+                .Unwind("orders")
+                .Project<BsonDocument>(new BsonDocument
+                {
+                    { "_id", 0 },
+                    { "c_name", 1 },
+                    { "o_orderdate", "$orders.o_orderdate" },
+                    { "o_totalprice", "$orders.o_totalprice" }
+                })
+                .ToListAsync();
+            
+            return result;
         }
 
     }

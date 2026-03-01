@@ -10,6 +10,7 @@ using System.Text;
 
 namespace MongoDBEntities.Benchmarks
 {
+    [MaxIterationCount(16)]
     public class MongoDBEntitiesBenchmarks
     {
         //[Benchmark]
@@ -42,6 +43,18 @@ namespace MongoDBEntities.Benchmarks
             */
             var b1 = await QueriesRMongoDBEntities.B1();
             return b1;
+        }
+
+        //[Benchmark]
+        public async Task<List<BsonDocument>> C2()
+        {
+            /*
+            | Method | Mean    | Error    | StdDev   |
+            |------- |--------:|---------:|---------:|
+            | C2     | 6.862 s | 0.1884 s | 0.1573 s |
+            */
+            var c2 = await QueriesRMongoDBEntities.C2();
+            return c2;
         }
 
         [GlobalSetup]
