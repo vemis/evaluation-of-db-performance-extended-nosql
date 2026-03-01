@@ -57,6 +57,18 @@ namespace MongoDBEntities.Benchmarks
             return c2;
         }
 
+        [Benchmark]
+        public async Task<List<BsonDocument>> D1()
+        {
+            /*
+            | Method | Mean     | Error    | StdDev   |
+            |------- |---------:|---------:|---------:|
+            | D1     | 15.10 ms | 1.530 ms | 1.431 ms |
+            */
+            var d1 = await QueriesRMongoDBEntities.D1();
+            return d1;
+        }
+
         [GlobalSetup]
         public async Task SetupAsync()
         {

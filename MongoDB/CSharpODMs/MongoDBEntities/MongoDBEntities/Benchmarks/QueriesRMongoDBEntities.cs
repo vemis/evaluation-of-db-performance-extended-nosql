@@ -1,12 +1,14 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Entities;
+using MongoDBEntities.Models;
 using MongoDBEntities.Models.TPC_H;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection.Metadata;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -150,6 +152,42 @@ namespace MongoDBEntities.Benchmarks
                 .ToListAsync();
             
             return result;
+        }
+
+        /*
+        ### D1) UNION
+        
+        This query combines customer and supplier nation keys
+        ```sql
+        (SELECT c_nationkey FROM customer)
+        UNION
+        (SELECT s_nationkey FROM supplier);
+        ```
+        */
+        public static async Task<List<BsonDocument>> D1()
+        {
+            var supplierPipeline = DB.Collection<SupplierR>();
+
+            var result = await DB.Fluent<CustomerR>()
+                .Project(c => new
+                {
+                    nationkey = c.c_nationkey
+                })
+                //.UnionWith(
+                //    supplierPipeline
+               // )
+                .Group(x => x.nationkey, g => new
+                {
+                    nationkey = g.Key
+                })
+                .Project(x => new BsonDocument
+                {
+                    { "nationkey", x.nationkey }
+                })
+                .ToListAsync();
+
+            return result;
+
         }
 
     }

@@ -34,7 +34,7 @@ namespace MongoDBEntities
         public static async Task Main(String[] args)
         {
 
-
+            
             BenchmarkRunner.Run<MongoDBEntitiesBenchmarks>();
 
             Console.WriteLine("Benchmark finished");
@@ -74,9 +74,13 @@ namespace MongoDBEntities
             //var b1 = await QueriesRMongoDBEntities.B1();
             //Console.WriteLine(b1.Count);
             //b1.ForEach(x => Console.WriteLine(x));
-            var c2 = await QueriesRMongoDBEntities.C2();
-            Console.WriteLine(c2.Count);
 
+            //var c2 = await QueriesRMongoDBEntities.C2();
+            //Console.WriteLine(c2.Count);
+
+            var d1 = await QueriesRMongoDBEntities.D1();
+            Console.WriteLine(d1.Count);
+            Console.WriteLine(d1[0]);
 
 
             /*
