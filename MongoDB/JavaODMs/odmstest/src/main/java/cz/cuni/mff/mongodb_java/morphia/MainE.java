@@ -2,16 +2,16 @@ package cz.cuni.mff.mongodb_java.morphia;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import cz.cuni.mff.mongodb_java.morphia.benchmarks.QueriesMorphiaE;
 import cz.cuni.mff.mongodb_java.morphia.models.Address;
 import cz.cuni.mff.mongodb_java.morphia.models.Employee;
-import cz.cuni.mff.mongodb_java.morphia.models.tpc_h_embedded.NationE;
-import cz.cuni.mff.mongodb_java.morphia.models.tpc_h_embedded.RegionE;
-import cz.cuni.mff.mongodb_java.morphia.models.tpc_h_embedded.SupplierE;
+import cz.cuni.mff.mongodb_java.morphia.models.tpc_h_embedded.*;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
 import dev.morphia.mapping.MapperOptions;
 import org.bson.types.ObjectId;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,7 +38,20 @@ public class MainE {
 
         System.out.println("Morphia initialized!");
 
+        var c2 = QueriesMorphiaE.C2(datastore);
+        System.out.println(c2.size());
+        System.out.println(c2.get(0));
 
+/*
+        var orders = TPCHDatasetLoaderMorphiaE.loadOrders("..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl", datastore);
+        System.out.println("OrderEs created!");
+
+        // Create Customers
+        TPCHDatasetLoaderMorphiaE.loadCustomersEWithOrders("..\\..\\..\\dataset\\TPC-H\\tpch-data\\customer.tbl", orders ,datastore);
+        System.out.println("CustomerEs created!");
+*/
+
+        /*
         // Create Orders
         var orders = TPCHDatasetLoaderMorphiaE.loadOrders("..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl", datastore);
         System.out.println("OrderEs created!");
@@ -48,9 +61,9 @@ public class MainE {
         System.out.println("CustomerEs created!");
 
         // Create Nations
-        /*var nations = */TPCHDatasetLoaderMorphiaE.loadNations("..\\..\\..\\dataset\\TPC-H\\tpch-data\\nation.tbl", customers,  datastore);
+        TPCHDatasetLoaderMorphiaE.loadNations("..\\..\\..\\dataset\\TPC-H\\tpch-data\\nation.tbl", customers,  datastore);
         System.out.println("NationEs created!");
-
+*/
         // Create Regions
         // WARNING: I AM LOADING ALL THE DATA TO ALL THE ENTITIES
         // -> EVERY CUSTOMER HAVE EVERY ORDER AND SO ON....

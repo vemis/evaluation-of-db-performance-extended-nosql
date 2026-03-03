@@ -50,6 +50,43 @@ public class TPCHDatasetLoaderMorphiaE extends TPCHDatasetLoader {
         return orderInstances;
     }
 
+    public static void loadCustomersEWithOrders(String filePath, List<OrdersE> orders , Datastore datastore) {
+
+        List<String[]> customers = readDataFromCustomSeparator(filePath);
+
+        LongAdder counter = new LongAdder();
+        int total = customers.size();
+
+        List<CustomerEWithOrders> customerInstances = customers
+                .parallelStream()
+                .map(row ->
+                {
+                    counter.increment();
+                    long current = counter.sum();
+
+                    if (current % 10_000 == 0) {
+                        System.out.println("Processed " + current + " / " + total);
+                    }
+
+                    return new CustomerEWithOrders(
+                            Integer.parseInt(row[0]),
+                            row[1],
+                            row[2],
+                            Integer.parseInt(row[3]),
+                            row[4],
+                            Double.parseDouble(row[5]),
+                            row[6],
+                            row[7],
+                            orders.stream()
+                                    .filter(item -> item.getO_custkey() == Integer.parseInt(row[0]))
+                                    .collect(Collectors.toList())
+                    );
+                })
+                .toList();
+
+        datastore.insert(customerInstances);
+    }
+
     public static List<CustomerE> loadCustomers(String filePath, List<OrdersE> orders , Datastore datastore) {
 
         List<String[]> customers = readDataFromCustomSeparator(filePath);
