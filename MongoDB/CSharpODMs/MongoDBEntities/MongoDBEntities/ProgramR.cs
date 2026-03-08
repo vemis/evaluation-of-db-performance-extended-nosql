@@ -35,7 +35,7 @@ namespace MongoDBEntities
         {
 
             
-            BenchmarkRunner.Run<MongoDBEntitiesBenchmarks>();
+            BenchmarkRunner.Run<MongoDBEntitiesBenchmarksR>();
 
             Console.WriteLine("Benchmark finished");
 

@@ -1,4 +1,6 @@
-﻿using MongoDB.Entities;
+﻿using BenchmarkDotNet.Running;
+using MongoDB.Entities;
+using MongoDBEntities.Benchmarks;
 using MongoDBEntities.Models.TPC_H;
 using System;
 using System.Collections.Generic;
@@ -11,9 +13,17 @@ namespace MongoDBEntities
     {
         public static async Task Main(String[] args)
         {
+            BenchmarkRunner.Run<MongoDBEntitiesBenchmarksE>();
+
+            Console.WriteLine("Benchmark finished");
+
+            throw new Exception();
 
 
-            
+
+
+
+
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
             CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
 
@@ -26,11 +36,12 @@ namespace MongoDBEntities
             Console.WriteLine("MongoDB.Entities initialized!");
 
 
+            var c2 = await QueriesEMongoDBEntities.C2();
+            Console.WriteLine(c2[0]);
+            Console.WriteLine(c2.Count);
 
 
-
-
-
+            /*
             await DB.Index<CustomerEWithOrders>()
                 .Key(c => c.c_nationkey, KeyType.Ascending)
                 .Key(c => c.c_orders[0].o_custkey, KeyType.Ascending)
@@ -44,7 +55,8 @@ namespace MongoDBEntities
 
 
             await TPCHDatasetLoaderE.LoadDatasetCustomerEWithOrdersAsync("..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\customer.tbl", orders);
-            
+            */
+
             /*
             OrdersE order1 = new OrdersE
                 (

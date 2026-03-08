@@ -11,7 +11,7 @@ using System.Text;
 namespace MongoDBEntities.Benchmarks
 {
     [MaxIterationCount(16)]
-    public class MongoDBEntitiesBenchmarks
+    public class MongoDBEntitiesBenchmarksR
     {
         //[Benchmark]
         public async Task<List<LineitemR>> A1() 
