@@ -4,6 +4,10 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
+import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.data.couchbase.core.CouchbaseTemplate;
+import org.springframework.data.couchbase.core.ReactiveCouchbaseTemplate;
+import reactor.core.publisher.Flux;
 
 import java.io.File;
 import java.io.FileReader;
@@ -60,5 +64,34 @@ public class TPCHDatasetLoader {
                 System.out.println(fileEntry.getName());
             }
         }
+    }
+
+    private static <T> void saveManyDocuments(List<T> documents, CouchbaseTemplate reactiveCouchbaseTemplate) {
+        throw new NotImplementedException();
+    }
+
+    protected static <T> void saveManyDocuments(List<T> documents, ReactiveCouchbaseTemplate reactiveCouchbaseTemplate){
+        // not fast enough
+        /*for (T document : documents) {
+            reactiveCouchbaseTemplate.save(document);
+        }*/
+
+        // parallel
+        Flux.fromIterable(documents)
+                // add a 0-based index to each element
+                .index()
+                .flatMap(tuple2 -> {
+                    long idx = tuple2.getT1();        // index
+                    T document = tuple2.getT2();  // document
+                    // log every 10_000 documents
+                    if ((idx + 1) % 10_000 == 0) {
+                        System.out.println("Inserted " + (idx + 1) + "/" + documents.size() +" documents so far");
+                    }
+                    return reactiveCouchbaseTemplate.save(document);
+                }, 500) // concurrency of 500
+                .blockLast(); // wait until all are saved
+
+        System.out.println("Flux saved!");
+
     }
 }

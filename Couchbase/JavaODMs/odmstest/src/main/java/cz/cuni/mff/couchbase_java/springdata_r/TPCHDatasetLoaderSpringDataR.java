@@ -2,27 +2,24 @@ package cz.cuni.mff.couchbase_java.springdata_r;
 
 
 import cz.cuni.mff.couchbase_java.TPCHDatasetLoader;
-import cz.cuni.mff.couchbase_java.springdata_r.models.NationR;
-import cz.cuni.mff.couchbase_java.springdata_r.models.RegionR;
+import cz.cuni.mff.couchbase_java.springdata_r.models.*;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.data.couchbase.core.CouchbaseTemplate;
+import reactor.core.publisher.Flux;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.LongAdder;
+import org.springframework.data.couchbase.core.ReactiveCouchbaseTemplate;
 
 /**
  * Loading could be done using constructor, but having doubts abour the performance
  */
 public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
 
-    private static <T> void saveManyDocuments(List<T> documents, CouchbaseTemplate couchbaseTemplate){
-        for (T document : documents) {
-            couchbaseTemplate.save(document);
-        }
-    }
 
-    public static void loadRegions(String filePath, CouchbaseTemplate couchbaseTemplate) {
+    public static void loadRegions(String filePath, ReactiveCouchbaseTemplate reactiveCouchbaseTemplate) {
 
         List<String[]> regions = readDataFromCustomSeparator(filePath);
 
@@ -36,16 +33,16 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
                     row[1],
                     row[2]
             );
-            //couchbaseTemplate.save(region);
+            //reactiveCouchbaseTemplate.save(region);
             //regionInstances[i] = region;
             regionInstances.add(region);
         }
-        //couchbaseTemplate.save(regionInstances);
-        saveManyDocuments(regionInstances, couchbaseTemplate);
+        //reactiveCouchbaseTemplate.save(regionInstances);
+        saveManyDocuments(regionInstances, reactiveCouchbaseTemplate);
 
     }
 
-    public static void loadNations(String filePath, CouchbaseTemplate couchbaseTemplate) {
+    public static void loadNations(String filePath, ReactiveCouchbaseTemplate reactiveCouchbaseTemplate) {
 
         List<String[]> nations = readDataFromCustomSeparator(filePath);
 
@@ -59,13 +56,14 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
                     Integer.parseInt(row[2]),
                     row[3]
             );
-            //couchbaseTemplate.save(nation);
+            //reactiveCouchbaseTemplate.save(nation);
             nationInstances.add(nation);
         }
-        couchbaseTemplate.insert(nationInstances,  NationR.class);
+        //reactiveCouchbaseTemplate.insert(nationInstances,  NationR.class);
+        saveManyDocuments(nationInstances, reactiveCouchbaseTemplate);
     }
 
-    public static void loadCustomers(String filePath, CouchbaseTemplate couchbaseTemplate) {
+    public static void loadCustomers(String filePath, ReactiveCouchbaseTemplate reactiveCouchbaseTemplate) {
 
         List<String[]> customers = readDataFromCustomSeparator(filePath);
 
@@ -85,13 +83,14 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
                     row[6],
                     row[7]
             );
-            //couchbaseTemplate.save(customer);//WriteConcern. UNACKNOWLEDGED
+            //reactiveCouchbaseTemplate.save(customer);//WriteConcern. UNACKNOWLEDGED
             customerInstances.add(customer);
         }
-        couchbaseTemplate.insert(customerInstances, CustomerR.class);
+        //reactiveCouchbaseTemplate.insert(customerInstances, CustomerR.class);
+        saveManyDocuments(customerInstances, reactiveCouchbaseTemplate);
     }
 
-    public static void loadOrders(String filePath, CouchbaseTemplate couchbaseTemplate) {
+    public static void loadOrders(String filePath, ReactiveCouchbaseTemplate reactiveCouchbaseTemplate) {
 
         List<String[]> orders = readDataFromCustomSeparator(filePath);
 
@@ -111,7 +110,7 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
 
                     return new OrdersR(
                             Integer.parseInt(row[0]),
-                            Integer.parseInt(row[1]),
+                            row[1],
                             row[2],
                             row[4],
                             LocalDate.parse(row[4]),
@@ -126,8 +125,8 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
 
         System.out.println("Inserting many orderInstances!");
 
-        couchbaseTemplate.insert(orderInstances, OrdersR.class);
-
+        //reactiveCouchbaseTemplate.insert(orderInstances, OrdersR.class);
+        saveManyDocuments(orderInstances, reactiveCouchbaseTemplate);
         System.out.println("orders inserted!");
     }
 
@@ -141,9 +140,11 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
         return batches;
     }
 
-    public static void loadLineitems(String filePath, CouchbaseTemplate couchbaseTemplate) {
+    public static void loadLineitems(String filePath, ReactiveCouchbaseTemplate reactiveCouchbaseTemplate) {
 
         List<String[]> lineitems = readDataFromCustomSeparator(filePath);
+
+        lineitems = lineitems.subList(1_000_000 ,lineitems.size());
 
         LongAdder counter = new LongAdder();
         int total = lineitems.size();
@@ -186,14 +187,15 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
         System.out.println("Inserting many lineitemInstances!");
 
         for (var batch : batches) {
-            couchbaseTemplate.insert(batch, LineitemR.class);
+            //reactiveCouchbaseTemplate.insert(batch, LineitemR.class);
+            saveManyDocuments(batch, reactiveCouchbaseTemplate);
             System.out.println("Batch inserted!");
         }
 
         System.out.println("lineitemInstances inserted!");
     }
 
-    public static void loadPartsupps(String filePath, CouchbaseTemplate couchbaseTemplate) {
+    public static void loadPartsupps(String filePath, ReactiveCouchbaseTemplate reactiveCouchbaseTemplate) {
 
         List<String[]> partsupps = readDataFromCustomSeparator(filePath);
 
@@ -227,14 +229,15 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
         System.out.println("Inserting many partsuppInstances!");
 
         for (var batch : batches) {
-            couchbaseTemplate.insert(batch, PartsuppR.class);
+            //reactiveCouchbaseTemplate.insert(batch, PartsuppR.class);
+            saveManyDocuments(batch, reactiveCouchbaseTemplate);
             System.out.println("Batch inserted!");
         }
 
         System.out.println("partsupp inserted!");
     }
 
-    public static void loadParts(String filePath, CouchbaseTemplate couchbaseTemplate) {
+    public static void loadParts(String filePath, ReactiveCouchbaseTemplate reactiveCouchbaseTemplate) {
 
         List<String[]> parts = readDataFromCustomSeparator(filePath);
 
@@ -271,14 +274,15 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
         System.out.println("Inserting many partInstances!");
 
         for (var batch : batches) {
-            couchbaseTemplate.insert(batch, PartR.class);
+            //reactiveCouchbaseTemplate.insert(batch, PartR.class);
+            saveManyDocuments(batch,  reactiveCouchbaseTemplate);
             System.out.println("Batch inserted!");
         }
 
         System.out.println("part inserted!");
     }
 
-    public static void loadSuppliers(String filePath, CouchbaseTemplate couchbaseTemplate) {
+    public static void loadSuppliers(String filePath, ReactiveCouchbaseTemplate reactiveCouchbaseTemplate) {
 
         List<String[]> suppliers = readDataFromCustomSeparator(filePath);
 
@@ -313,7 +317,8 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
         System.out.println("Inserting many supplierInstances!");
 
         for (var batch : batches) {
-            couchbaseTemplate.insert(batch, SupplierR.class);
+            //reactiveCouchbaseTemplate.insert(batch, SupplierR.class);
+            saveManyDocuments(batch, reactiveCouchbaseTemplate);
             System.out.println("Batch inserted!");
         }
 
