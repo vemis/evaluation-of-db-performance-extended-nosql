@@ -21,17 +21,8 @@ CustomerEWithOrdersSchema.index.findBy_c_nationkey = {
     type: 'n1ql',
 };
 
-// create indexes of orders
-/*
-await ottoman.getDefaultInstance().query(
-    `
-CREATE INDEX idx_contacts_email
-ON  ottoman_bucket_e.ottoman_scope_e.CustomerEWithOrders(
-  DISTINCT ARRAY o.o_orderkey FOR o IN c_orders END
-)
-`
-)
-*/
+
+
 
 /*CustomerEWithOrdersSchema.index.findBy_o_orderkey = {
     by: "c_orders.o_orderkey",
@@ -43,9 +34,19 @@ CustomerEWithOrdersSchema.index.findBy_o_custkey = {
     type: 'n1ql',
 };*/
 
+export async function createEmbeddedIndexesCustomerEWithOrders() {
+    await ottoman.getDefaultInstance().query(
+        `
+            CREATE INDEX idx_customers_orders IF NOT EXISTS
+                ON ottoman_bucket_e.ottoman_scope_e.CustomerEWithOrders (
+                        DISTINCT ARRAY o.o_orderkey FOR o IN c_orders END
+                    )
+        `
+    )
+}
 
 
-export const CustomerEWithOrders =  model("CustomerEWithOrders", CustomerEWithOrdersSchema,
+export const CustomerEWithOrders = model("CustomerEWithOrders", CustomerEWithOrdersSchema,
     {
         idKey: "id",
         collectionName: 'CustomerEWithOrders',

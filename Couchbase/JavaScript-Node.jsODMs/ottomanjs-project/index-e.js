@@ -3,10 +3,14 @@ import {} from './config/db-e.js';
 
 import ottoman from "ottoman";
 import OrdersESchema from "./models/tpc_h_e/orders-e.js";
-import {CustomerEWithOrders} from "./models/tpc_h_e/customer-e-with-orders.js";
-
+import {createEmbeddedIndexesCustomerEWithOrders, CustomerEWithOrders} from "./models/tpc_h_e/customer-e-with-orders.js";
+import * as queriesE from "./benchmarks/queries-e.js";
 
 async function run(){
+
+    // create indexes of orders
+
+    /*await createEmbeddedIndexesCustomerEWithOrders();
     const cuse1 = new CustomerEWithOrders({
         id: "1",
         c_name: "test",
@@ -33,8 +37,11 @@ async function run(){
         ]
     });
 
-    await cuse1.save();
+    await cuse1.save();*/
 
+    console.log(
+        await queriesE.C2()
+    );
 }
 
 run().catch(err => console.error(err));
