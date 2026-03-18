@@ -11,6 +11,10 @@ import ottoman from "ottoman";
  * ```
  */
 async function C2(){
+    /*
+    Ops/sec: 0.15
+    Average time per op: 6655.253 ms
+    */
     const c2 = await ottoman.getDefaultInstance().query(
         `SELECT
              c.c_name,

@@ -8,7 +8,7 @@ import {loadRegions} from "./load-data-tpc-h-r.js";
 import * as loadDataTPCHR from "./load-data-tpc-h-r.js";
 
 import * as queriesR from "./benchmarks/queries-r.js";
-import {benchmarkQuery} from "./benchmarks/benchmarks-r.js";
+import {benchmarkQuery} from "./benchmarks/benchmarks.js";
 
 async function run() {
     /*const reg1 = new RegionR({

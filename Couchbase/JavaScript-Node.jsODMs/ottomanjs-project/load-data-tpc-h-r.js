@@ -7,24 +7,10 @@ import {LineitemR} from "./models/tpc_h_r/lineitem-r.js";
 import {PartsuppR} from "./models/tpc_h_r/partsupp-r.js";
 import {SupplierR} from "./models/tpc_h_r/supplier-r.js";
 import {PartR} from "./models/tpc_h_r/part-r.js";
+import {insertAll, partition, readDataFromCustomSeparator} from "./load-data-tpc-h.js";
 
 
-async function readDataFromCustomSeparator(filePath){
-    const data = await fs.promises.readFile(filePath, 'utf8');
-    var rows = data.split('\n');
 
-    // the last one is just empty string
-    if (rows.length > 1 && rows[rows.length - 1] == '') {
-        rows.pop()
-    }
-    return rows.map(row => row.split('|'));
-}
-
-async function insertAll(batch, model) {
-    await Promise.all(
-        batch.map(n => model.create(n))
-    )
-}
 
 async function loadRegions(filePath){
     try {
@@ -310,15 +296,7 @@ async function loadParts(filePath){
     }
 }
 
-function partition(array, batchSize) {
-    const result = [];
 
-    for (let i = 0; i < array.length; i += batchSize) {
-        result.push(array.slice(i, i + batchSize));
-    }
-
-    return result;
-}
 
 // exported API
 export {

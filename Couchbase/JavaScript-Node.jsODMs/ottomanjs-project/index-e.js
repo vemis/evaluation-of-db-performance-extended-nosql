@@ -5,6 +5,8 @@ import ottoman from "ottoman";
 import OrdersESchema from "./models/tpc_h_e/orders-e.js";
 import {createEmbeddedIndexesCustomerEWithOrders, CustomerEWithOrders} from "./models/tpc_h_e/customer-e-with-orders.js";
 import * as queriesE from "./benchmarks/queries-e.js";
+import * as loadDataE from "./load-data-tpc-h-e.js";
+import {benchmarkQuery} from "./benchmarks/benchmarks.js";
 
 async function run(){
 
@@ -39,9 +41,22 @@ async function run(){
 
     await cuse1.save();*/
 
-    console.log(
-        await queriesE.C2()
-    );
+    /*
+    // Create ordersE
+    const ordersE =  await loadDataE.loadOrders("..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl")
+    // Load CustomersEWithOrders
+    await loadDataE.loadCustomersEWithOrders("..\\..\\..\\dataset\\TPC-H\\tpch-data\\customer.tbl",
+        ordersE)
+    */
+
+    //const c2 = await queriesE.C2();
+    //console.log(c2[0])
+
+    benchmarkQuery(
+        queriesE.C2
+    )
+
+    console.log("End")
 }
 
 run().catch(err => console.error(err));
