@@ -2,6 +2,7 @@ package cz.cuni.mff.mongodb_java.morphia.benchmarks;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import cz.cuni.mff.mongodb_java.morphia.models.tpc_h_relational.CustomerR;
 import cz.cuni.mff.mongodb_java.morphia.models.tpc_h_relational.LineitemR;
 import cz.cuni.mff.mongodb_java.morphia.models.tpc_h_relational.OrdersR;
 import dev.morphia.Datastore;
@@ -37,13 +38,30 @@ public class MorphiaBenchmarksR {
         List<OrdersR> a2 = QueriesMorphiaR.A2(datastore);
     }
 
-    /**
-     * Benchmark              Mode  Cnt    Score    Error  Units
-     * MorphiaBenchmarksR.A3  avgt    5  274,807 ± 73,967  ms/op
-     */
+
+    //MorphiaBenchmarksR.A3  avgt    5   297,817 ±  32,489  ms/op
     //@Benchmark
     public  void A3(){
-        List<Document> a3 = QueriesMorphiaR.B1(datastore);
+        List<CustomerR> a3 = QueriesMorphiaR.A3(datastore);
+    }
+
+
+    //MorphiaBenchmarksR.A4  avgt    5   135,689 ±   3,186  ms/op
+    //@Benchmark
+    public void A4(){
+        List<OrdersR> a4 = QueriesMorphiaR.A4(datastore);
+    }
+
+    //MorphiaBenchmarksR.B1  avgt    5   249,079 ±  31,396  ms/op
+    //@Benchmark
+    public  void B1(){
+        List<Document> b1 = QueriesMorphiaR.B1(datastore);
+    }
+
+    //MorphiaBenchmarksR.B2  avgt    5  1156,219 ± 180,760  ms/op
+    //@Benchmark
+    public  void B2(){
+        List<Document> b2 = QueriesMorphiaR.B2(datastore);
     }
 
     /**

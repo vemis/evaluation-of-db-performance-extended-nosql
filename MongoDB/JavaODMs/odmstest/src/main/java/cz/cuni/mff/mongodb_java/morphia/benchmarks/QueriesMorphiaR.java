@@ -62,6 +62,43 @@ public class QueriesMorphiaR {
     }
 
     /**
+     * ### A3) Indexed Columns
+     *
+     * This query selects all records from the customer table
+     * ```sql
+     * SELECT * FROM customer;
+     * ```
+     * */
+    public static List<CustomerR> A3(Datastore datastore) {
+        List<CustomerR> a3 = datastore
+                .find(CustomerR.class)
+                .iterator()
+                .toList();
+
+        return a3;
+    }
+
+    /**
+     * ### A4) Indexed Columns — Range Query
+     *
+     * This query selects all records from the orders table where the order key is between 1000 and 50000
+     * ```sql
+     * SELECT * FROM orders
+     * WHERE o_orderkey BETWEEN 1000 AND 50000;
+     * ```
+     * */
+    public static List<OrdersR> A4(Datastore datastore) {
+        List<OrdersR> a4 = datastore
+                .find(OrdersR.class)
+                .filter(gte("o_orderkey", 1000), lte("o_orderkey",50000 ))
+                .iterator()
+                .toList();
+
+        return a4;
+    }
+
+
+    /**
      * ### B1) COUNT
      *
      * This query counts the number of orders grouped by order month
@@ -96,6 +133,43 @@ public class QueriesMorphiaR {
 
          return aggregation;
     }
+
+    /**
+     * ### B2) MAX
+     *
+     * This query finds the maximum extended price from the lineitem table grouped by ship month
+     * ```sql
+     * SELECT DATE_FORMAT(l.l_shipdate, '%Y-%m') AS ship_month,
+     *        MAX(l.l_extendedprice) AS max_price
+     * FROM lineitem l
+     * GROUP BY ship_month;
+     * ```
+     * */
+    public static List<Document> B2(Datastore datastore){
+        List<Document> aggregation = datastore.aggregate(LineitemR.class)
+                .group(
+                        Group.group(Group.id(
+
+                                        DateExpressions.dateToString()
+                                                .format("%Y-%m")
+                                                .date(Expressions.field("l_shipdate"))
+
+                                )
+                        ).field("max_price", AccumulatorExpressions.max(Expressions.field("l_extendedprice")))
+                )
+                .project(
+                        Projection.project()
+                                .suppressId()
+                                .include("max_price")
+                                .include("ship_month", Expressions.field("_id"))
+                )
+                .execute(Document.class)
+                .toList();
+
+        return aggregation;
+    }
+
+
 
     /**
      * ### C2) Indexed Columns

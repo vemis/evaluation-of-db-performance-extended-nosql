@@ -2,6 +2,7 @@ package cz.cuni.mff.mongodb_java.morphia;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import cz.cuni.mff.mongodb_java.morphia.benchmarks.QueriesMorphiaR;
 import dev.morphia.Datastore;
 import dev.morphia.Morphia;
 import dev.morphia.mapping.MapperOptions;
@@ -87,6 +88,9 @@ public class MainR {
         System.out.println("A1 size: " + lSize);
         System.out.println("Query A1 finished");*/
 
+        /*var b2 = QueriesMorphiaR.B2(datastore);
+        System.out.println(b2.get(0));
+        System.out.println(b2.size());*/
 
 
     }
