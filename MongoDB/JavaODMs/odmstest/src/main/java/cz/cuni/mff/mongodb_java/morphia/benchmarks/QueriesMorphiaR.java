@@ -1116,9 +1116,128 @@ public class QueriesMorphiaR {
      * ```
      */
     public static List<Document> Q5(Datastore datastore){
+        var q5 = datastore.aggregate(CustomerR.class)
+                // Join orders
+                .lookup(
+                        Lookup.lookup(OrdersR.class)
+                                .localField("_id")
+                                .foreignField("o_custkey")
+                                .as("orders")
+                )
+                .unwind(Unwind.unwind("orders"))
+
+                // Filter orders by date
+                .match(
+                        expr(
+                                BooleanExpressions.and(
+                                        ComparisonExpressions.gte(
+                                                Expressions.field("orders.o_orderdate"),
+                                                Expressions.value(LocalDate.parse("1994-01-01"))
+                                        ),
+                                        ComparisonExpressions.lt(
+                                                Expressions.field("orders.o_orderdate"),
+                                                DateExpressions.dateAdd(
+                                                        Expressions.value(LocalDate.parse("1994-01-01")),
+                                                        1,
+                                                        TimeUnit.YEAR
+                                                )
+                                        )
+                                )
 
 
-        return null;
+                        )
+                )
+                // Join lineitem
+                .lookup(
+                        Lookup.lookup(LineitemR.class)
+                                .localField("orders._id")
+                                .foreignField("l_orderkey")
+                                .as("lineitems")
+                )
+                .unwind(Unwind.unwind("lineitems"))
+
+                // Join supplier
+                .lookup(
+                        Lookup.lookup(SupplierR.class)
+                                .localField("lineitems.l_suppkey")
+                                .foreignField("_id")
+                                .as("supplier")
+                )
+                .unwind(Unwind.unwind("supplier"))
+
+                // Match local supplier (same nation)
+                .match(
+                        expr(
+                                ComparisonExpressions.eq(
+                                        Expressions.field("c_nationkey"),
+                                        Expressions.field("supplier.s_nationkey")
+                                )
+                        )
+                )
+
+                // Join nation
+                .lookup(
+                        Lookup.lookup(NationR.class)
+                                .localField("supplier.s_nationkey")
+                                .foreignField("_id")
+                                .as("nation")
+                )
+                .unwind(Unwind.unwind("nation"))
+
+                // Join region
+                .lookup(
+                        Lookup.lookup(RegionR.class)
+                                .localField("nation.n_regionkey")
+                                .foreignField("_id")
+                                .as("region")
+                )
+                .unwind(Unwind.unwind("region"))
+
+                // Filter region = 'ASIA'
+                .match(
+                        Filters.eq("region.r_name", "ASIA")
+                )
+
+                // Group by nation name and compute revenue
+                .group(
+                        Group.group(
+                                        Group.id(
+                                                Expressions.field("nation.n_name")
+                                        )
+
+                                )
+                                // SUM(lineitems.l_extendedprice * (1 - lineitems.l_discount)) AS revenue,
+                                .field("revenue",
+                                        AccumulatorExpressions.sum(
+                                                MathExpressions.multiply(
+                                                        Expressions.field("lineitems.l_extendedprice"),
+                                                        MathExpressions.subtract(
+                                                                Expressions.value(1),
+                                                                Expressions.field("lineitems.l_discount")
+                                                        )
+                                                )
+                                        )
+                                )
+                )
+
+                // Sort descending
+                .sort(
+                        Sort.sort()
+                                .descending("revenue")
+                )
+
+                .project(
+                        Projection.project()
+
+                                .include("n_name", Expressions.field("_id"))
+                                .include("revenue")
+                                .suppressId()
+                )
+
+
+                .execute(Document.class)
+                .toList();
+        return q5;
     }
 }
 

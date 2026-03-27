@@ -90,12 +90,12 @@ public class MainR {
         System.out.println("Query A1 finished");*/
 
 
-        var q4 = QueriesMorphiaR.Q4(datastore);
-        System.out.println(q4.get(0));
-        //System.out.println(q4.get(1));
-        //System.out.println(q4.get(2));
-        //q4.forEach(System.out::println);
-        System.out.println(q4.size());
+        var q5 = QueriesMorphiaR.Q5(datastore);
+        //System.out.println(q5.get(0));
+        //System.out.println(q5.get(1));
+        //System.out.println(q5.get(2));
+        q5.forEach(System.out::println);
+        System.out.println(q5.size());
 
 
     }
