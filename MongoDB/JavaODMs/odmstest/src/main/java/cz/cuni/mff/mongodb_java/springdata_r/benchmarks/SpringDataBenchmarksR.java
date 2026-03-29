@@ -45,6 +45,7 @@ public class SpringDataBenchmarksR {
         List<OrdersR> a2 = logicServiceR.A2();
     }
 
+
     /**
      * Benchmark                 Mode  Cnt    Score     Error  Units
      * SpringDataBenchmarksR.B1  avgt    5  461,682 ± 580,270  ms/op
