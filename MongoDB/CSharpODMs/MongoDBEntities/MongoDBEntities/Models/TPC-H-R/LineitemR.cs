@@ -38,9 +38,9 @@ namespace MongoDBEntities.Models.TPC_H
         public double l_tax;
         public string l_returnflag;
         public string l_linestatus;
-        public string l_shipdate;
-        public string l_commitdate;
-        public string l_receiptdate;
+        public Date l_shipdate;
+        public Date l_commitdate;
+        public Date l_receiptdate;
         public string l_shipinstruct;
         public string l_shipmode;
         public string l_comment;
@@ -59,9 +59,9 @@ namespace MongoDBEntities.Models.TPC_H
                 Convert.ToDouble(row[7]),
                 row[8],
                 row[9],
-                row[10],
-                row[11],
-                row[12],
+                new Date(DateTime.Parse(row[10])),
+                new Date(DateTime.Parse(row[11])),
+                new Date(DateTime.Parse(row[12])),
                 row[13],
                 row[14],
                 row[15]
@@ -111,7 +111,7 @@ namespace MongoDBEntities.Models.TPC_H
          row[15]
          */
 
-        public LineitemR(int l_orderkey, int l_partkey, int l_suppkey, int l_linenumber, int l_quantity, double l_extendedprice, double l_discount, double l_tax, string l_returnflag, string l_linestatus, string l_shipdate, string l_commitdate, string l_receiptdate, string l_shipinstruct, string l_shipmode, string l_comment)
+        public LineitemR(int l_orderkey, int l_partkey, int l_suppkey, int l_linenumber, int l_quantity, double l_extendedprice, double l_discount, double l_tax, string l_returnflag, string l_linestatus, Date l_shipdate, Date l_commitdate, Date l_receiptdate, string l_shipinstruct, string l_shipmode, string l_comment)
         {
             this.l_ps_id = l_partkey.ToString() + "|" + l_suppkey.ToString();
             this.l_id = l_orderkey.ToString() + "|" + l_linenumber.ToString();

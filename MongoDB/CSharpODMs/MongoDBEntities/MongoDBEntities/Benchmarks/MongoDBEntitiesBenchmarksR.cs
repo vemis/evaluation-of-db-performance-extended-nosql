@@ -17,7 +17,7 @@ namespace MongoDBEntities.Benchmarks
         public async Task<List<LineitemR>> A1() 
         {
             //WorkloadActual  36: 1 op, 14688927500.00 ns, 14.6889 s/op
-            var a1 = await QueriesRMongoDBEntities.A1Async();
+            var a1 = await QueriesRMongoDBEntities.A1();
             return a1;
         }
 

@@ -11,7 +11,7 @@ namespace MongoDBEntities
 {
     public class ProgramE
     {
-        public static async Task Main(String[] args)
+        public static async Task Main_E(String[] args)
         {
             BenchmarkRunner.Run<MongoDBEntitiesBenchmarksE>();
 

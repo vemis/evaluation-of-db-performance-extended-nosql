@@ -8,7 +8,7 @@ namespace MongoDBEntities.Models.TPC_H
 {
     public class OrdersR : IEntity
     {
-        
+        [BsonId]
         public int o_orderkey {  get; set; }
         public int o_custkey;
         public string o_orderstatus;
