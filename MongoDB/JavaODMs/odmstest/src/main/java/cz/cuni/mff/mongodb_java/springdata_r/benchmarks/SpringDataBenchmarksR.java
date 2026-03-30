@@ -45,6 +45,16 @@ public class SpringDataBenchmarksR {
         List<OrdersR> a2 = logicServiceR.A2();
     }
 
+    @Benchmark
+    public void A3(){
+        List<CustomerR> a3 = logicServiceR.A3();
+    }
+
+    @Benchmark
+    public void A4(){
+        List<OrdersR> a4 = logicServiceR.A4();
+    }
+
 
     /**
      * Benchmark                 Mode  Cnt    Score     Error  Units
@@ -53,6 +63,16 @@ public class SpringDataBenchmarksR {
     //@Benchmark
     public void B1(){
         List<Document> b1 = logicServiceR.B1();
+    }
+
+    @Benchmark
+    public void B2(){
+        List<Document> b2 = logicServiceR.B2();
+    }
+
+    @Benchmark
+    public void C1(){
+        List<Document> c1 = logicServiceR.C1();
     }
 
     /**
@@ -64,6 +84,21 @@ public class SpringDataBenchmarksR {
         List<Document> c2 = logicServiceR.C2();
     }
 
+    @Benchmark
+    public void C3(){
+        List<Document> c3 = logicServiceR.C3();
+    }
+
+    @Benchmark
+    public void C4(){
+        List<Document> c4 = logicServiceR.C4();
+    }
+
+    @Benchmark
+    public void C5(){
+        List<Document> c5 = logicServiceR.C5();
+    }
+
     /**
      * Benchmark                 Mode  Cnt   Score   Error  Units
      * SpringDataBenchmarksR.D1  avgt    5  46,793 ± 2,847  ms/op
@@ -72,6 +107,54 @@ public class SpringDataBenchmarksR {
     public  void D1(){
         List<Document> d1 = logicServiceR.D1();
     }
+
+    @Benchmark
+    public  void D2(){
+        List<Document> d2 = logicServiceR.D2();
+    }
+
+    @Benchmark
+    public  void D3(){
+        List<Document> d3 = logicServiceR.D3();
+    }
+
+    @Benchmark
+    public  void E1(){
+        List<Document> e1 = logicServiceR.E1();
+    }
+
+    @Benchmark
+    public  void E2(){
+        List<OrdersR> e2 = logicServiceR.E2();
+    }
+
+    @Benchmark
+    public  void Q1(){
+        List<Document> q1 = logicServiceR.Q1();
+    }
+
+    @Benchmark
+    public  void Q2(){
+        List<Document> q2 = logicServiceR.Q2();
+    }
+
+    @Benchmark
+    public  void Q3(){
+        List<Document> q3 = logicServiceR.Q3();
+    }
+
+    @Benchmark
+    public  void Q4(){
+        List<Document> q4 = logicServiceR.Q4();
+    }
+
+    @Benchmark
+    public  void Q5(){
+        List<Document> q5 = logicServiceR.Q5();
+    }
+
+
+
 
     @Setup(Level.Trial)
     public void setup() {
