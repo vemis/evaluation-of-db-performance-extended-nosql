@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using MongoDB.Entities;
 using MongoDBEntities.Models;
 using MongoDBEntities.Models.TPC_H;
@@ -23,7 +24,7 @@ namespace MongoDBEntities.Benchmarks
             SELECT * FROM lineitem;
         ```
          */
-        public static async Task<List<LineitemR>> A1Async()
+        public static async Task<List<LineitemR>> A1()
         {
             var a1 = await DB.Find<LineitemR>()
                 .ExecuteAsync();
@@ -55,6 +56,46 @@ namespace MongoDBEntities.Benchmarks
             return a2;        
         }
 
+
+        /*
+         ### A3) Indexed Columns
+
+        This query selects all records from the customer table
+        ```sql
+        SELECT * FROM customer;
+        ```
+         */
+        public static async Task<List<CustomerR>> A3()
+        {
+            var a3 = await DB.Find<CustomerR>()
+                .ExecuteAsync();
+
+            return a3;
+        }
+
+        /*
+         ### A4) Indexed Columns — Range Query
+
+        This query selects all records from the orders table where the order key is between 1000 and 50000
+        ```sql
+        SELECT * FROM orders
+        WHERE o_orderkey BETWEEN 1000 AND 50000;
+        ```
+         */
+        public static async Task<List<OrdersR>> A4()
+        {
+
+
+            var a4 = await DB.Find<OrdersR>()
+                .Match(
+                    o => o.o_orderkey > 1000
+                    && o.o_orderkey < 50_000
+                )
+                .ExecuteAsync();
+
+            return a4;
+        }
+
         /**
         ### B1) COUNT
         
@@ -70,7 +111,7 @@ namespace MongoDBEntities.Benchmarks
         {
             var b1 = await DB.Fluent<OrdersR>()
                 .Group(
-                    x => x.o_orderdate.DateTime.Year.ToString() + "-" + x.o_orderdate.DateTime.Month.ToString(),//.ToString("yyyy-MM")
+                    x => x.o_orderdate.DateTime.ToString("%Y-%m"),
                     g => new
                     {
                         OrderMonth = g.Key,
@@ -88,6 +129,38 @@ namespace MongoDBEntities.Benchmarks
         }
 
         /*
+        ### B2) MAX
+
+        This query finds the maximum extended price from the lineitem table grouped by ship month
+        ```sql
+        SELECT DATE_FORMAT(l.l_shipdate, '%Y-%m') AS ship_month,
+               MAX(l.l_extendedprice) AS max_price
+        FROM lineitem l
+        GROUP BY ship_month;
+        ```
+        */
+        public static async Task<List<BsonDocument>> B2()
+        {
+            var b2 = await DB.Fluent<LineitemR>()
+                .Group(
+                    x => x.l_shipdate.DateTime.ToString("%Y-%m"),
+                    g => new
+                    {
+                        ShipMonth = g.Key,
+                        MaxPrice = g.Max(x => x.l_extendedprice)
+                    }
+                )
+                .Project(x => new BsonDocument
+                {
+            { "ShipMonth", x.ShipMonth },
+            { "MaxPrice", x.MaxPrice }
+                })
+                .ToListAsync();
+
+            return b2;
+        }
+
+        /*
         ### C2) Indexed Columns
         
         This query gives customer names, order dates, and total prices for all customers
@@ -99,41 +172,6 @@ namespace MongoDBEntities.Benchmarks
         */
         public static async Task<List<BsonDocument>> C2()
         {
-            /* ALTERNATIVE SOLUTION USING INTERMEDIATE-CLASSES
-             * NOT TESTED, BUT SHOULD WORK WITH SMALL CHANGES
-             * public class Order : Entity
-            {
-                public int o_custkey { get; set; }
-                public DateTime o_orderdate { get; set; }
-                public decimal o_totalprice { get; set; }
-            }
-
-            public class CustomerWithOrders : CustomerR
-            {
-                public Order Orders { get; set; }
-            }
-
-            public class CustomerOrderResult
-            {
-                public string c_name { get; set; }
-                public DateTime o_orderdate { get; set; }
-                public decimal o_totalprice { get; set; }
-            }
-                         * 
-                         * var result = await DB.Fluent<CustomerR>()
-                .Lookup<Order, CustomerWithOrders>(
-                    DB.Collection<Order>(),
-                    c => c.c_custkey,
-                    o => o.o_custkey,
-                    x => x.Orders)
-                .Unwind(x => x.Orders)
-                .Project<CustomerOrderResult>(x => new CustomerOrderResult
-                {
-                    c_name = x.c_name,
-                    o_orderdate = x.Orders.o_orderdate,
-                    o_totalprice = x.Orders.o_totalprice
-                })
-                .ToListAsync();*/
 
             var result = await DB.Fluent<CustomerR>()
                 .Lookup(
@@ -166,16 +204,13 @@ namespace MongoDBEntities.Benchmarks
         */
         public static async Task<List<BsonDocument>> D1()
         {
-            var supplierPipeline = DB.Collection<SupplierR>();
 
             var result = await DB.Fluent<CustomerR>()
                 .Project(c => new
                 {
                     nationkey = c.c_nationkey
                 })
-                //.UnionWith(
-                //    supplierPipeline
-               // )
+
                 .Group(x => x.nationkey, g => new
                 {
                     nationkey = g.Key

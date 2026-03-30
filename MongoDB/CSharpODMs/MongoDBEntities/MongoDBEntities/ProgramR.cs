@@ -31,15 +31,15 @@ namespace MongoDBEntities
     class ProgramR
     {
         // MainTesting Method
-        public static async Task Main_R(String[] args)
+        public static async Task Main(String[] args)
         {
 
             
-            BenchmarkRunner.Run<MongoDBEntitiesBenchmarksR>();
+            /*BenchmarkRunner.Run<MongoDBEntitiesBenchmarksR>();
 
             Console.WriteLine("Benchmark finished");
 
-            throw new Exception();
+            throw new Exception();*/
 
 
 
@@ -78,9 +78,14 @@ namespace MongoDBEntities
             //var c2 = await QueriesRMongoDBEntities.C2();
             //Console.WriteLine(c2.Count);
 
-            var d1 = await QueriesRMongoDBEntities.D1();
-            Console.WriteLine(d1.Count);
-            Console.WriteLine(d1[0]);
+            var res = await QueriesRMongoDBEntities.B2();
+            for (int i = 0; i < 3; i++)
+            {
+                Console.WriteLine(res[i]);
+            }
+
+            Console.WriteLine(res.Count);
+            
 
 
             /*
