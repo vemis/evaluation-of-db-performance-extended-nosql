@@ -78,7 +78,7 @@ namespace MongoDBEntities
             //var c2 = await QueriesRMongoDBEntities.C2();
             //Console.WriteLine(c2.Count);
 
-            var res = await QueriesRMongoDBEntities.B2();
+            var res = await QueriesRMongoDBEntities.Q5();
             for (int i = 0; i < 3; i++)
             {
                 Console.WriteLine(res[i]);
@@ -100,12 +100,12 @@ namespace MongoDBEntities
 
             
             await DB.Index<PartsuppR>()
-                .Key(c => c.ps_partKey, KeyType.Ascending)
-                .Key(c => c.ps_suppKey, KeyType.Ascending)
+                .Key(c => c.ps_partkey, KeyType.Ascending)
+                .Key(c => c.ps_suppkey, KeyType.Ascending)
                 .CreateAsync();
             await TPCHDatasetLoaderR.LoadDatasetAsync<PartsuppR>("..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\partsupp.tbl");
             Console.WriteLine("Partsupps loaded!");
-
+            
             
             await DB.Index<OrdersR>()
                 .Key(c => c.o_custkey, KeyType.Ascending)
