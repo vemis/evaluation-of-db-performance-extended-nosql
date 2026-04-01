@@ -35,11 +35,11 @@ namespace MongoDBEntities
         {
 
             
-            /*BenchmarkRunner.Run<MongoDBEntitiesBenchmarksR>();
+            BenchmarkRunner.Run<MongoDBEntitiesBenchmarksR>();
 
             Console.WriteLine("Benchmark finished");
 
-            throw new Exception();*/
+            throw new Exception();
 
 
 
@@ -78,13 +78,13 @@ namespace MongoDBEntities
             //var c2 = await QueriesRMongoDBEntities.C2();
             //Console.WriteLine(c2.Count);
 
-            var res = await QueriesRMongoDBEntities.Q5();
+            /*var res = await QueriesRMongoDBEntities.Q5();
             for (int i = 0; i < 3; i++)
             {
                 Console.WriteLine(res[i]);
             }
 
-            Console.WriteLine(res.Count);
+            Console.WriteLine(res.Count);*/
             
 
 
