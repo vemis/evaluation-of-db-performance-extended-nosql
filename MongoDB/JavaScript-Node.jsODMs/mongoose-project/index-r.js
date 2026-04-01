@@ -55,20 +55,37 @@ async function run() {
 */
 
     // Queries
-    console.log("Query Started")
+    /*console.log("Query Started")
     const res = await queriesR.Q5()
     for (let i = 0; i < 3; i++) {
         console.log(res[i])
     }
-    console.log(res.length)
+    console.log(res.length)*/
 
-    /*benchmarksR.benchmarkQuery(
+    benchmarksR.benchmarkQuery(
         //queriesR.A1,
         //queriesR.A2,
+        queriesR.A3,
+        queriesR.A4,
         //queriesR.B1,
+        queriesR.B2,
+        queriesR.C1,
         //queriesR.C2,
+        queriesR.C3,
+        queriesR.C4,
+        queriesR.C5,
         //queriesR.D1
-    )*/
+        queriesR.D2,
+        queriesR.D3,
+        queriesR.E1,
+        queriesR.E2,
+        queriesR.E3,
+        queriesR.Q1,
+        queriesR.Q2,
+        queriesR.Q3,
+        queriesR.Q4,
+        queriesR.Q5
+    )
 
     //console.log("Start qeury")
     //const c = await queriesR.B1()

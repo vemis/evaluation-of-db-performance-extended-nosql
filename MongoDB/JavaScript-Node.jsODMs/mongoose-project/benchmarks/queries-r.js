@@ -59,6 +59,10 @@ async function A2() {
  * ```
  */
 async function A3() {
+    /*
+    Ops/sec: 0.38
+    Average time per op: 2600.686 ms
+    */
     const a3 = CustomerR.find();
 
     return a3;
@@ -75,6 +79,10 @@ async function A3() {
  * ```
  */
 async function A4() {
+    /*
+    Ops/sec: 4.05
+    Average time per op: 247.175 ms
+    */
     const a4 = OrdersR.find()
         .where('_id')
         .gte(1000)
@@ -134,6 +142,10 @@ function B1() {
  * ```
 **/
 function B2() {
+    /*
+    Ops/sec: 0.03
+    Average time per op: 29767.111 ms
+    */
     const b2 = LineitemR.aggregate()
         .group({
             _id: {
@@ -166,6 +178,10 @@ function B2() {
  * ```
  */
 async function C1() {
+    /*
+    Ops/sec: 0.03
+    Average time per op: 32907.049 ms
+    */
     const c1 = CustomerR.aggregate()
         .lookup({
             from: "OrdersR", // collection name
@@ -235,6 +251,10 @@ async function C2() {
  * @constructor
  */
 async function C3() {
+    /*
+    Ops/sec: 0.11
+    Average time per op: 8889.103 ms
+    */
     const c3 = CustomerR.aggregate()
         // Join with nation
         .lookup({
@@ -280,6 +300,10 @@ async function C3() {
  * ```
  */
 async function C4() {
+    /*
+    Ops/sec: 0.11
+    Average time per op: 8807.359 ms
+    */
     const c4 = CustomerR.aggregate()
         // Join with nation (c_nationkey -> nation._id)
         .lookup({
@@ -333,6 +357,10 @@ async function C4() {
  * ```
  */
 async function C5() {
+    /*
+    Ops/sec: 0.18
+    Average time per op: 5512.869 ms
+    */
     const c5 = CustomerR.aggregate()
         // Left join with orders
         .lookup({
@@ -409,6 +437,10 @@ async function D1() {
  * ```
  */
 async function D2() {
+    /*
+    Ops/sec: 3.15
+    Average time per op: 317.147 ms
+    */
     const d2 = CustomerR.aggregate()
         // Join with supplier on matching keys
         .lookup({
@@ -449,6 +481,10 @@ async function D2() {
  * ```
  */
 async function D3() {
+    /*
+    Ops/sec: 2.49
+    Average time per op: 401.888 ms
+    */
     const d3 = CustomerR.aggregate()
         // Join with supplier on matching keys
         .lookup({
@@ -487,6 +523,10 @@ async function D3() {
  * ```
  */
 async function E1() {
+    /*
+    Ops/sec: 1.79
+    Average time per op: 559.466 ms
+    */
     const e1 = CustomerR.find({}, {
         _id: 0,           // exclude _id
         c_name: 1,
@@ -511,6 +551,10 @@ async function E1() {
  * ```
  */
 async function E2() {
+    /*
+    Ops/sec: 0.26
+    Average time per op: 3904.876 ms
+    */
     const e2 = OrdersR.find({}, {
         _id: 1,          // _id represents o_orderkey
         o_custkey: 1,
@@ -533,6 +577,10 @@ async function E2() {
  * ```
  */
 async function E3() {
+    /*
+    Ops/sec: 36.83
+    Average time per op: 27.148 ms
+    */
     const e3 = CustomerR.aggregate()
         .group({
             _id: {
@@ -576,6 +624,10 @@ async function E3() {
  * ```
  */
 async function Q1() {
+    /*
+    Ops/sec: 0.16
+    Average time per op: 6220.911 ms
+    */
     const q1 = LineitemR.aggregate()
         // Compute ship date limit using $dateSubtract
         .addFields({
@@ -693,6 +745,10 @@ async function Q1() {
  * ```
  */
 async function Q2() {
+    /*
+    Ops/sec: 3.70
+    Average time per op: 270.291 ms
+    */
     const q2 = PartR.aggregate()
         // Filter parts by size and type
         .match({
@@ -816,6 +872,10 @@ async function Q2() {
  * ```
  */
 async function Q3() {
+    /*
+    Ops/sec: 0.22
+    Average time per op: 4606.493 ms
+    */
     const cutoffDate = new Date("1995-03-15");
 
     const q3 = CustomerR.aggregate()
@@ -919,6 +979,10 @@ async function Q3() {
  * ```
  */
 async function Q4() {
+    /*
+    Ops/sec: 0.31
+    Average time per op: 3240.095 ms
+    */
     const startDate = new Date("1993-07-01");
 
     const q4 = OrdersR.aggregate()
@@ -1010,6 +1074,10 @@ async function Q4() {
  * ```
  */
 async function Q5() {
+    /*
+    Ops/sec: 0.03
+    Average time per op: 37100.857 ms
+    */
     const startDate = new Date("1994-01-01");
 
     const q5 = CustomerR.aggregate()
