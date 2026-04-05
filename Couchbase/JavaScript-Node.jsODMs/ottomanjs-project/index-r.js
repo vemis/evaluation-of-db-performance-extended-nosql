@@ -10,6 +10,13 @@ import * as loadDataTPCHR from "./load-data-tpc-h-r.js";
 import * as queriesR from "./benchmarks/queries-r.js";
 import {benchmarkQuery} from "./benchmarks/benchmarks.js";
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// recreate __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 async function run() {
     /*const reg1 = new RegionR({
         id: "1",
@@ -33,35 +40,39 @@ async function run() {
 
     await nat1.save();
     console.log("nat1 saved");*/
-/*
-    await loadDataTPCHR.loadRegions("..\\..\\..\\dataset\\TPC-H\\tpch-data\\region.tbl")
-    console.log("Regions loaded")
 
-    await loadDataTPCHR.loadNations("..\\..\\..\\dataset\\TPC-H\\tpch-data\\nation.tbl")
-    console.log("Nations loaded")
 
-    await loadDataTPCHR.loadCustomers("..\\..\\..\\dataset\\TPC-H\\tpch-data\\customer.tbl")
-    console.log("Customers loaded")
-*/
-    await loadDataTPCHR.loadOrders("..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl")
+
+    const basePath = path.join(__dirname, '..', '..', '..', 'dataset', 'TPC-H', 'tpch-data');
+    /*
+    await loadDataTPCHR.loadRegions(path.join(basePath, 'region.tbl'));
+    console.log("Regions loaded");
+
+    await loadDataTPCHR.loadNations(path.join(basePath, 'nation.tbl'));
+    console.log("Nations loaded");
+
+    await loadDataTPCHR.loadCustomers(path.join(basePath, 'customer.tbl'));
+    console.log("Customers loaded");
+
+    await loadDataTPCHR.loadOrders(path.join(basePath, 'orders.tbl'));
     console.log("Orders loaded");
-/
-    console.log("Loading Lineitems")
-    await loadDataTPCHR.loadLineitems("..\\..\\..\\dataset\\TPC-H\\tpch-data\\lineitem.tbl")
+
+    console.log("Loading Lineitems");
+    await loadDataTPCHR.loadLineitems(path.join(basePath, 'lineitem.tbl'));
     console.log("Lineitems loaded");
 
-    console.log("Loading Partsupps")
-    await loadDataTPCHR.loadPartsupps("..\\..\\..\\dataset\\TPC-H\\tpch-data\\partsupp.tbl")
+    console.log("Loading Partsupps");
+    await loadDataTPCHR.loadPartsupps(path.join(basePath, 'partsupp.tbl'));
     console.log("Partsupps loaded");
 
-    console.log("Loading Suppliers")
-    await loadDataTPCHR.loadSuppliers("..\\..\\..\\dataset\\TPC-H\\tpch-data\\supplier.tbl")
-    console.log("Suppliers loaded")
+    console.log("Loading Suppliers");
+    await loadDataTPCHR.loadSuppliers(path.join(basePath, 'supplier.tbl'));
+    console.log("Suppliers loaded");
 
-    console.log("Loading Parts")
-    await loadDataTPCHR.loadParts("..\\..\\..\\dataset\\TPC-H\\tpch-data\\part.tbl")
-    console.log("Parts loaded")
-
+    console.log("Loading Parts");
+    await loadDataTPCHR.loadParts(path.join(basePath, 'part.tbl'));
+    console.log("Parts loaded");
+    */
 
     //const a2 = await queriesR.A2();
     //console.log(a2.length)
@@ -80,13 +91,13 @@ async function run() {
         queriesR.C2,
         queriesR.D1
     )*/
-/*
-    const res = await queriesR.C5();
+
+    const res = await queriesR.Q5();
     for (let i = 0; i < 3; i++) {
         console.log(res[i])
     }
     console.log(res.length)
-*/
+
 }
 
 run().catch(err => console.error(err));
