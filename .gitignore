@@ -1,2 +1,5 @@
 # ignore all the datasets
 dataset/
+
+# ignore every CLAUDE.md file
+**/CLAUDE.md
