@@ -8,7 +8,9 @@ import cz.cuni.mff.mongodb_java.morphia.models.tpc_h_embedded.OrdersEWithLineite
 import cz.cuni.mff.mongodb_java.morphia.models.tpc_h_embedded.OrdersEWithLineitemsArrayAsTags;
 import cz.cuni.mff.mongodb_java.morphia.models.tpc_h_embedded.OrdersEWithLineitemsArrayAsTagsIndexed;
 import dev.morphia.Datastore;
+import dev.morphia.aggregation.expressions.AccumulatorExpressions;
 import dev.morphia.aggregation.expressions.Expressions;
+import dev.morphia.aggregation.stages.Group;
 import dev.morphia.aggregation.stages.Projection;
 import dev.morphia.aggregation.stages.Unwind;
 import dev.morphia.query.FindOptions;
@@ -222,6 +224,8 @@ public class QueriesMorphiaE {
         return results;
     }
 
+
+
     /**
      * ### R8) Unwind Embedded Lineitems
      *
@@ -238,6 +242,35 @@ public class QueriesMorphiaE {
                 .unwind(Unwind.unwind("o_lineitems"))
                 .project(Projection.project()
                         .include("o_lineitems.l_partkey")
+                )
+                .execute(Document.class)
+                .toList();
+
+        return results;
+    }
+
+    /**
+     * ### R9) Aggregation on Embedded Array — Sum Revenue per Order
+     *
+     * Test aggregation on embedded arrays ($unwind + $group interaction).
+     * ```MongoDB
+     * db.ordersEWithLineitems.aggregate([
+     *   { $unwind: "$o_lineitems" },
+     *   {
+     *     $group: {
+     *       _id: "$_id",
+     *       totalRevenue: { $sum: "$o_lineitems.l_extendedprice" }
+     *     }
+     *   }
+     * ])
+     * ```
+     */
+    public static List<Document> R9(Datastore datastore) {
+        List<Document> results = datastore.aggregate(OrdersEWithLineitems.class)
+                .unwind(Unwind.unwind("o_lineitems"))
+                .group(
+                        Group.group(Group.id(Expressions.field("_id")))
+                                .field("totalRevenue", AccumulatorExpressions.sum(Expressions.field("o_lineitems.l_extendedprice")))
                 )
                 .execute(Document.class)
                 .toList();

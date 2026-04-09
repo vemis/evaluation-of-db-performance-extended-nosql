@@ -29,7 +29,7 @@ public class MainE {
         System.out.println("Morphia initialized!");
 
 
-        var res = QueriesMorphiaE.R6(datastore);
+        var res = QueriesMorphiaE.R9(datastore);
         System.out.println(res.get(0));
         System.out.println(res.size());
 
