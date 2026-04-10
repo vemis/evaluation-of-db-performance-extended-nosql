@@ -8,11 +8,16 @@ import cz.cuni.mff.mongodb_java.springdata_e.model.OrdersE;
 import cz.cuni.mff.mongodb_java.springdata_e.model.OrdersEWithLineitems;
 import cz.cuni.mff.mongodb_java.springdata_e.model.OrdersEWithLineitemsArrayAsTags;
 import cz.cuni.mff.mongodb_java.springdata_e.model.OrdersEWithLineitemsArrayAsTagsIndexed;
+import cz.cuni.mff.mongodb_java.springdata_e.model.OrdersEWithCustomerWithNationWithRegion;
+import cz.cuni.mff.mongodb_java.springdata_e.model.CustomerEOnlyCNameCNation;
+import cz.cuni.mff.mongodb_java.springdata_e.model.NationEOnlyNNameNRegion;
+import cz.cuni.mff.mongodb_java.springdata_e.model.RegionEOnlyName;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
@@ -232,6 +237,130 @@ public class TPCHDatasetLoaderSpringDataE extends TPCHDatasetLoader {
         }
 
         System.out.println("ordersEWithLineitemsArrayAsTagsIndexed inserted!");
+    }
+
+    public static List<RegionEOnlyName> createRegionEOnlyName(String filePath) {
+        List<String[]> regions = readDataFromCustomSeparator(filePath);
+
+        List<RegionEOnlyName> regionInstances = new ArrayList<>();
+        for (String[] row : regions) {
+            regionInstances.add(new RegionEOnlyName(
+                    Integer.parseInt(row[0]),
+                    row[1]
+            ));
+        }
+
+        return regionInstances;
+    }
+
+    public static List<NationEOnlyNNameNRegion> createNationEOnlyNNameNRegion(String filePath, RegionEOnlyName region) {
+        List<String[]> nations = readDataFromCustomSeparator(filePath);
+
+        List<NationEOnlyNNameNRegion> nationInstances = new ArrayList<>();
+        for (String[] row : nations) {
+            nationInstances.add(new NationEOnlyNNameNRegion(
+                    Integer.parseInt(row[0]),
+                    row[1],
+                    Integer.parseInt(row[2]),
+                    region
+            ));
+        }
+
+        return nationInstances;
+    }
+
+    public static List<CustomerEOnlyCNameCNation> createCustomerEOnlyCNameCNation(String filePath, NationEOnlyNNameNRegion nation) {
+        List<String[]> customers = readDataFromCustomSeparator(filePath);
+
+        LongAdder counter = new LongAdder();
+        int total = customers.size();
+
+        return customers
+                .parallelStream()
+                .map(row -> {
+                    counter.increment();
+                    long current = counter.sum();
+
+                    if (current % 10_000 == 0) {
+                        System.out.println("Processed " + current + " / " + total);
+                    }
+
+                    return new CustomerEOnlyCNameCNation(
+                            Integer.parseInt(row[0]),
+                            row[1],
+                            Integer.parseInt(row[3]),
+                            nation
+                    );
+                })
+                .toList();
+    }
+
+    public static void loadOrdersEWithCustomerWithNationWithRegion(
+            String filePathOrders,
+            String filePathCustomers,
+            String filePathNations,
+            String filePathRegions,
+            MongoTemplate mongoTemplate) {
+
+        List<String[]> orders = readDataFromCustomSeparator(filePathOrders);
+
+        // Build RegionEOnlyName map keyed by r_regionkey
+        List<String[]> regionRows = readDataFromCustomSeparator(filePathRegions);
+        Map<Integer, RegionEOnlyName> regionMap = new HashMap<>();
+        for (String[] row : regionRows) {
+            int key = Integer.parseInt(row[0]);
+            regionMap.put(key, new RegionEOnlyName(key, row[1]));
+        }
+
+        // Build NationEOnlyNNameNRegion map keyed by n_nationkey
+        List<String[]> nationRows = readDataFromCustomSeparator(filePathNations);
+        Map<Integer, NationEOnlyNNameNRegion> nationMap = new HashMap<>();
+        for (String[] row : nationRows) {
+            int key = Integer.parseInt(row[0]);
+            int regionkey = Integer.parseInt(row[2]);
+            nationMap.put(key, new NationEOnlyNNameNRegion(key, row[1], regionkey, regionMap.get(regionkey)));
+        }
+
+        // Build CustomerEOnlyCNameCNation map keyed by c_custkey
+        List<String[]> customerRows = readDataFromCustomSeparator(filePathCustomers);
+        Map<Integer, CustomerEOnlyCNameCNation> customerMap = new HashMap<>();
+        for (String[] row : customerRows) {
+            int key = Integer.parseInt(row[0]);
+            int nationkey = Integer.parseInt(row[3]);
+            customerMap.put(key, new CustomerEOnlyCNameCNation(key, row[1], nationkey, nationMap.get(nationkey)));
+        }
+
+        LongAdder counter = new LongAdder();
+        int total = orders.size();
+
+        List<OrdersEWithCustomerWithNationWithRegion> orderInstances = orders
+                .parallelStream()
+                .map(row -> {
+                    counter.increment();
+                    long current = counter.sum();
+
+                    if (current % 10_000 == 0) {
+                        System.out.println("Processed " + current + " / " + total);
+                    }
+
+                    return new OrdersEWithCustomerWithNationWithRegion(
+                            Integer.parseInt(row[0]),
+                            LocalDate.parse(row[4]),
+                            customerMap.get(Integer.parseInt(row[1]))
+                    );
+                })
+                .toList();
+
+        var batches = partition(orderInstances, 200_000);
+
+        System.out.println("Inserting many ordersEWithCustomerWithNationWithRegion!");
+
+        for (var batch : batches) {
+            mongoTemplate.insert(batch, OrdersEWithCustomerWithNationWithRegion.class);
+            System.out.println("Batch inserted!");
+        }
+
+        System.out.println("ordersEWithCustomerWithNationWithRegion inserted!");
     }
 
     public static List<OrdersE> loadOrders(String filePath) {

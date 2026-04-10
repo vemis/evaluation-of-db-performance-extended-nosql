@@ -4,6 +4,7 @@ import cz.cuni.mff.mongodb_java.springdata_e.model.CustomerEWithOrders;
 import cz.cuni.mff.mongodb_java.springdata_e.model.OrdersEWithLineitems;
 import cz.cuni.mff.mongodb_java.springdata_e.model.OrdersEWithLineitemsArrayAsTags;
 import cz.cuni.mff.mongodb_java.springdata_e.model.OrdersEWithLineitemsArrayAsTagsIndexed;
+import cz.cuni.mff.mongodb_java.springdata_e.model.OrdersEWithCustomerWithNationWithRegion;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -133,6 +134,23 @@ public class QueriesSpringDataE {
         query.fields().include("o_orderdate").include("o_lineitems_tags_indexed");
 
         return mongoTemplate.find(query, OrdersEWithLineitemsArrayAsTagsIndexed.class);
+    }
+
+    /**
+     * ### R5) Embedded Customer with Nation with Region — Filter by Region Name
+     *
+     * Test denormalization vs join simulation in documents.
+     * Find all orders from customers in "AMERICA".
+     * ```MongoDB
+     * db.ordersEWithCustomerWithNationWithRegion.find(
+     *   { "o_customer.c_nation.n_region.r_name": "AMERICA" }
+     * )
+     * ```
+     */
+    public static List<OrdersEWithCustomerWithNationWithRegion> R5(MongoTemplate mongoTemplate) {
+        Query query = new Query(Criteria.where("o_customer.c_nation.n_region.r_name").is("AMERICA"));
+
+        return mongoTemplate.find(query, OrdersEWithCustomerWithNationWithRegion.class);
     }
 
 
