@@ -20,7 +20,7 @@ public class LogicCommandRunnerE {
 
 
             System.out.println("Query started:");
-            var res = QueriesSpringDataE.R8(mongoTemplate);
+            var res = QueriesSpringDataE.R9(mongoTemplate);
             System.out.println(res.get(0));
             System.out.println(res.size());
 

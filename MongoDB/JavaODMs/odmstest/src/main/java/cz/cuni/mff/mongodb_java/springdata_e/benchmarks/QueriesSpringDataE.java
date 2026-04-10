@@ -11,6 +11,7 @@ import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
 import org.springframework.data.mongodb.core.aggregation.UnwindOperation;
@@ -203,6 +204,36 @@ public class QueriesSpringDataE {
         ProjectionOperation project = project("o_lineitems.l_partkey");
 
         Aggregation aggregation = newAggregation(unwind, project);
+
+        AggregationResults<Document> results =
+                mongoTemplate.aggregate(aggregation, OrdersEWithLineitems.class, Document.class);
+
+        return results.getMappedResults();
+    }
+
+    /**
+     * ### R9) Aggregation on Embedded Array — Sum Revenue per Order
+     *
+     * Test aggregation on embedded arrays ($unwind + $group interaction).
+     * ```MongoDB
+     * db.ordersEWithLineitems.aggregate([
+     *   { $unwind: "$o_lineitems" },
+     *   {
+     *     $group: {
+     *       _id: "$_id",
+     *       totalRevenue: { $sum: "$o_lineitems.l_extendedprice" }
+     *     }
+     *   }
+     * ])
+     * ```
+     */
+    public static List<Document> R9(MongoTemplate mongoTemplate) {
+        UnwindOperation unwind = unwind("o_lineitems");
+
+        GroupOperation group = group("_id")
+                .sum("o_lineitems.l_extendedprice").as("totalRevenue");
+
+        Aggregation aggregation = newAggregation(unwind, group);
 
         AggregationResults<Document> results =
                 mongoTemplate.aggregate(aggregation, OrdersEWithLineitems.class, Document.class);
