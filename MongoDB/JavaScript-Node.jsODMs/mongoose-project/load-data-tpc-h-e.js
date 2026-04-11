@@ -10,6 +10,7 @@ import OrdersEWithLineitemsArrayAsTags from "./models/tpc_h_e/orders-e-with-line
 import OrdersEWithLineitemsArrayAsTagsIndexed from "./models/tpc_h_e/orders-e-with-lineitems-array-as-tags-indexed.js";
 import OrdersEWithCustomerWithNationWithRegion from "./models/tpc_h_e/orders-e-with-customer-with-nation-with-region.js";
 import OrdersEOnlyOComment from "./models/tpc_h_e/orders-e-only-o-comment.js";
+import OrdersEOnlyOCommentIndexed from "./models/tpc_h_e/orders-e-only-o-comment-indexed.js";
 
 
 async function readDataFromCustomSeparator(filePath){
@@ -436,6 +437,32 @@ async function loadOrdersEOnlyOComment(filePathOrders) {
     }
 }
 
+async function loadOrdersEOnlyOCommentIndexed(filePathOrders) {
+    try {
+        const ordersData = await readDataFromCustomSeparator(filePathOrders);
+
+        // orders.tbl: o_orderkey|o_custkey|o_orderstatus|o_totalprice|o_orderdate|...|o_comment(8)
+        const rowsOfSchemas = ordersData.map(row => ({
+            _id: Number(row[0]),
+            o_orderdate: new Date(row[4]),
+            o_comment: row[8]
+        }));
+
+        const batches = partition(rowsOfSchemas, 200);
+
+        console.log("Inserting ordersEOnlyOCommentIndexed batches");
+
+        for (let i = 0; i < batches.length; i++) {
+            await OrdersEOnlyOCommentIndexed.insertMany(batches[i]);
+            console.log(`Batch ${i}/${batches.length} inserted!`);
+        }
+
+        console.log("ordersEOnlyOCommentIndexed inserted!");
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 // exported API
 export {
     loadOrdersE,
@@ -445,5 +472,6 @@ export {
     loadOrdersEWithLineitemsArrayAsTags,
     loadOrdersEWithLineitemsArrayAsTagsIndexed,
     loadOrdersEWithCustomerWithNationWithRegion,
-    loadOrdersEOnlyOComment
+    loadOrdersEOnlyOComment,
+    loadOrdersEOnlyOCommentIndexed
 }
