@@ -4,6 +4,7 @@ import fs from 'fs';
 
 import OrdersESchema from "./models/tpc_h_e/orders-e.js";
 import CustomerEWithOrders from "./models/tpc_h_e/customer-e-with-orders.js";
+import OrdersEWithLineitems from "./models/tpc_h_e/orders-e-with-lineitems.js";
 
 
 async function readDataFromCustomSeparator(filePath){
@@ -123,8 +124,115 @@ async function loadCustomersEWithOrders(filePath, orders){
     }
 }
 
+function mapLineitemsByOrder(lineitems) {
+    const byOrder = new Map();
+    for (const item of lineitems) {
+        const key = item.l_orderkey;
+        if (!byOrder.has(key)) {
+            byOrder.set(key, []);
+        }
+        byOrder.get(key).push(item);
+    }
+    return byOrder;
+}
+
+async function loadLineitemsE(filePath) {
+    try {
+        const rowsOfData = await readDataFromCustomSeparator(filePath);
+
+        return rowsOfData.map(([
+            l_orderkey,
+            l_partkey,
+            l_suppkey,
+            l_linenumber,
+            l_quantity,
+            l_extendedprice,
+            l_discount,
+            l_tax,
+            l_returnflag,
+            l_linestatus,
+            l_shipdate,
+            l_commitdate,
+            l_receiptdate,
+            l_shipinstruct,
+            l_shipmode,
+            l_comment
+        ]) => ({
+            l_id: l_orderkey + l_linenumber,
+            l_orderkey: Number(l_orderkey),
+            l_partkey: Number(l_partkey),
+            l_suppkey: Number(l_suppkey),
+            l_ps_id: l_partkey + "|" + l_suppkey,
+            l_linenumber: Number(l_linenumber),
+            l_quantity: Number(l_quantity),
+            l_extendedprice: Number(l_extendedprice),
+            l_discount: Number(l_discount),
+            l_tax: Number(l_tax),
+            l_returnflag,
+            l_linestatus,
+            l_shipdate: new Date(l_shipdate),
+            l_commitdate: new Date(l_commitdate),
+            l_receiptdate: new Date(l_receiptdate),
+            l_shipinstruct,
+            l_shipmode,
+            l_comment
+        }));
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function loadOrdersEWithLineitems(filePathOrders, filePathLineitems) {
+    try {
+        const lineitems = await loadLineitemsE(filePathLineitems);
+        console.log("Lineitems loaded");
+
+        const lineitemsByOrder = mapLineitemsByOrder(lineitems);
+
+        const rowsOfData = await readDataFromCustomSeparator(filePathOrders);
+
+        const rowsOfSchemas = rowsOfData.map(([
+            o_orderkey,
+            o_custkey,
+            o_orderstatus,
+            o_totalprice,
+            o_orderdate,
+            o_orderpriority,
+            o_clerk,
+            o_shippriority,
+            o_comment
+        ]) => ({
+            _id: Number(o_orderkey),
+            o_custkey: Number(o_custkey),
+            o_orderstatus,
+            o_totalprice,
+            o_orderdate: new Date(o_orderdate),
+            o_orderpriority,
+            o_clerk,
+            o_shippriority,
+            o_comment,
+            o_lineitems: lineitemsByOrder.get(Number(o_orderkey)) ?? []
+        }));
+
+        const batches = partition(rowsOfSchemas, 200);
+
+        console.log("Inserting ordersEWithLineitems batches");
+
+        for (let i = 0; i < batches.length; i++) {
+            await OrdersEWithLineitems.insertMany(batches[i]);
+            console.log("Batch " + i + "/" + batches.length + " inserted!");
+        }
+
+        console.log("ordersEWithLineitems inserted!");
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 // exported API
 export {
     loadOrdersE,
-    loadCustomersEWithOrders
+    loadCustomersEWithOrders,
+    loadLineitemsE,
+    loadOrdersEWithLineitems
 }

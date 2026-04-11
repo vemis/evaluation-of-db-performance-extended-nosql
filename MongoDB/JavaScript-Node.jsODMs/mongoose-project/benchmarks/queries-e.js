@@ -1,4 +1,5 @@
 import CustomerEWithOrders from "./../models/tpc_h_e/customer-e-with-orders.js";
+import OrdersEWithLineitems from "./../models/tpc_h_e/orders-e-with-lineitems.js";
 
 /**
  * ### C2) Indexed Columns
@@ -29,6 +30,31 @@ async function C2(){
     return c2
 }
 
+/**
+ * ### R1) Embedded Orders with Lineitems Query
+ *
+ * Test performance of fetching nested documents (1:N relationship embedded).
+ * ```MongoDB
+ * db.ordersEWithLineitems.aggregate([
+ *   { $match: { "o_lineitems.l_quantity": { $gt: 5 } } },
+ *   { $project: { o_orderdate: 1, "o_lineitems.l_partkey": 1 } }
+ * ])
+ * ```
+ */
+async function R1() {
+    const r1 = OrdersEWithLineitems.aggregate([
+        { $match: { "o_lineitems.l_quantity": { $gt: 5 } } },
+        {
+            $project: {
+                o_orderdate: 1,
+                "o_lineitems.l_partkey": 1
+            }
+        }
+    ]);
+    return r1;
+}
+
 export {
-    C2
+    C2,
+    R1
 }

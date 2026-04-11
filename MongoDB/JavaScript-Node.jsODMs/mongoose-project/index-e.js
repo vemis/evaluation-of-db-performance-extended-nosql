@@ -19,18 +19,25 @@ async function run() {
 
     console.log("Connected to MongoDB.");
 
-    benchmarksR.benchmarkQuery(
+    /*benchmarksR.benchmarkQuery(
         queriesE.C2
-    )
+    )*/
+
+
+    const res = await queriesE.R1()
+    console.log(res[0]);
+    console.log(res.length)
+
+
+
+
 
     /*
-    const c2 = await queriesE.C2()
-    console.log(c2.length)
-    console.log(c2[0]);
-*/
+    loadDataTPCHE.loadOrdersEWithLineitems(
+        "..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl",
+        "..\\..\\..\\dataset\\TPC-H\\tpch-data\\lineitem.tbl"
+    )
 
-
-/*
     const ordersE = await loadDataTPCHE.loadOrdersE("..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl")
     //console.log(ordersE.slice(0, 2))
     console.log("Orders loaded");
