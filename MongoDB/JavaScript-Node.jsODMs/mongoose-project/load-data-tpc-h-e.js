@@ -1,10 +1,12 @@
 import mongoose, { mongo } from "mongoose";
 
 import fs from 'fs';
+import seedrandom from 'seedrandom';
 
 import OrdersESchema from "./models/tpc_h_e/orders-e.js";
 import CustomerEWithOrders from "./models/tpc_h_e/customer-e-with-orders.js";
 import OrdersEWithLineitems from "./models/tpc_h_e/orders-e-with-lineitems.js";
+import OrdersEWithLineitemsArrayAsTags from "./models/tpc_h_e/orders-e-with-lineitems-array-as-tags.js";
 
 
 async function readDataFromCustomSeparator(filePath){
@@ -229,10 +231,92 @@ async function loadOrdersEWithLineitems(filePathOrders, filePathLineitems) {
     }
 }
 
+/**
+ * Converts a pipe-split lineitem row into a mixed-type array of 16 values.
+ */
+function createLineitemsTags(lineitemsRow) {
+    return [
+        Number(lineitemsRow[0]),    // l_orderkey
+        Number(lineitemsRow[1]),    // l_partkey
+        Number(lineitemsRow[2]),    // l_suppkey
+        Number(lineitemsRow[3]),    // l_linenumber
+        Number(lineitemsRow[4]),    // l_quantity
+        Number(lineitemsRow[5]),    // l_extendedprice
+        Number(lineitemsRow[6]),    // l_discount
+        Number(lineitemsRow[7]),    // l_tax
+        lineitemsRow[8],            // l_returnflag
+        lineitemsRow[9],            // l_linestatus
+        new Date(lineitemsRow[10]), // l_shipdate
+        new Date(lineitemsRow[11]), // l_commitdate
+        new Date(lineitemsRow[12]), // l_receiptdate
+        lineitemsRow[13],           // l_shipinstruct
+        lineitemsRow[14],           // l_shipmode
+        lineitemsRow[15]            // l_comment
+    ];
+}
+
+/**
+ * Seeded Fisher-Yates shuffle that also picks a random prefix length (1–16).
+ * Using seedrandom so the same o_orderkey always produces the same tags array.
+ */
+function shuffleArrayItemsAndLength(tags, shuffleSeed) {
+    const rng = seedrandom(shuffleSeed);
+    const list = [...tags];
+
+    for (let i = list.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [list[i], list[j]] = [list[j], list[i]];
+    }
+
+    const size = 1 + Math.floor(rng() * list.length);
+    return list.slice(0, size);
+}
+
+function getShuffledLineitemsTagsFromRow(lineitemsRow, shuffleSeed) {
+    return shuffleArrayItemsAndLength(createLineitemsTags(lineitemsRow), shuffleSeed);
+}
+
+/**
+ * Mirrors TPCHDatasetLoaderMorphiaE.loadOrdersEWithLineitemsArrayAsTags / SpringDataE equivalent.
+ *
+ * Populates the ordersEWithLineitemsArrayAsTags collection.
+ * Each document stores a randomly shuffled and truncated subset of the fields from
+ * the 2nd row of lineitems.tbl as a mixed-type array (o_lineitems_tags).
+ * The shuffle seed is the o_orderkey value, matching the Java implementation exactly.
+ */
+async function loadOrdersEWithLineitemsArrayAsTags(filePathOrders, filePathLineitems) {
+    try {
+        const ordersData = await readDataFromCustomSeparator(filePathOrders);
+        const lineitemsData = await readDataFromCustomSeparator(filePathLineitems);
+
+        const linetemsRow2 = lineitemsData[1]; // 2nd row - used as source of unique tag elements
+
+        const rowsOfSchemas = ordersData.map(row => ({
+            _id: Number(row[0]),
+            o_orderdate: new Date(row[4]),
+            o_lineitems_tags: getShuffledLineitemsTagsFromRow(linetemsRow2, Number(row[0]))
+        }));
+
+        const batches = partition(rowsOfSchemas, 200);
+
+        console.log("Inserting ordersEWithLineitemsArrayAsTags batches");
+
+        for (let i = 0; i < batches.length; i++) {
+            await OrdersEWithLineitemsArrayAsTags.insertMany(batches[i]);
+            console.log(`Batch ${i}/${batches.length} inserted!`);
+        }
+
+        console.log("ordersEWithLineitemsArrayAsTags inserted!");
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 // exported API
 export {
     loadOrdersE,
     loadCustomersEWithOrders,
     loadLineitemsE,
-    loadOrdersEWithLineitems
+    loadOrdersEWithLineitems,
+    loadOrdersEWithLineitemsArrayAsTags
 }

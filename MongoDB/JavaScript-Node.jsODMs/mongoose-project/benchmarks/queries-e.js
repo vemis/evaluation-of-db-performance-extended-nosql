@@ -1,5 +1,6 @@
 import CustomerEWithOrders from "./../models/tpc_h_e/customer-e-with-orders.js";
 import OrdersEWithLineitems from "./../models/tpc_h_e/orders-e-with-lineitems.js";
+import OrdersEWithLineitemsArrayAsTags from "./../models/tpc_h_e/orders-e-with-lineitems-array-as-tags.js";
 
 /**
  * ### C2) Indexed Columns
@@ -78,8 +79,28 @@ async function R2() {
     return r2;
 }
 
+/**
+ * ### R3) Array Tags Query — Find Orders by Tag
+ *
+ * Test array indexing and filtering. Finds orders whose o_lineitems_tags array contains the value "MAIL".
+ * ```MongoDB
+ * db.ordersEWithLineitemsArrayAsTags.find(
+ *   { o_lineitems_tags: "MAIL" },
+ *   { o_orderdate: 1, o_lineitems_tags: 1 }
+ * )
+ * ```
+ */
+async function R3() {
+    const r3 = OrdersEWithLineitemsArrayAsTags.find(
+        { o_lineitems_tags: "MAIL" },
+        { o_orderdate: 1, o_lineitems_tags: 1 }
+    );
+    return r3;
+}
+
 export {
     C2,
     R1,
-    R2
+    R2,
+    R3
 }

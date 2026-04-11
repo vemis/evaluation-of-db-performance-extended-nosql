@@ -4,6 +4,7 @@
   "main": "index.js",
   "type": "module",
   "dependencies": {
-    "mongoose": "^9.0.0"
+    "mongoose": "^9.0.0",
+    "seedrandom": "^3.0.5"
   }
 }

@@ -24,16 +24,20 @@ async function run() {
     )*/
 
 
-    const res = await queriesE.R2()
+    const res = await queriesE.R3()
     console.log(res[0]);
     console.log(res.length)
 
 
 
 
-
     /*
-    loadDataTPCHE.loadOrdersEWithLineitems(
+    await loadDataTPCHE.loadOrdersEWithLineitemsArrayAsTags(
+        "..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl",
+        "..\\..\\..\\dataset\\TPC-H\\tpch-data\\lineitem.tbl"
+    )
+
+    await loadDataTPCHE.loadOrdersEWithLineitems(
         "..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl",
         "..\\..\\..\\dataset\\TPC-H\\tpch-data\\lineitem.tbl"
     )
