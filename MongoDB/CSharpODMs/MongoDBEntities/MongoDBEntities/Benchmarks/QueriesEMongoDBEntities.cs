@@ -89,5 +89,29 @@ namespace MongoDBEntities.Benchmarks
 
             return result;
         }
+
+        /*
+        ### R3) Array Tags Query — Find Orders by Tag
+
+        Test array indexing and filtering. Finds orders whose o_lineitems_tags array contains the value "MAIL".
+        ```MongoDB
+        db.ordersEWithLineitemsArrayAsTags.find(
+          { o_lineitems_tags: "MAIL" },
+          { o_orderdate: 1, o_lineitems_tags: 1 }
+        )
+        ```
+        */
+        public static async Task<List<OrdersEWithLineitemsArrayAsTags>> R3()
+        {
+            var result = await DB.Collection<OrdersEWithLineitemsArrayAsTags>()
+                .Find(Builders<OrdersEWithLineitemsArrayAsTags>.Filter.Eq("o_lineitems_tags", "MAIL"))
+                .Project<OrdersEWithLineitemsArrayAsTags>(
+                    Builders<OrdersEWithLineitemsArrayAsTags>.Projection
+                        .Include("o_orderdate")
+                        .Include("o_lineitems_tags"))
+                .ToListAsync();
+
+            return result;
+        }
     }
 }

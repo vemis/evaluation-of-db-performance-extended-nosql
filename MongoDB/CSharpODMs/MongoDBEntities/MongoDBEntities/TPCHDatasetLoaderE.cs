@@ -88,6 +88,33 @@ namespace MongoDBEntities
             await DB.InsertAsync(entities);
         }
 
+        public static async Task LoadOrdersEWithLineitemsArrayAsTags(string filePathOrders, string filePathLineitems)
+        {
+            List<string[]> orders = ReadDataFromCustomSeparator(filePathOrders);
+            List<string[]> lineitems = ReadDataFromCustomSeparator(filePathLineitems);
+
+            string[] lineitemsRow2 = lineitems[1]; // 2nd row — unique elements (same as Java lineitems.get(1))
+
+            List<OrdersEWithLineitemsArrayAsTags> entities = new List<OrdersEWithLineitemsArrayAsTags>();
+
+            for (int i = 0; i < orders.Count; i++)
+            {
+                if (i % 10_000 == 0)
+                {
+                    Console.WriteLine("Processed " + i + " / " + orders.Count);
+                }
+
+                int orderkey = Convert.ToInt32(orders[i][0]);
+                entities.Add(new OrdersEWithLineitemsArrayAsTags(
+                    orderkey,
+                    new Date(DateTime.Parse(orders[i][4])),
+                    new List<object>(GetShuffledLineitemsTagsFromRow(lineitemsRow2, orderkey))
+                ));
+            }
+
+            await DB.InsertAsync(entities);
+        }
+
         public static async Task LoadDatasetCustomerEWithOrdersAsync(string filePath, List<OrdersE> orders)
         {
             List<string[]> dataset = ReadDataFromCustomSeparator(filePath);
