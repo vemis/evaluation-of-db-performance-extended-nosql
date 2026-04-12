@@ -174,5 +174,22 @@ namespace MongoDBEntities.Benchmarks
 
             return result;
         }
+
+        /*
+        ### R7) Text Index Search on Comment Field
+
+        Simulate text search with a text index.
+        ```MongoDB
+        db.ordersEOnlyOCommentIndexed.find({ $text: { $search: "furiously" } })
+        ```
+        */
+        public static async Task<List<OrdersEOnlyOCommentIndexed>> R7()
+        {
+            var result = await DB.Collection<OrdersEOnlyOCommentIndexed>()
+                .Find(Builders<OrdersEOnlyOCommentIndexed>.Filter.Text("furiously"))
+                .ToListAsync();
+
+            return result;
+        }
     }
 }
