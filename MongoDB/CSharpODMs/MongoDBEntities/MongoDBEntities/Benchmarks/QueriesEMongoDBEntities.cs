@@ -157,5 +157,22 @@ namespace MongoDBEntities.Benchmarks
 
             return result;
         }
+
+        /*
+        ### R6) Regex Text Search on Comment Field
+
+        Simulate text search without an index.
+        ```MongoDB
+        db.ordersEOnlyOComment.find({ o_comment: /furiously/i })
+        ```
+        */
+        public static async Task<List<OrdersEOnlyOComment>> R6()
+        {
+            var result = await DB.Collection<OrdersEOnlyOComment>()
+                .Find(Builders<OrdersEOnlyOComment>.Filter.Regex("o_comment", new MongoDB.Bson.BsonRegularExpression("furiously", "i")))
+                .ToListAsync();
+
+            return result;
+        }
     }
 }

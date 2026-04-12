@@ -35,13 +35,16 @@ namespace MongoDBEntities
             Console.WriteLine("MongoDB.Entities initialized!");
 
 
-            var res = await QueriesEMongoDBEntities.R5();
+            var res = await QueriesEMongoDBEntities.R6();
             Console.WriteLine(res[0]);
             Console.WriteLine(res.Count);
 
 
-
             /*
+            await TPCHDatasetLoaderE.LoadOrdersEOnlyOComment(
+                "..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl");
+            
+
             await TPCHDatasetLoaderE.LoadOrdersEWithCustomerWithNationWithRegion(
                 "..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl",
                 "..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\customer.tbl",

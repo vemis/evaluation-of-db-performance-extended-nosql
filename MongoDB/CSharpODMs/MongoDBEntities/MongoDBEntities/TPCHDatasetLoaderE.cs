@@ -142,6 +142,29 @@ namespace MongoDBEntities
             await DB.InsertAsync(entities);
         }
 
+        public static async Task LoadOrdersEOnlyOComment(string filePathOrders)
+        {
+            List<string[]> orders = ReadDataFromCustomSeparator(filePathOrders);
+
+            List<OrdersEOnlyOComment> entities = new List<OrdersEOnlyOComment>();
+
+            for (int i = 0; i < orders.Count; i++)
+            {
+                if (i % 10_000 == 0)
+                {
+                    Console.WriteLine("Processed " + i + " / " + orders.Count);
+                }
+
+                entities.Add(new OrdersEOnlyOComment(
+                    Convert.ToInt32(orders[i][0]),
+                    new Date(DateTime.Parse(orders[i][4])),
+                    orders[i][8]
+                ));
+            }
+
+            await DB.InsertAsync(entities);
+        }
+
         public static async Task LoadOrdersEWithCustomerWithNationWithRegion(
             string filePathOrders,
             string filePathCustomers,
