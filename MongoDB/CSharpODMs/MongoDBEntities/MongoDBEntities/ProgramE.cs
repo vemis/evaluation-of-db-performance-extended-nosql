@@ -35,12 +35,19 @@ namespace MongoDBEntities
             Console.WriteLine("MongoDB.Entities initialized!");
 
 
-            var res = await QueriesEMongoDBEntities.R4();
+            var res = await QueriesEMongoDBEntities.R5();
             Console.WriteLine(res[0]);
             Console.WriteLine(res.Count);
 
 
+
             /*
+            await TPCHDatasetLoaderE.LoadOrdersEWithCustomerWithNationWithRegion(
+                "..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl",
+                "..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\customer.tbl",
+                "..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\nation.tbl",
+                "..\\..\\..\\..\\..\\..\\..\\dataset\\TPC-H\\tpch-data\\region.tbl");
+            
             await DB.Index<OrdersEWithLineitemsArrayAsTagsIndexed>()
                 .Key(c => c.o_lineitems_tags_indexed, KeyType.Ascending)
                 .CreateAsync();

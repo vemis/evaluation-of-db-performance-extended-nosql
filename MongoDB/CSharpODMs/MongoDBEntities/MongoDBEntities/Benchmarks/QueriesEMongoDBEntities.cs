@@ -137,5 +137,25 @@ namespace MongoDBEntities.Benchmarks
 
             return result;
         }
+
+        /*
+        ### R5) Embedded Customer with Nation with Region — Filter by Region Name
+
+        Test denormalization vs join simulation in documents.
+        Find all orders from customers in "AMERICA".
+        ```MongoDB
+        db.ordersEWithCustomerWithNationWithRegion.find(
+          { "o_customer.c_nation.n_region.r_name": "AMERICA" }
+        )
+        ```
+        */
+        public static async Task<List<OrdersEWithCustomerWithNationWithRegion>> R5()
+        {
+            var result = await DB.Collection<OrdersEWithCustomerWithNationWithRegion>()
+                .Find(Builders<OrdersEWithCustomerWithNationWithRegion>.Filter.Eq("o_customer.c_nation.n_region.r_name", "AMERICA"))
+                .ToListAsync();
+
+            return result;
+        }
     }
 }

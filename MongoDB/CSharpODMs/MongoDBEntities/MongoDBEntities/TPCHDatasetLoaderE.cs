@@ -142,6 +142,64 @@ namespace MongoDBEntities
             await DB.InsertAsync(entities);
         }
 
+        public static async Task LoadOrdersEWithCustomerWithNationWithRegion(
+            string filePathOrders,
+            string filePathCustomers,
+            string filePathNations,
+            string filePathRegions)
+        {
+            List<string[]> orders = ReadDataFromCustomSeparator(filePathOrders);
+
+            // Build RegionEOnlyName map keyed by r_regionkey
+            List<string[]> regionRows = ReadDataFromCustomSeparator(filePathRegions);
+            Dictionary<int, RegionEOnlyName> regionMap = new Dictionary<int, RegionEOnlyName>();
+            foreach (string[] row in regionRows)
+            {
+                int key = Convert.ToInt32(row[0]);
+                regionMap[key] = new RegionEOnlyName(key, row[1]);
+            }
+
+            // Build NationEOnlyNNameNRegion map keyed by n_nationkey
+            List<string[]> nationRows = ReadDataFromCustomSeparator(filePathNations);
+            Dictionary<int, NationEOnlyNNameNRegion> nationMap = new Dictionary<int, NationEOnlyNNameNRegion>();
+            foreach (string[] row in nationRows)
+            {
+                int key = Convert.ToInt32(row[0]);
+                int regionkey = Convert.ToInt32(row[2]);
+                nationMap[key] = new NationEOnlyNNameNRegion(key, row[1], regionkey, regionMap[regionkey]);
+            }
+
+            // Build CustomerEOnlyCNameCNation map keyed by c_custkey
+            List<string[]> customerRows = ReadDataFromCustomSeparator(filePathCustomers);
+            Dictionary<int, CustomerEOnlyCNameCNation> customerMap = new Dictionary<int, CustomerEOnlyCNameCNation>();
+            foreach (string[] row in customerRows)
+            {
+                int key = Convert.ToInt32(row[0]);
+                int nationkey = Convert.ToInt32(row[3]);
+                customerMap[key] = new CustomerEOnlyCNameCNation(key, row[1], nationkey, nationMap[nationkey]);
+            }
+
+            List<OrdersEWithCustomerWithNationWithRegion> entities = new List<OrdersEWithCustomerWithNationWithRegion>();
+
+            for (int i = 0; i < orders.Count; i++)
+            {
+                if (i % 10_000 == 0)
+                {
+                    Console.WriteLine("Processed " + i + " / " + orders.Count);
+                }
+
+                int orderkey = Convert.ToInt32(orders[i][0]);
+                int custkey = Convert.ToInt32(orders[i][1]);
+                entities.Add(new OrdersEWithCustomerWithNationWithRegion(
+                    orderkey,
+                    new Date(DateTime.Parse(orders[i][4])),
+                    customerMap.GetValueOrDefault(custkey, null)
+                ));
+            }
+
+            await DB.InsertAsync(entities);
+        }
+
         public static async Task LoadDatasetCustomerEWithOrdersAsync(string filePath, List<OrdersE> orders)
         {
             List<string[]> dataset = ReadDataFromCustomSeparator(filePath);
