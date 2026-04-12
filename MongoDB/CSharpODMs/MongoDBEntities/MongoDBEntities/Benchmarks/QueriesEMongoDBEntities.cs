@@ -191,5 +191,30 @@ namespace MongoDBEntities.Benchmarks
 
             return result;
         }
+
+        /*
+        ### R8) Unwind Embedded Lineitems
+
+        Test unwind of embedded objects (array flattening cost).
+        ```MongoDB
+        db.ordersEWithLineitems.aggregate([
+          { $unwind: "$o_lineitems" },
+          { $project: { _id: 1, "o_lineitems.l_partkey": 1 } }
+        ])
+        ```
+        */
+        public static async Task<List<BsonDocument>> R8()
+        {
+            var result = await DB.Collection<OrdersEWithLineitems>()
+                .Aggregate()
+                .Unwind("o_lineitems")
+                .Project<BsonDocument>(new BsonDocument
+                {
+                    {"o_lineitems.l_partkey", 1}
+                })
+                .ToListAsync();
+
+            return result;
+        }
     }
 }

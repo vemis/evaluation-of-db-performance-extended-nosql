@@ -35,7 +35,7 @@ namespace MongoDBEntities
             Console.WriteLine("MongoDB.Entities initialized!");
 
 
-            var res = await QueriesEMongoDBEntities.R7();
+            var res = await QueriesEMongoDBEntities.R8();
             Console.WriteLine(res[0]);
             Console.WriteLine(res.Count);
 
