@@ -10,6 +10,7 @@
   "dependencies": {
     "benchmark": "^2.1.4",
     "couchbase": "^4.6.0",
-    "ottoman": "^2.5.3"
+    "ottoman": "^2.5.3",
+    "seedrandom": "^3.0.5"
   }
 }

@@ -69,8 +69,29 @@ async function R2(){
     return r2.rows;
 }
 
+/**
+ * ### R3) Array Tags Query — Find Orders by Tag
+ *
+ * Test array filtering without an index. Finds orders whose o_lineitems_tags
+ * array contains the value "MAIL".
+ * ```sql
+ * SELECT o.o_orderdate, o.o_lineitems_tags
+ * FROM ottoman_bucket_e.ottoman_scope_e.OrdersEWithLineitemsArrayAsTags AS o
+ * WHERE ANY tag IN o.o_lineitems_tags SATISFIES tag = 'MAIL' END
+ * ```
+ */
+async function R3(){
+    const r3 = await ottoman.getDefaultInstance().query(
+        `SELECT o.o_orderdate, o.o_lineitems_tags
+         FROM ottoman_bucket_e.ottoman_scope_e.OrdersEWithLineitemsArrayAsTags AS o
+         WHERE ANY tag IN o.o_lineitems_tags SATISFIES tag = 'MAIL' END`
+    )
+    return r3.rows;
+}
+
 export {
     C2,
     R1,
-    R2
+    R2,
+    R3
 }

@@ -13,6 +13,7 @@ import {benchmarkQuery} from "./benchmarks/benchmarks.js";
 
 import path from 'path';
 import { fileURLToPath } from 'url';
+import {OrdersEWithLineitemsArrayAsTags} from "./models/tpc_h_e/orders-e-with-lineitems-array-as-tags.js";
 
 // recreate __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -26,15 +27,21 @@ async function run(){
     console.log("Creating indexes");
     await CustomerEWithOrders.createIndexes();
     await OrdersEWithLineitems.createIndexes();
+    await OrdersEWithLineitemsArrayAsTags.createIndexes();
     console.log("Indexes created");
 
 
     console.log("Query:")
-    const res = await queriesE.R2();
+    const res = await queriesE.R3();
     console.log(res[0])
     console.log(res.length)
 
     /*
+    await loadDataE.loadOrdersEWithLineitemsArrayAsTags(
+        path.join(basePath, 'orders.tbl'),
+        path.join(basePath, 'lineitem.tbl')
+    )
+
     const lineitemsE = await loadDataE.createLineitemsE(path.join(basePath, 'lineitem.tbl'))
     await loadDataE.loadOrdersEWithLineitems(path.join(basePath, 'orders.tbl'), lineitemsE);
 

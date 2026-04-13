@@ -1,6 +1,7 @@
-import {insertAll, partition, readDataFromCustomSeparator} from "./load-data-tpc-h.js";
+import {insertAll, partition, readDataFromCustomSeparator, getShuffledLineitemsTagsFromRow} from "./load-data-tpc-h.js";
 import {CustomerEWithOrders} from "./models/tpc_h_e/customer-e-with-orders.js";
 import {OrdersEWithLineitems} from "./models/tpc_h_e/orders-e-with-lineitems.js";
+import {OrdersEWithLineitemsArrayAsTags} from "./models/tpc_h_e/orders-e-with-lineitems-array-as-tags.js";
 
 
 function mapOrdersByCustomer(ordersE){
@@ -205,9 +206,73 @@ async function loadOrdersEWithLineitems(ordersFilePath, lineitems) {
     }
 }
 
+/**
+ * Converts one row of lineitem.tbl into a mixed-type tags array, mirroring
+ * TPCHDatasetLoader.createLineitemsTags() in the Java reference implementation.
+ */
+function createLineitemsTags(lineitemsRow) {
+    return [
+        Number(lineitemsRow[0]),    // l_orderkey
+        Number(lineitemsRow[1]),    // l_partkey
+        Number(lineitemsRow[2]),    // l_suppkey
+        Number(lineitemsRow[3]),    // l_linenumber
+        Number(lineitemsRow[4]),    // l_quantity
+        Number(lineitemsRow[5]),    // l_extendedprice
+        Number(lineitemsRow[6]),    // l_discount
+        Number(lineitemsRow[7]),    // l_tax
+        lineitemsRow[8],            // l_returnflag
+        lineitemsRow[9],            // l_linestatus
+        new Date(lineitemsRow[10]), // l_shipdate
+        new Date(lineitemsRow[11]), // l_commitdate
+        new Date(lineitemsRow[12]), // l_receiptdate
+        lineitemsRow[13],           // l_shipinstruct
+        lineitemsRow[14],           // l_shipmode
+        lineitemsRow[15]            // l_comment
+    ];
+}
+
+async function loadOrdersEWithLineitemsArrayAsTags(ordersFilePath, lineitemsFilePath) {
+    try {
+        const ordersData = await readDataFromCustomSeparator(ordersFilePath);
+        const lineitemsData = await readDataFromCustomSeparator(lineitemsFilePath);
+
+        // 2nd row (index 1) is used as the source of unique tag values,
+        // matching the Java reference implementation
+        const lineitemsRow2 = lineitemsData[1];
+
+        console.log("Mapping rowsOfData to rowsOfSchemas")
+        const rowsOfSchemas = ordersData.map(([
+                                                  id,
+                                                  _o_custkey,
+                                                  _o_orderstatus,
+                                                  _o_totalprice,
+                                                  o_orderdate,
+                                              ]) => ({
+            id,
+            o_orderdate: new Date(o_orderdate),
+            o_lineitems_tags: getShuffledLineitemsTagsFromRow(createLineitemsTags(lineitemsRow2), parseInt(id))
+        }));
+
+        console.log("Inserting rowsOfSchemas")
+
+        const rowsOfSchemasBatches = partition(rowsOfSchemas, 5_000);
+
+        console.log("Batches created")
+
+        for (let i = 0; i < rowsOfSchemasBatches.length; i++) {
+            await insertAll(rowsOfSchemasBatches[i], OrdersEWithLineitemsArrayAsTags);
+            console.log(`Batch inserted! ${i + 1}/${rowsOfSchemasBatches.length}`)
+        }
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 export {
     loadOrders,
     loadCustomersEWithOrders,
     createLineitemsE,
-    loadOrdersEWithLineitems
+    loadOrdersEWithLineitems,
+    loadOrdersEWithLineitemsArrayAsTags
 }
