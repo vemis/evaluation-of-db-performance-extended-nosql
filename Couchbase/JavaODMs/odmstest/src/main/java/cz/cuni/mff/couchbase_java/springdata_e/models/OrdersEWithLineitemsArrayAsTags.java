@@ -29,10 +29,6 @@ public class OrdersEWithLineitemsArrayAsTags {
     }
 
     public static void createIndexes(Cluster cluster) {
-        String tags_index_query =
-                "CREATE INDEX idx_OrdersEWithLineitemsArrayAsTags_tags IF NOT EXISTS" +
-                " ON spring_bucket_e.spring_scope_e.OrdersEWithLineitemsArrayAsTags" +
-                " (DISTINCT ARRAY tag FOR tag IN o_lineitems_tags END)";
-        cluster.query(tags_index_query);
+        return;
     }
 }

@@ -4,10 +4,7 @@ import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import cz.cuni.mff.couchbase_java.SpringDataCouchbaseClusterManagement;
 import cz.cuni.mff.couchbase_java.springdata_e.benchmarks.QueriesSpringDataE;
-import cz.cuni.mff.couchbase_java.springdata_e.models.CustomerEWithOrders;
-import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersE;
-import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersEWithLineitems;
-import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersEWithLineitemsArrayAsTags;
+import cz.cuni.mff.couchbase_java.springdata_e.models.*;
 import cz.cuni.mff.couchbase_java.springdata_e.service.LogicServiceE;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -49,6 +46,8 @@ public class CouchbaseSpringDataLogicCommandRunnerE {
             SpringDataCouchbaseClusterManagement.createCollection("spring_scope_e", "CustomerEWithOrders", bucket);
             SpringDataCouchbaseClusterManagement.createCollection("spring_scope_e", "OrdersEWithLineitems", bucket);
             SpringDataCouchbaseClusterManagement.createCollection("spring_scope_e", "OrdersEWithLineitemsArrayAsTags", bucket);
+            SpringDataCouchbaseClusterManagement.createCollection("spring_scope_e", "OrdersEWithLineitemsArrayAsTagsIndexed", bucket);
+
 
 
             // Create Indexes - DEPRECATED
@@ -61,15 +60,22 @@ public class CouchbaseSpringDataLogicCommandRunnerE {
             CustomerEWithOrders.createIndexes(cluster);
             OrdersEWithLineitems.createIndexes(cluster);
             OrdersEWithLineitemsArrayAsTags.createIndexes(cluster);
+            OrdersEWithLineitemsArrayAsTagsIndexed.createIndexes(cluster);
 
 
-
-            var res = QueriesSpringDataE.R3(cluster);
+            System.out.println("Query:");
+            var res = QueriesSpringDataE.R4(cluster);
             System.out.println(res.get(0));
             System.out.println(res.size());
 
 
             /*
+            TPCHDatasetLoaderSpringDataE.loadOrdersEWithLineitemsArrayAsTagsIndexed(
+                    "../../../dataset/TPC-H/tpch-data/orders.tbl",
+                    "../../../dataset/TPC-H/tpch-data/lineitem.tbl",
+                    reactiveCouchbaseTemplate
+            );
+
             TPCHDatasetLoaderSpringDataE.loadOrdersEWithLineitemsArrayAsTags(
                     "../../../dataset/TPC-H/tpch-data/orders.tbl",
                     "../../../dataset/TPC-H/tpch-data/lineitem.tbl",

@@ -103,4 +103,26 @@ public class QueriesSpringDataE {
                 .query(query)
                 .rowsAsObject();
     }
+
+    /**
+     * ### R4) Indexed Array Tags Query — Find Orders by Tag
+     *
+     * Test array indexing and filtering on an indexed field. Finds orders whose o_lineitems_tags_indexed array contains the value "MAIL".
+     * Uses the array index idx_OrdersEWithLineitemsArrayAsTagsIndexed_tags on o_lineitems_tags_indexed[].
+     * ```sql
+     * SELECT o.o_orderdate, o.o_lineitems_tags_indexed
+     * FROM spring_bucket_e.spring_scope_e.OrdersEWithLineitemsArrayAsTagsIndexed AS o
+     * WHERE ANY tag IN o.o_lineitems_tags_indexed SATISFIES tag = 'MAIL' END
+     * ```
+     */
+    public static List<JsonObject> R4(Cluster cluster) {
+        String query =
+                "SELECT o.o_orderdate, o.o_lineitems_tags_indexed" +
+                " FROM spring_bucket_e.spring_scope_e.OrdersEWithLineitemsArrayAsTagsIndexed AS o" +
+                " WHERE ANY tag IN o.o_lineitems_tags_indexed SATISFIES tag = 'MAIL' END";
+
+        return cluster
+                .query(query)
+                .rowsAsObject();
+    }
 }
