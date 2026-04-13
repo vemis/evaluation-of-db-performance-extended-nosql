@@ -178,10 +178,10 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
 
         System.out.println("Inserting many lineitemInstances!");
 
-        for (var batch : batches) {
-            //reactiveCouchbaseTemplate.insert(batch, LineitemR.class);
-            saveManyDocuments(batch, reactiveCouchbaseTemplate);
-            System.out.println("Batch inserted!");
+        for (int i = 0; i < batches.size(); i++) {
+            //reactiveCouchbaseTemplate.insert(batches.get(i), LineitemR.class);
+            saveManyDocuments(batches.get(i), reactiveCouchbaseTemplate);
+            System.out.println("Batch inserted! " + (i + 1) + "/" + batches.size());
         }
 
         System.out.println("lineitemInstances inserted!");
@@ -220,10 +220,10 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
 
         System.out.println("Inserting many partsuppInstances!");
 
-        for (var batch : batches) {
-            //reactiveCouchbaseTemplate.insert(batch, PartsuppR.class);
-            saveManyDocuments(batch, reactiveCouchbaseTemplate);
-            System.out.println("Batch inserted!");
+        for (int i = 0; i < batches.size(); i++) {
+            //reactiveCouchbaseTemplate.insert(batches.get(i), PartsuppR.class);
+            saveManyDocuments(batches.get(i), reactiveCouchbaseTemplate);
+            System.out.println("Batch inserted! " + (i + 1) + "/" + batches.size());
         }
 
         System.out.println("partsupp inserted!");
@@ -265,10 +265,10 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
 
         System.out.println("Inserting many partInstances!");
 
-        for (var batch : batches) {
-            //reactiveCouchbaseTemplate.insert(batch, PartR.class);
-            saveManyDocuments(batch,  reactiveCouchbaseTemplate);
-            System.out.println("Batch inserted!");
+        for (int i = 0; i < batches.size(); i++) {
+            //reactiveCouchbaseTemplate.insert(batches.get(i), PartR.class);
+            saveManyDocuments(batches.get(i),  reactiveCouchbaseTemplate);
+            System.out.println("Batch inserted! " + (i + 1) + "/" + batches.size());
         }
 
         System.out.println("part inserted!");
@@ -308,10 +308,10 @@ public class TPCHDatasetLoaderSpringDataR extends TPCHDatasetLoader {
 
         System.out.println("Inserting many supplierInstances!");
 
-        for (var batch : batches) {
-            //reactiveCouchbaseTemplate.insert(batch, SupplierR.class);
-            saveManyDocuments(batch, reactiveCouchbaseTemplate);
-            System.out.println("Batch inserted!");
+        for (int i = 0; i < batches.size(); i++) {
+            //reactiveCouchbaseTemplate.insert(batches.get(i), SupplierR.class);
+            saveManyDocuments(batches.get(i), reactiveCouchbaseTemplate);
+            System.out.println("Batch inserted! " + (i + 1) + "/" + batches.size());
         }
 
         System.out.println("suppliers inserted!");

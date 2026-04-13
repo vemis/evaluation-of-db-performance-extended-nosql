@@ -12,9 +12,20 @@ import reactor.core.publisher.Flux;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 public class TPCHDatasetLoader {
+
+    public static <T> Map<Integer, List<T>> groupListsByKey(List<T> items, Function<T, Integer> keyExtractor) {
+        Map<Integer, List<T>> map = new HashMap<>();
+        for (T item : items) {
+            map.computeIfAbsent(keyExtractor.apply(item), k -> new ArrayList<>()).add(item);
+        }
+        return map;
+    }
 
     // Java code to illustrate
 // Reading CSV File with different separator
