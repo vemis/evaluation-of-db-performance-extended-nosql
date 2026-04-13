@@ -173,6 +173,26 @@ async function R7(){
     return r7.rows;
 }
 
+/**
+ * ### R8) Unwind Embedded Lineitems
+ *
+ * Test array flattening cost (equivalent of MongoDB $unwind).
+ * In Couchbase N1QL, UNNEST replaces $unwind — it produces one output row per array element.
+ * ```sql
+ * SELECT META(o).id AS o_orderkey, l.l_partkey
+ * FROM ottoman_bucket_e.ottoman_scope_e.OrdersEWithLineitems AS o
+ * UNNEST o.o_lineitems AS l
+ * ```
+ */
+async function R8(){
+    const r8 = await ottoman.getDefaultInstance().query(
+        `SELECT META(o).id AS o_orderkey, l.l_partkey
+         FROM ottoman_bucket_e.ottoman_scope_e.OrdersEWithLineitems AS o
+         UNNEST o.o_lineitems AS l`
+    )
+    return r8.rows;
+}
+
 export {
     C2,
     R1,
@@ -181,5 +201,6 @@ export {
     R4,
     R5,
     R6,
-    R7
+    R7,
+    R8
 }
