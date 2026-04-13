@@ -7,6 +7,8 @@ import cz.cuni.mff.couchbase_java.springdata_e.models.LineitemE;
 import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersE;
 import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersEWithLineitems;
 import cz.cuni.mff.couchbase_java.springdata_e.models.CustomerEOnlyCNameCNation;
+import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersEOnlyOComment;
+import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersEOnlyOCommentIndexed;
 import cz.cuni.mff.couchbase_java.springdata_e.models.NationEOnlyNNameNRegion;
 import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersEWithCustomerWithNationWithRegion;
 import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersEWithLineitemsArrayAsTags;
@@ -191,6 +193,80 @@ public class TPCHDatasetLoaderSpringDataE extends TPCHDatasetLoader {
         }
 
         System.out.println("ordersEWithLineitems inserted!");
+    }
+
+    public static void loadOrdersEOnlyOComment(String filePathOrders, ReactiveCouchbaseTemplate reactiveCouchbaseTemplate) {
+
+        List<String[]> orders = readDataFromCustomSeparator(filePathOrders);
+
+        LongAdder counter = new LongAdder();
+        int total = orders.size();
+
+        List<OrdersEOnlyOComment> orderInstances = orders
+                .parallelStream()
+                .map(row -> {
+                    counter.increment();
+                    long current = counter.sum();
+
+                    if (current % 10_000 == 0) {
+                        System.out.println("Processed " + current + " / " + total);
+                    }
+
+                    return new OrdersEOnlyOComment(
+                            Integer.parseInt(row[0]),
+                            LocalDate.parse(row[4]),
+                            row[8]
+                    );
+                })
+                .toList();
+
+        var batches = partition(orderInstances, 10_000);
+
+        System.out.println("Inserting many ordersEOnlyOComment!");
+
+        for (int i = 0; i < batches.size(); i++) {
+            saveManyDocuments(batches.get(i), reactiveCouchbaseTemplate);
+            System.out.println("Batch inserted! " + (i + 1) + "/" + batches.size());
+        }
+
+        System.out.println("ordersEOnlyOComment inserted!");
+    }
+
+    public static void loadOrdersEOnlyOCommentIndexed(String filePathOrders, ReactiveCouchbaseTemplate reactiveCouchbaseTemplate) {
+
+        List<String[]> orders = readDataFromCustomSeparator(filePathOrders);
+
+        LongAdder counter = new LongAdder();
+        int total = orders.size();
+
+        List<OrdersEOnlyOCommentIndexed> orderInstances = orders
+                .parallelStream()
+                .map(row -> {
+                    counter.increment();
+                    long current = counter.sum();
+
+                    if (current % 10_000 == 0) {
+                        System.out.println("Processed " + current + " / " + total);
+                    }
+
+                    return new OrdersEOnlyOCommentIndexed(
+                            Integer.parseInt(row[0]),
+                            LocalDate.parse(row[4]),
+                            row[8]
+                    );
+                })
+                .toList();
+
+        var batches = partition(orderInstances, 10_000);
+
+        System.out.println("Inserting many ordersEOnlyOCommentIndexed!");
+
+        for (int i = 0; i < batches.size(); i++) {
+            saveManyDocuments(batches.get(i), reactiveCouchbaseTemplate);
+            System.out.println("Batch inserted! " + (i + 1) + "/" + batches.size());
+        }
+
+        System.out.println("ordersEOnlyOCommentIndexed inserted!");
     }
 
     public static void loadOrdersEWithCustomerWithNationWithRegion(

@@ -127,6 +127,31 @@ public class QueriesSpringDataE {
     }
 
     /**
+     * ### R7) Text Index Search on Comment Field
+     *
+     * Simulate text search with an index on o_comment.
+     * Couchbase does not have a MongoDB-style text index for N1QL; a regular index on o_comment
+     * is present on this collection. REGEXP_CONTAINS with a non-anchored pattern cannot use a
+     * B-tree index — for true full-text search acceleration Couchbase requires an FTS index
+     * with the SEARCH() function, which is a separate service.
+     * ```sql
+     * SELECT *
+     * FROM spring_bucket_e.spring_scope_e.OrdersEOnlyOCommentIndexed AS o
+     * WHERE REGEXP_CONTAINS(o.o_comment, '(?i)furiously')
+     * ```
+     */
+    public static List<JsonObject> R7(Cluster cluster) {
+        String query =
+                "SELECT *" +
+                " FROM spring_bucket_e.spring_scope_e.OrdersEOnlyOCommentIndexed AS o" +
+                " WHERE REGEXP_CONTAINS(o.o_comment, '(?i)furiously')";
+
+        return cluster
+                .query(query)
+                .rowsAsObject();
+    }
+
+    /**
      * ### R5) Embedded Customer with Nation with Region — Filter by Region Name
      *
      * Test denormalization depth. Find all orders from customers in "AMERICA".
@@ -142,6 +167,27 @@ public class QueriesSpringDataE {
                 "SELECT *" +
                 " FROM spring_bucket_e.spring_scope_e.OrdersEWithCustomerWithNationWithRegion AS o" +
                 " WHERE o.o_customer.c_nation.n_region.r_name = 'AMERICA'";
+
+        return cluster
+                .query(query)
+                .rowsAsObject();
+    }
+
+    /**
+     * ### R6) Regex Text Search on Comment Field
+     *
+     * Simulate text search without an index using REGEXP_CONTAINS.
+     * ```sql
+     * SELECT *
+     * FROM spring_bucket_e.spring_scope_e.OrdersEOnlyOComment AS o
+     * WHERE REGEXP_CONTAINS(o.o_comment, '(?i)furiously')
+     * ```
+     */
+    public static List<JsonObject> R6(Cluster cluster) {
+        String query =
+                "SELECT *" +
+                        " FROM spring_bucket_e.spring_scope_e.OrdersEOnlyOComment AS o" +
+                        " WHERE REGEXP_CONTAINS(o.o_comment, '(?i)furiously')";
 
         return cluster
                 .query(query)
