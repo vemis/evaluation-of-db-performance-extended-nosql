@@ -70,7 +70,7 @@ public class CouchbaseSpringDataLogicCommandRunnerE {
 
 
             System.out.println("Query:");
-            var res = QueriesSpringDataE.R8(cluster);
+            var res = QueriesSpringDataE.R9(cluster);
             System.out.println(res.get(0));
             System.out.println(res.size());
 

@@ -2,11 +2,13 @@ package cz.cuni.mff.couchbase_java.springdata_e.benchmarks;
 
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.json.JsonObject;
+import com.couchbase.client.java.query.QueryOptions;
 
 import org.springframework.data.couchbase.core.ReactiveCouchbaseTemplate;
 import org.springframework.data.couchbase.core.query.Query;
 import org.springframework.data.couchbase.core.query.QueryCriteria;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -127,53 +129,6 @@ public class QueriesSpringDataE {
     }
 
     /**
-     * ### R8) Unwind Embedded Lineitems
-     *
-     * Test array flattening cost (equivalent of MongoDB $unwind).
-     * In Couchbase N1QL, UNNEST replaces $unwind — it produces one output row per array element.
-     * ```sql
-     * SELECT META(o).id AS o_orderkey, l.l_partkey
-     * FROM spring_bucket_e.spring_scope_e.OrdersEWithLineitems AS o
-     * UNNEST o.o_lineitems AS l
-     * ```
-     */
-    public static List<JsonObject> R8(Cluster cluster) {
-        String query =
-                "SELECT META(o).id AS o_orderkey, l.l_partkey" +
-                " FROM spring_bucket_e.spring_scope_e.OrdersEWithLineitems AS o" +
-                " UNNEST o.o_lineitems AS l";
-
-        return cluster
-                .query(query)
-                .rowsAsObject();
-    }
-
-    /**
-     * ### R7) Text Index Search on Comment Field
-     *
-     * Simulate text search with an index on o_comment.
-     * Couchbase does not have a MongoDB-style text index for N1QL; a regular index on o_comment
-     * is present on this collection. REGEXP_CONTAINS with a non-anchored pattern cannot use a
-     * B-tree index — for true full-text search acceleration Couchbase requires an FTS index
-     * with the SEARCH() function, which is a separate service.
-     * ```sql
-     * SELECT *
-     * FROM spring_bucket_e.spring_scope_e.OrdersEOnlyOCommentIndexed AS o
-     * WHERE REGEXP_CONTAINS(o.o_comment, '(?i)furiously')
-     * ```
-     */
-    public static List<JsonObject> R7(Cluster cluster) {
-        String query =
-                "SELECT *" +
-                " FROM spring_bucket_e.spring_scope_e.OrdersEOnlyOCommentIndexed AS o" +
-                " WHERE REGEXP_CONTAINS(o.o_comment, '(?i)furiously')";
-
-        return cluster
-                .query(query)
-                .rowsAsObject();
-    }
-
-    /**
      * ### R5) Embedded Customer with Nation with Region — Filter by Region Name
      *
      * Test denormalization depth. Find all orders from customers in "AMERICA".
@@ -213,6 +168,79 @@ public class QueriesSpringDataE {
 
         return cluster
                 .query(query)
+                .rowsAsObject();
+    }
+
+    /**
+     * ### R7) Text Index Search on Comment Field
+     *
+     * Simulate text search with an index on o_comment.
+     * Couchbase does not have a MongoDB-style text index for N1QL; a regular index on o_comment
+     * is present on this collection. REGEXP_CONTAINS with a non-anchored pattern cannot use a
+     * B-tree index — for true full-text search acceleration Couchbase requires an FTS index
+     * with the SEARCH() function, which is a separate service.
+     * ```sql
+     * SELECT *
+     * FROM spring_bucket_e.spring_scope_e.OrdersEOnlyOCommentIndexed AS o
+     * WHERE REGEXP_CONTAINS(o.o_comment, '(?i)furiously')
+     * ```
+     */
+    public static List<JsonObject> R7(Cluster cluster) {
+        String query =
+                "SELECT *" +
+                        " FROM spring_bucket_e.spring_scope_e.OrdersEOnlyOCommentIndexed AS o" +
+                        " WHERE REGEXP_CONTAINS(o.o_comment, '(?i)furiously')";
+
+        return cluster
+                .query(query)
+                .rowsAsObject();
+    }
+
+    /**
+     * ### R8) Unwind Embedded Lineitems
+     *
+     * Test array flattening cost (equivalent of MongoDB $unwind).
+     * In Couchbase N1QL, UNNEST replaces $unwind — it produces one output row per array element.
+     * ```sql
+     * SELECT META(o).id AS o_orderkey, l.l_partkey
+     * FROM spring_bucket_e.spring_scope_e.OrdersEWithLineitems AS o
+     * UNNEST o.o_lineitems AS l
+     * ```
+     */
+    public static List<JsonObject> R8(Cluster cluster) {
+        String query =
+                "SELECT META(o).id AS o_orderkey, l.l_partkey" +
+                        " FROM spring_bucket_e.spring_scope_e.OrdersEWithLineitems AS o" +
+                        " UNNEST o.o_lineitems AS l";
+
+        return cluster
+                .query(query)
+                .rowsAsObject();
+    }
+
+    /**
+     * ### R9) Aggregation on Embedded Array — Sum Revenue per Order
+     *
+     * Test aggregation on embedded arrays (UNNEST + GROUP BY interaction).
+     * In Couchbase N1QL, UNNEST replaces $unwind and GROUP BY + SUM replaces $group + $sum.
+     * ```sql
+     * SELECT META(o).id AS o_orderkey, SUM(l.l_extendedprice) AS totalRevenue
+     * FROM spring_bucket_e.spring_scope_e.OrdersEWithLineitems AS o
+     * UNNEST o.o_lineitems AS l
+     * GROUP BY META(o).id
+     * ```
+     */
+    public static List<JsonObject> R9(Cluster cluster) {
+        String query =
+                "SELECT META(o).id AS o_orderkey, SUM(l.l_extendedprice) AS totalRevenue" +
+                        " FROM spring_bucket_e.spring_scope_e.OrdersEWithLineitems AS o" +
+                        " UNNEST o.o_lineitems AS l" +
+                        " GROUP BY META(o).id";
+
+        QueryOptions queryOptions = QueryOptions.queryOptions().timeout(Duration.ofMinutes(10));
+
+        return cluster
+                .query(query, queryOptions)
                 .rowsAsObject();
     }
 }
