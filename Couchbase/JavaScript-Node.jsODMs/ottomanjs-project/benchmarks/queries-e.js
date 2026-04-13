@@ -150,6 +150,29 @@ async function R6(){
     return r6.rows;
 }
 
+/**
+ * ### R7) Text Index Search on Comment Field
+ *
+ * Simulate text search with an index on o_comment.
+ * Couchbase does not have a MongoDB-style text index for N1QL; a regular index on o_comment
+ * is present on this collection. REGEXP_CONTAINS with a non-anchored pattern cannot use a
+ * B-tree index — for true full-text search acceleration Couchbase requires an FTS index
+ * with the SEARCH() function, which is a separate service.
+ * ```sql
+ * SELECT *
+ * FROM ottoman_bucket_e.ottoman_scope_e.OrdersEOnlyOCommentIndexed AS o
+ * WHERE REGEXP_CONTAINS(o.o_comment, '(?i)furiously')
+ * ```
+ */
+async function R7(){
+    const r7 = await ottoman.getDefaultInstance().query(
+        `SELECT *
+         FROM ottoman_bucket_e.ottoman_scope_e.OrdersEOnlyOCommentIndexed AS o
+         WHERE REGEXP_CONTAINS(o.o_comment, '(?i)furiously')`
+    )
+    return r7.rows;
+}
+
 export {
     C2,
     R1,
@@ -157,5 +180,6 @@ export {
     R3,
     R4,
     R5,
-    R6
+    R6,
+    R7
 }

@@ -17,6 +17,7 @@ import {OrdersEWithLineitemsArrayAsTags} from "./models/tpc_h_e/orders-e-with-li
 import {OrdersEWithLineitemsArrayAsTagsIndexed} from "./models/tpc_h_e/orders-e-with-lineitems-array-as-tags-indexed.js";
 import {OrdersEWithCustomerWithNationWithRegion} from "./models/tpc_h_e/orders-e-with-customer-with-nation-with-region.js";
 import {OrdersEOnlyOComment} from "./models/tpc_h_e/orders-e-only-o-comment.js";
+import {OrdersEOnlyOCommentIndexed} from "./models/tpc_h_e/orders-e-only-o-comment-indexed.js";
 import {loadOrdersEWithCustomerWithNationWithRegion} from "./load-data-tpc-h-e.js";
 
 // recreate __dirname in ES modules
@@ -35,16 +36,21 @@ async function run(){
     await OrdersEWithLineitemsArrayAsTagsIndexed.createIndexes();
     await OrdersEWithCustomerWithNationWithRegion.createIndexes();
     await OrdersEOnlyOComment.createIndexes();
+    await OrdersEOnlyOCommentIndexed.createIndexes();
     console.log("Indexes created");
 
 
     console.log("Query:")
-    const res = await queriesE.R6();
+    const res = await queriesE.R7();
     console.log(res[0])
     console.log(res.length)
 
 
     /*
+    await loadDataE.loadOrdersEOnlyOCommentIndexed(
+        path.join(basePath, 'orders.tbl')
+    )
+
     await loadDataE.loadOrdersEOnlyOComment(
         path.join(basePath, 'orders.tbl')
     )
