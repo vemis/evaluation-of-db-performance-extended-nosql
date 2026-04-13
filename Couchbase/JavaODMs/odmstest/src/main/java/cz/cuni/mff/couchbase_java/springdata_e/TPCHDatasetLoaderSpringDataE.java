@@ -6,10 +6,12 @@ import cz.cuni.mff.couchbase_java.springdata_e.models.CustomerEWithOrders;
 import cz.cuni.mff.couchbase_java.springdata_e.models.LineitemE;
 import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersE;
 import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersEWithLineitems;
+import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersEWithLineitemsArrayAsTags;
 import org.springframework.data.couchbase.core.ReactiveCouchbaseTemplate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
@@ -183,6 +185,45 @@ public class TPCHDatasetLoaderSpringDataE extends TPCHDatasetLoader {
         }
 
         System.out.println("ordersEWithLineitems inserted!");
+    }
+
+    public static void loadOrdersEWithLineitemsArrayAsTags(String filePathOrders, String filePathLineitems, ReactiveCouchbaseTemplate reactiveCouchbaseTemplate) {
+
+        List<String[]> orders = readDataFromCustomSeparator(filePathOrders);
+        List<String[]> lineitems = readDataFromCustomSeparator(filePathLineitems);
+        String[] linetemsRow2 = lineitems.get(1); // 2nd row — used as source of unique tag values
+
+        LongAdder counter = new LongAdder();
+        int total = orders.size();
+
+        List<OrdersEWithLineitemsArrayAsTags> orderInstances = orders
+                .parallelStream()
+                .map(row -> {
+                    counter.increment();
+                    long current = counter.sum();
+
+                    if (current % 10_000 == 0) {
+                        System.out.println("Processed " + current + " / " + total);
+                    }
+
+                    return new OrdersEWithLineitemsArrayAsTags(
+                            Integer.parseInt(row[0]),
+                            LocalDate.parse(row[4]),
+                            Arrays.asList(getShuffledLineitemsTagsFromRow(linetemsRow2, Integer.parseInt(row[0])))
+                    );
+                })
+                .toList();
+
+        var batches = partition(orderInstances, 10_000);
+
+        System.out.println("Inserting many ordersEWithLineitemsArrayAsTags!");
+
+        for (int i = 0; i < batches.size(); i++) {
+            saveManyDocuments(batches.get(i), reactiveCouchbaseTemplate);
+            System.out.println("Batch inserted! " + (i + 1) + "/" + batches.size());
+        }
+
+        System.out.println("ordersEWithLineitemsArrayAsTags inserted!");
     }
 
     public static List<OrdersE> createOrders(String filePath, ReactiveCouchbaseTemplate reactiveCouchbaseTemplate) {

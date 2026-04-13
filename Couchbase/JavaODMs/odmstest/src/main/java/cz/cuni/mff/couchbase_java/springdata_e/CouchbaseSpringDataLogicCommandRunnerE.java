@@ -7,6 +7,7 @@ import cz.cuni.mff.couchbase_java.springdata_e.benchmarks.QueriesSpringDataE;
 import cz.cuni.mff.couchbase_java.springdata_e.models.CustomerEWithOrders;
 import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersE;
 import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersEWithLineitems;
+import cz.cuni.mff.couchbase_java.springdata_e.models.OrdersEWithLineitemsArrayAsTags;
 import cz.cuni.mff.couchbase_java.springdata_e.service.LogicServiceE;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +48,8 @@ public class CouchbaseSpringDataLogicCommandRunnerE {
             // Create Collections
             SpringDataCouchbaseClusterManagement.createCollection("spring_scope_e", "CustomerEWithOrders", bucket);
             SpringDataCouchbaseClusterManagement.createCollection("spring_scope_e", "OrdersEWithLineitems", bucket);
+            SpringDataCouchbaseClusterManagement.createCollection("spring_scope_e", "OrdersEWithLineitemsArrayAsTags", bucket);
+
 
             // Create Indexes - DEPRECATED
             //SpringDataCouchbaseClusterManagement.createIndex(cluster, "spring_bucket_e", "spring_scope_e", "CustomerEWithOrders", "s_nationkey");
@@ -57,15 +60,23 @@ public class CouchbaseSpringDataLogicCommandRunnerE {
             // Create Indexes
             CustomerEWithOrders.createIndexes(cluster);
             OrdersEWithLineitems.createIndexes(cluster);
+            OrdersEWithLineitemsArrayAsTags.createIndexes(cluster);
 
 
 
-            var res = QueriesSpringDataE.R2(cluster);
+            var res = QueriesSpringDataE.R3(cluster);
             System.out.println(res.get(0));
             System.out.println(res.size());
 
 
             /*
+            TPCHDatasetLoaderSpringDataE.loadOrdersEWithLineitemsArrayAsTags(
+                    "../../../dataset/TPC-H/tpch-data/orders.tbl",
+                    "../../../dataset/TPC-H/tpch-data/lineitem.tbl",
+                    reactiveCouchbaseTemplate
+            );
+
+
             var lineitemsE = TPCHDatasetLoaderSpringDataE.createLineitemsE("../../../dataset/TPC-H/tpch-data/lineitem.tbl");
             TPCHDatasetLoaderSpringDataE.loadOrdersEWithLineitems("../../../dataset/TPC-H/tpch-data/orders.tbl", lineitemsE, reactiveCouchbaseTemplate);
 
