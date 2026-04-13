@@ -41,7 +41,7 @@ async function run(){
 
 
     console.log("Query:")
-    const res = await queriesE.R8();
+    const res = await queriesE.R9();
     console.log(res[0])
     console.log(res.length)
 

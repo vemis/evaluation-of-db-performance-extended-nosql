@@ -193,6 +193,28 @@ async function R8(){
     return r8.rows;
 }
 
+/**
+ * ### R9) Aggregation on Embedded Array — Sum Revenue per Order
+ *
+ * Test aggregation on embedded arrays (equivalent of MongoDB $unwind + $group + $sum).
+ * In Couchbase N1QL, UNNEST replaces $unwind and GROUP BY + SUM replaces $group + $sum.
+ * ```sql
+ * SELECT META(o).id AS o_orderkey, SUM(l.l_extendedprice) AS totalRevenue
+ * FROM ottoman_bucket_e.ottoman_scope_e.OrdersEWithLineitems AS o
+ * UNNEST o.o_lineitems AS l
+ * GROUP BY META(o).id
+ * ```
+ */
+async function R9(){
+    const r9 = await ottoman.getDefaultInstance().query(
+        `SELECT META(o).id AS o_orderkey, SUM(l.l_extendedprice) AS totalRevenue
+         FROM ottoman_bucket_e.ottoman_scope_e.OrdersEWithLineitems AS o
+         UNNEST o.o_lineitems AS l
+         GROUP BY META(o).id`
+    )
+    return r9.rows;
+}
+
 export {
     C2,
     R1,
@@ -202,5 +224,6 @@ export {
     R5,
     R6,
     R7,
-    R8
+    R8,
+    R9
 }
