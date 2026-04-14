@@ -2,3 +2,9 @@
 .idea/
 target/
 .vscode/
+
+# ignore every CLAUDE.md file
+**/CLAUDE.md
+
+# ignore readme files for Claude
+readme/
