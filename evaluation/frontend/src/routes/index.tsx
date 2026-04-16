@@ -7,13 +7,13 @@ import {
   Input,
   Select,
   Typography,
-  type CheckboxOptionType,
 } from 'antd'
 import { useQueryEndpoints } from '../hooks/useQueryEndpoints'
 import { useState } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { format } from 'sql-formatter'
+import { SERVICES } from '../types'
 
 export const Route = createFileRoute('/')({
   component: Home,
@@ -21,36 +21,7 @@ export const Route = createFileRoute('/')({
 
 const { Title } = Typography
 
-const options: CheckboxOptionType<string>[] = [
-  {
-    label: 'MyBatis',
-    value: 'myBatis',
-  },
-  {
-    label: 'JOOQ',
-    value: 'jooq',
-  },
-  {
-    label: 'JDBC',
-    value: 'jdbc',
-  },
-  {
-    label: 'Ebean',
-    value: 'ebean',
-  },
-  {
-    label: 'Cayenne',
-    value: 'cayenne',
-  },
-  {
-    label: 'Spring Data JPA',
-    value: 'springDataJpa',
-  },
-  {
-    label: 'Morphia (MongoDB)',
-    value: 'morphia',
-  },
-]
+const options = SERVICES.map(({ id, label }) => ({ label, value: id }))
 
 function Home() {
   const [form] = Form.useForm()

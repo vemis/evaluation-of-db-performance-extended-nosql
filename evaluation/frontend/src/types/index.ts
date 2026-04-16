@@ -4,17 +4,22 @@ export type OrchestratorQueryType = {
   repetitions?: number
 }
 
+export const SERVICES = [
+  { id: 'myBatis',      label: 'MyBatis' },
+  { id: 'jooq',         label: 'JOOQ' },
+  { id: 'jdbc',         label: 'JDBC' },
+  { id: 'ebean',        label: 'Ebean' },
+  { id: 'cayenne',      label: 'Cayenne' },
+  { id: 'springDataJpa', label: 'Spring Data JPA' },
+  { id: 'morphia',      label: 'Morphia (MongoDB)' },
+] as const
+
+export type ServiceId = (typeof SERVICES)[number]['id']
+
 export type OrchestratorType = {
   query: string
   description: string
-  cayenne?: MetricType
-  ebean?: MetricType
-  jooq?: MetricType
-  jdbc?: MetricType
-  myBatis?: MetricType
-  springDataJpa?: MetricType
-  morphia?: MetricType
-}
+} & Partial<Record<ServiceId, MetricType>>
 
 type JfrType = {
   gcCount: number

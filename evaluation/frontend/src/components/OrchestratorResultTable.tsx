@@ -1,9 +1,14 @@
 import { Button, Carousel, Table } from 'antd'
 import type { OrchestratorType } from '../types'
+import { SERVICES } from '../types'
 import { Column } from '@ant-design/plots'
 import styles from './OrchestratorResultTable.module.scss'
 import Title from 'antd/es/typography/Title'
 import { exportOrchestratorCsv } from '../service/utils'
+
+const ormNames: Record<string, string> = Object.fromEntries(
+  SERVICES.map(({ id, label }) => [id, label]),
+)
 
 export const OrchestratorResultTable: React.FC<{
   data: OrchestratorType
@@ -44,16 +49,6 @@ export const OrchestratorResultTable: React.FC<{
     },
   ]
 
-  const ormNames: Record<string, string> = {
-    cayenne: 'Cayenne',
-    ebean: 'Ebean',
-    jooq: 'JOOQ',
-    jdbc: 'JDBC',
-    myBatis: 'MyBatis',
-    springDataJpa: 'Spring Data JPA',
-    morphia: 'Morphia (MongoDB)',
-  }
-
   const rows = Object.entries(data)
     .filter(
       ([key, value]) =>
@@ -89,7 +84,7 @@ export const OrchestratorResultTable: React.FC<{
     minMemoryUsage: value?.minMemoryUsage,
   }))
 
-  const chartConfig = {
+  const baseChartConfig = {
     width: 600,
     height: 400,
     lazyLoad: true,
@@ -103,44 +98,14 @@ export const OrchestratorResultTable: React.FC<{
     },
   }
 
-  const timeChartConfig = {
-    data: chartData,
-    xField: 'name',
-    yField: 'averageExecutionTime',
-    ...chartConfig,
-  }
-
-  const memoryChartConfig = {
-    data: chartData,
-    xField: 'name',
-    yField: 'averageMemoryUsage',
-    ...chartConfig,
-  }
-
-  const maxExecutionTimeChartConfig = {
-    data: chartData,
-    xField: 'name',
-    yField: 'maxExecutionTime',
-    ...chartConfig,
-  }
-  const minExecutionTimeChartConfig = {
-    data: chartData,
-    xField: 'name',
-    yField: 'minExecutionTime',
-    ...chartConfig,
-  }
-  const maxMemoryUsageChartConfig = {
-    data: chartData,
-    xField: 'name',
-    yField: 'maxMemoryUsage',
-    ...chartConfig,
-  }
-  const minMemoryUsageChartConfig = {
-    data: chartData,
-    xField: 'name',
-    yField: 'minMemoryUsage',
-    ...chartConfig,
-  }
+  const charts: { title: string; yField: keyof (typeof chartData)[number] }[] = [
+    { title: 'Average Execution Time (ms)', yField: 'averageExecutionTime' },
+    { title: 'Average Memory Usage (B)',    yField: 'averageMemoryUsage' },
+    { title: 'Max Execution Time (ms)',     yField: 'maxExecutionTime' },
+    { title: 'Min Execution Time (ms)',     yField: 'minExecutionTime' },
+    { title: 'Max Memory Usage (B)',        yField: 'maxMemoryUsage' },
+    { title: 'Min Memory Usage (B)',        yField: 'minMemoryUsage' },
+  ]
 
   return (
     <div className={styles.container}>
@@ -183,54 +148,16 @@ export const OrchestratorResultTable: React.FC<{
           // autoplay
           // autoplaySpeed={5000}
         >
-          <div>
-            <div className={styles.slide}>
-              <Title level={3} className={styles.chartTitle}>
-                Average Execution Time (ms)
-              </Title>
-              <Column {...timeChartConfig} />
+          {charts.map(({ title, yField }) => (
+            <div key={yField}>
+              <div className={styles.slide}>
+                <Title level={3} className={styles.chartTitle}>
+                  {title}
+                </Title>
+                <Column data={chartData} xField="name" yField={yField} {...baseChartConfig} />
+              </div>
             </div>
-          </div>
-          <div>
-            <div className={styles.slide}>
-              <Title level={3} className={styles.chartTitle}>
-                Average Memory Usage (B)
-              </Title>
-              <Column {...memoryChartConfig} />
-            </div>
-          </div>
-          <div>
-            <div className={styles.slide}>
-              <Title level={3} className={styles.chartTitle}>
-                Max Execution Time (ms)
-              </Title>
-              <Column {...maxExecutionTimeChartConfig} />
-            </div>
-          </div>
-          <div>
-            <div className={styles.slide}>
-              <Title level={3} className={styles.chartTitle}>
-                Min Execution Time (ms)
-              </Title>
-              <Column {...minExecutionTimeChartConfig} />
-            </div>
-          </div>
-          <div>
-            <div className={styles.slide}>
-              <Title level={3} className={styles.chartTitle}>
-                Max Memory Usage (B)
-              </Title>
-              <Column {...maxMemoryUsageChartConfig} />
-            </div>
-          </div>
-          <div>
-            <div className={styles.slide}>
-              <Title level={3} className={styles.chartTitle}>
-                Min Memory Usage (B)
-              </Title>
-              <Column {...minMemoryUsageChartConfig} />
-            </div>
-          </div>
+          ))}
         </Carousel>
       </div>
     </div>
