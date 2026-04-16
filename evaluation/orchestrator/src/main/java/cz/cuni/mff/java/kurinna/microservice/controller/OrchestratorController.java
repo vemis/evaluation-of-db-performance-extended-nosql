@@ -4,6 +4,7 @@ import cz.cuni.mff.java.kurinna.microservice.service.CayenneService;
 import cz.cuni.mff.java.kurinna.microservice.service.EbeanService;
 import cz.cuni.mff.java.kurinna.microservice.service.JdbcService;
 import cz.cuni.mff.java.kurinna.microservice.service.JooqService;
+import cz.cuni.mff.java.kurinna.microservice.service.MorphiaService;
 import cz.cuni.mff.java.kurinna.microservice.service.MyBatisService;
 import cz.cuni.mff.java.kurinna.microservice.service.SpringDataJpaService;
 import org.springframework.http.MediaType;
@@ -24,17 +25,20 @@ public class OrchestratorController {
     private final EbeanService ebeanService;
     private final JdbcService jdbcService;
     private final JooqService jooqService;
+    private final MorphiaService morphiaService;
 
     public OrchestratorController(MyBatisService myBatisService,
             SpringDataJpaService springDataJpaService,
             CayenneService cayenneService, EbeanService ebeanService,
-            JdbcService jdbcService, JooqService jooqService) {
+            JdbcService jdbcService, JooqService jooqService,
+            MorphiaService morphiaService) {
         this.myBatisService = myBatisService;
         this.springDataJpaService = springDataJpaService;
         this.cayenneService = cayenneService;
         this.ebeanService = ebeanService;
         this.jdbcService = jdbcService;
         this.jooqService = jooqService;
+        this.morphiaService = morphiaService;
     }
 
     private Set<String> parseServices(Optional<String> servicesOpt) {
@@ -77,7 +81,8 @@ public class OrchestratorController {
                 () -> cayenneService.getPricingSummary(rep),
                 () -> ebeanService.getPricingSummary(rep),
                 () -> jdbcService.getPricingSummary(rep),
-                () -> jooqService.getPricingSummary(rep));
+                () -> jooqService.getPricingSummary(rep),
+                () -> morphiaService.getPricingSummary(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -96,7 +101,8 @@ public class OrchestratorController {
                 () -> cayenneService.getMinimumCostSupplier(rep),
                 () -> ebeanService.getMinimumCostSupplier(rep),
                 () -> jdbcService.getMinimumCostSupplier(rep),
-                () -> jooqService.getMinimumCostSupplier(rep));
+                () -> jooqService.getMinimumCostSupplier(rep),
+                () -> morphiaService.getMinimumCostSupplier(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -115,7 +121,8 @@ public class OrchestratorController {
                 () -> cayenneService.getShippingPriority(rep),
                 () -> ebeanService.getShippingPriority(rep),
                 () -> jdbcService.getShippingPriority(rep),
-                () -> jooqService.getShippingPriority(rep));
+                () -> jooqService.getShippingPriority(rep),
+                () -> morphiaService.getShippingPriority(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -134,7 +141,8 @@ public class OrchestratorController {
                 () -> cayenneService.getOrderPriorityChecking(rep),
                 () -> ebeanService.getOrderPriorityChecking(rep),
                 () -> jdbcService.getOrderPriorityChecking(rep),
-                () -> jooqService.getOrderPriorityChecking(rep));
+                () -> jooqService.getOrderPriorityChecking(rep),
+                () -> morphiaService.getOrderPriorityChecking(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -153,7 +161,8 @@ public class OrchestratorController {
                 () -> cayenneService.getLocalSupplierVolume(rep),
                 () -> ebeanService.getLocalSupplierVolume(rep),
                 () -> jdbcService.getLocalSupplierVolume(rep),
-                () -> jooqService.getLocalSupplierVolume(rep));
+                () -> jooqService.getLocalSupplierVolume(rep),
+                () -> morphiaService.getLocalSupplierVolume(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -172,7 +181,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryA1(rep),
                 () -> ebeanService.executeQueryA1(rep),
                 () -> jdbcService.executeQueryA1(rep),
-                () -> jooqService.executeQueryA1(rep));
+                () -> jooqService.executeQueryA1(rep),
+                () -> morphiaService.executeQueryA1(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -191,7 +201,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryA2(rep),
                 () -> ebeanService.executeQueryA2(rep),
                 () -> jdbcService.executeQueryA2(rep),
-                () -> jooqService.executeQueryA2(rep));
+                () -> jooqService.executeQueryA2(rep),
+                () -> morphiaService.executeQueryA2(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -208,7 +219,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryA3(rep),
                 () -> ebeanService.executeQueryA3(rep),
                 () -> jdbcService.executeQueryA3(rep),
-                () -> jooqService.executeQueryA3(rep));
+                () -> jooqService.executeQueryA3(rep),
+                () -> morphiaService.executeQueryA3(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -227,7 +239,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryA4(rep),
                 () -> ebeanService.executeQueryA4(rep),
                 () -> jdbcService.executeQueryA4(rep),
-                () -> jooqService.executeQueryA4(rep));
+                () -> jooqService.executeQueryA4(rep),
+                () -> morphiaService.executeQueryA4(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -248,7 +261,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryB1(rep),
                 () -> ebeanService.executeQueryB1(rep),
                 () -> jdbcService.executeQueryB1(rep),
-                () -> jooqService.executeQueryB1(rep));
+                () -> jooqService.executeQueryB1(rep),
+                () -> morphiaService.executeQueryB1(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -267,7 +281,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryB2(rep),
                 () -> ebeanService.executeQueryB2(rep),
                 () -> jdbcService.executeQueryB2(rep),
-                () -> jooqService.executeQueryB2(rep));
+                () -> jooqService.executeQueryB2(rep),
+                () -> morphiaService.executeQueryB2(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -288,7 +303,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryC1(rep),
                 () -> ebeanService.executeQueryC1(rep),
                 () -> jdbcService.executeQueryC1(rep),
-                () -> jooqService.executeQueryC1(rep));
+                () -> jooqService.executeQueryC1(rep),
+                () -> morphiaService.executeQueryC1(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -307,7 +323,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryC2(rep),
                 () -> ebeanService.executeQueryC2(rep),
                 () -> jdbcService.executeQueryC2(rep),
-                () -> jooqService.executeQueryC2(rep));
+                () -> jooqService.executeQueryC2(rep),
+                () -> morphiaService.executeQueryC2(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -326,7 +343,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryC3(rep),
                 () -> ebeanService.executeQueryC3(rep),
                 () -> jdbcService.executeQueryC3(rep),
-                () -> jooqService.executeQueryC3(rep));
+                () -> jooqService.executeQueryC3(rep),
+                () -> morphiaService.executeQueryC3(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -345,7 +363,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryC4(rep),
                 () -> ebeanService.executeQueryC4(rep),
                 () -> jdbcService.executeQueryC4(rep),
-                () -> jooqService.executeQueryC4(rep));
+                () -> jooqService.executeQueryC4(rep),
+                () -> morphiaService.executeQueryC4(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -364,7 +383,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryC5(rep),
                 () -> ebeanService.executeQueryC5(rep),
                 () -> jdbcService.executeQueryC5(rep),
-                () -> jooqService.executeQueryC5(rep));
+                () -> jooqService.executeQueryC5(rep),
+                () -> morphiaService.executeQueryC5(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -385,7 +405,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryD1(rep),
                 () -> ebeanService.executeQueryD1(rep),
                 () -> jdbcService.executeQueryD1(rep),
-                () -> jooqService.executeQueryD1(rep));
+                () -> jooqService.executeQueryD1(rep),
+                () -> morphiaService.executeQueryD1(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -404,7 +425,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryD2(rep),
                 () -> ebeanService.executeQueryD2(rep),
                 () -> jdbcService.executeQueryD2(rep),
-                () -> jooqService.executeQueryD2(rep));
+                () -> jooqService.executeQueryD2(rep),
+                () -> morphiaService.executeQueryD2(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -423,7 +445,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryD3(rep),
                 () -> ebeanService.executeQueryD3(rep),
                 () -> jdbcService.executeQueryD3(rep),
-                () -> jooqService.executeQueryD3(rep));
+                () -> jooqService.executeQueryD3(rep),
+                () -> morphiaService.executeQueryD3(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -444,7 +467,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryE1(rep),
                 () -> ebeanService.executeQueryE1(rep),
                 () -> jdbcService.executeQueryE1(rep),
-                () -> jooqService.executeQueryE1(rep));
+                () -> jooqService.executeQueryE1(rep),
+                () -> morphiaService.executeQueryE1(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -463,7 +487,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryE2(rep),
                 () -> ebeanService.executeQueryE2(rep),
                 () -> jdbcService.executeQueryE2(rep),
-                () -> jooqService.executeQueryE2(rep));
+                () -> jooqService.executeQueryE2(rep),
+                () -> morphiaService.executeQueryE2(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -482,7 +507,8 @@ public class OrchestratorController {
                 () -> cayenneService.executeQueryE3(rep),
                 () -> ebeanService.executeQueryE3(rep),
                 () -> jdbcService.executeQueryE3(rep),
-                () -> jooqService.executeQueryE3(rep));
+                () -> jooqService.executeQueryE3(rep),
+                () -> morphiaService.executeQueryE3(rep));
         return ResponseEntity.ok(results);
     }
 
@@ -507,14 +533,16 @@ public class OrchestratorController {
             ServiceCall cayenneCall,
             ServiceCall ebeanCall,
             ServiceCall jdbcCall,
-            ServiceCall jooqCall) {
+            ServiceCall jooqCall,
+            ServiceCall morphiaCall) {
 
-        if (services.contains("myBatis"))      runService("myBatis",      myBatisCall,      results);
+        if (services.contains("myBatis"))       runService("myBatis",       myBatisCall,       results);
         if (services.contains("springDataJpa")) runService("springDataJpa", springDataJpaCall, results);
-        if (services.contains("cayenne"))      runService("cayenne",      cayenneCall,      results);
-        if (services.contains("ebean"))        runService("ebean",        ebeanCall,        results);
-        if (services.contains("jdbc"))         runService("jdbc",         jdbcCall,         results);
-        if (services.contains("jooq"))         runService("jooq",         jooqCall,         results);
+        if (services.contains("cayenne"))       runService("cayenne",       cayenneCall,       results);
+        if (services.contains("ebean"))         runService("ebean",         ebeanCall,         results);
+        if (services.contains("jdbc"))          runService("jdbc",          jdbcCall,          results);
+        if (services.contains("jooq"))          runService("jooq",          jooqCall,          results);
+        if (services.contains("morphia"))       runService("morphia",       morphiaCall,       results);
     }
 
     /**

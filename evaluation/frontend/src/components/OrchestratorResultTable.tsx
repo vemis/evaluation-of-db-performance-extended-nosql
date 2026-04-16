@@ -51,6 +51,7 @@ export const OrchestratorResultTable: React.FC<{
     jdbc: 'JDBC',
     myBatis: 'MyBatis',
     springDataJpa: 'Spring Data JPA',
+    morphia: 'Morphia (MongoDB)',
   }
 
   const rows = Object.entries(data)

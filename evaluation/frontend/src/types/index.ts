@@ -13,6 +13,7 @@ export type OrchestratorType = {
   jdbc?: MetricType
   myBatis?: MetricType
   springDataJpa?: MetricType
+  morphia?: MetricType
 }
 
 type JfrType = {

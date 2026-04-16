@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class Utils {
     public static final String[] ALL_SERVICES = new String[] {
-            "ebean", "cayenne", "jdbc", "jooq", "myBatis", "springDataJpa"
+            "ebean", "cayenne", "jdbc", "jooq", "myBatis", "springDataJpa", "morphia"
     };
 
     public static final String[] ALL_QUERIES = new String[] {

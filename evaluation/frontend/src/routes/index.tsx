@@ -46,6 +46,10 @@ const options: CheckboxOptionType<string>[] = [
     label: 'Spring Data JPA',
     value: 'springDataJpa',
   },
+  {
+    label: 'Morphia (MongoDB)',
+    value: 'morphia',
+  },
 ]
 
 function Home() {
