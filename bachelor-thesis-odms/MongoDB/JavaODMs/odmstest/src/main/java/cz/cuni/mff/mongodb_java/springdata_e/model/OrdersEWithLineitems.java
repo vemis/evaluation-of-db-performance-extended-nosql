@@ -23,7 +23,7 @@ public class OrdersEWithLineitems {
     @Indexed
     private int o_custkey;
     private String o_orderstatus;
-    private String o_totalprice;
+    private double o_totalprice;
     private LocalDate o_orderdate;
     private String o_orderpriority;
     private String o_clerk;
@@ -34,7 +34,7 @@ public class OrdersEWithLineitems {
 
     public OrdersEWithLineitems() {}
 
-    public OrdersEWithLineitems(int o_orderkey, int o_custkey, String o_orderstatus, String o_totalprice,
+    public OrdersEWithLineitems(int o_orderkey, int o_custkey, String o_orderstatus, double o_totalprice,
                                 LocalDate o_orderdate, String o_orderpriority, String o_clerk,
                                 String o_shippriority, String o_comment, List<LineitemE> o_lineitems) {
         this.o_orderkey = o_orderkey;

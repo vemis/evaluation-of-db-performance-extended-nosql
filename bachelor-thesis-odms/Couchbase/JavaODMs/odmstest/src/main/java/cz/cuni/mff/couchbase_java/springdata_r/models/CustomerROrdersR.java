@@ -4,7 +4,7 @@ public class CustomerROrdersR {
 
     private String cName;
     private String oOrderDate;
-    private String oTotalPrice;
+    private double oTotalPrice;
     //private String id;
 
     public CustomerROrdersR() {
@@ -26,11 +26,11 @@ public class CustomerROrdersR {
         this.oOrderDate = oOrderDate;
     }
 
-    public String getOTotalPrice() {
+    public double getOTotalPrice() {
         return oTotalPrice;
     }
 
-    public void setOTotalPrice(String oTotalPrice) {
+    public void setOTotalPrice(double oTotalPrice) {
         this.oTotalPrice = oTotalPrice;
     }
 
