@@ -17,6 +17,7 @@
       <module>microservice-mysql-mybatis</module>
       <module>microservice-mysql-springdatajpa</module>
       <module>orchestrator</module>
+      <module>microservice-mongodb-morphia-java</module>
   </modules>
   <properties>
       <java.version>21</java.version>
