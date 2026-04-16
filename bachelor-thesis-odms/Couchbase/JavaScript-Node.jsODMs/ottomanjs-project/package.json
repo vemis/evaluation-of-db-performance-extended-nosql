@@ -1,0 +1,16 @@
+{
+  "name": "ottoman-couchbase-project",
+  "version": "1.0.0",
+  "description": "A Couchbase Ottoman.js version of the Spring Data MongoDB project",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "benchmark": "^2.1.4",
+    "couchbase": "^4.6.0",
+    "ottoman": "^2.5.3",
+    "seedrandom": "^3.0.5"
+  }
+}

@@ -1,0 +1,117 @@
+package cz.cuni.mff.mongodb_java.morphia;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import cz.cuni.mff.mongodb_java.morphia.benchmarks.QueriesMorphiaE;
+import dev.morphia.Datastore;
+import dev.morphia.Morphia;
+import dev.morphia.mapping.MapperOptions;
+
+
+public class MainE {
+    public static void main(String[] args){
+        // 1. Create a MongoClient (connects to local MongoDB by default)
+        MongoClient client = MongoClients.create("mongodb://localhost:27017");
+
+        // 2. Configure Morphia
+        MapperOptions options = MapperOptions.builder()
+                .storeNulls(false)     // <-- THIS makes Morphia write null values
+                .build();
+
+        // 3. Create a Datastore instance
+        Datastore datastore = Morphia.createDatastore(client, "morphia_database_tpch_embedded", options);
+
+        // 4. Tell Morphia to discover your entity classes
+        datastore.getMapper().mapPackage("cz.cuni.mff.mongodb_java.morphia.models.tpc_h_embedded");
+
+        datastore.ensureIndexes();
+
+        System.out.println("Morphia initialized!");
+
+
+        var res = QueriesMorphiaE.R9(datastore);
+        System.out.println(res.get(0));
+        System.out.println(res.size());
+
+
+
+        /*
+        TPCHDatasetLoaderMorphiaE.loadOrdersEOnlyOCommentIndexed("..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl", datastore);
+
+        TPCHDatasetLoaderMorphiaE.loadOrdersEOnlyOComment("..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl", datastore);
+
+
+        TPCHDatasetLoaderMorphiaE.loadOrdersEWithCustomerWithNationWithRegion(
+                "..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl",
+                "..\\..\\..\\dataset\\TPC-H\\tpch-data\\customer.tbl",
+                "..\\..\\..\\dataset\\TPC-H\\tpch-data\\nation.tbl",
+                "..\\..\\..\\dataset\\TPC-H\\tpch-data\\region.tbl",
+                datastore
+        );
+
+
+
+        TPCHDatasetLoaderMorphiaE.loadOrdersEWithLineitemsArrayAsTagsindexed(
+                "..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl",
+                "..\\..\\..\\dataset\\TPC-H\\tpch-data\\lineitem.tbl",
+                datastore);
+
+        TPCHDatasetLoaderMorphiaE.loadOrdersEWithLineitemsArrayAsTags(
+                "..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl",
+                "..\\..\\..\\dataset\\TPC-H\\tpch-data\\lineitem.tbl",
+                datastore);
+
+        var lineitemsE = TPCHDatasetLoaderMorphiaE.createLineitemsE("..\\..\\..\\dataset\\TPC-H\\tpch-data\\lineitem.tbl", datastore);
+        System.out.println(lineitemsE.size());
+
+        TPCHDatasetLoaderMorphiaE.loadOrdersEWithLineitems("..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl", lineitemsE ,datastore);
+        System.out.println("OrdersEWithLineitems loaded");
+        */
+
+
+        /*
+        var orders = TPCHDatasetLoaderMorphiaE.loadOrders("..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl", datastore);
+        System.out.println("OrderEs created!");
+        */
+
+        /*
+        ArrayList<Double> totalprices = new ArrayList<>();
+        for(var order : orders){
+            totalprices.add(order.o_totalprice);
+        }
+        Collections.sort(totalprices);
+        for (int i = 0; i < 5; i++) {
+            System.out.println(i + " - " + totalprices.get(i));
+        }
+        System.out.println(totalprices.get(  totalprices.size() / 2    ));
+        System.out.println(totalprices.get(   (int)(totalprices.size() * 0.9)    ));
+        System.out.println( totalprices.size() );
+        */
+
+        /*
+        // Create Customers
+        TPCHDatasetLoaderMorphiaE.loadCustomersEWithOrders("..\\..\\..\\dataset\\TPC-H\\tpch-data\\customer.tbl", orders ,datastore);
+        System.out.println("CustomerEs created!");
+        */
+
+        /*
+        // Create Orders
+        var orders = TPCHDatasetLoaderMorphiaE.loadOrders("..\\..\\..\\dataset\\TPC-H\\tpch-data\\orders.tbl", datastore);
+        System.out.println("OrderEs created!");
+
+        // Create Customers
+        var customers = TPCHDatasetLoaderMorphiaE.loadCustomers("..\\..\\..\\dataset\\TPC-H\\tpch-data\\customer.tbl", orders ,datastore);
+        System.out.println("CustomerEs created!");
+
+        // Create Nations
+        TPCHDatasetLoaderMorphiaE.loadNations("..\\..\\..\\dataset\\TPC-H\\tpch-data\\nation.tbl", customers,  datastore);
+        System.out.println("NationEs created!");
+*/
+        // Create Regions
+        // WARNING: I AM LOADING ALL THE DATA TO ALL THE ENTITIES
+        // -> EVERY CUSTOMER HAVE EVERY ORDER AND SO ON....
+        // INSTEAD OF EVERY CUSTOMER HAVE HIS ORDERS
+        //TPCHDatasetLoaderMorphiaE.loadRegions("..\\..\\..\\dataset\\TPC-H\\tpch-data\\region.tbl", nations, datastore);
+        //System.out.println("RegionEs saved!");
+    }
+}

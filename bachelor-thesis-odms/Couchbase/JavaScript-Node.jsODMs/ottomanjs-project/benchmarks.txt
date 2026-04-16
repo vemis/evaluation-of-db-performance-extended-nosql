@@ -1,0 +1,23 @@
+Connected to Couchbase!
+Ottoman initialized!
+A1:
+Ops/sec: 0.00
+Average time per op: 220113.647 ms
+---------------
+A2:
+Ops/sec: 0.08
+Average time per op: 12577.724 ms
+---------------
+B1:
+Ops/sec: 0.10
+Average time per op: 9653.446 ms
+---------------
+C2:
+Ops/sec: 0.10
+Average time per op: 9905.980 ms
+---------------
+D1:
+Ops/sec: 1.33
+Average time per op: 751.370 ms
+---------------
+Fastest is D1
