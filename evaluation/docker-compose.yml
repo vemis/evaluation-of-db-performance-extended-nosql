@@ -149,6 +149,23 @@ services:
       db:
         condition: service_healthy
 
+  microservice-mongodb-morphia-java:
+    build:
+      context: .
+      dockerfile: microservice-mongodb-morphia-java/Dockerfile
+    container_name: ms-mongodb-morphia-java
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DATABASE: morphia_tpch_relational
+      EUREKA_URL: http://eureka-server:8761/eureka
+      TPCH_DATA_PATH: /data/tpch-data-small
+    ports:
+      - "8086:8086"
+    depends_on:
+      - mongodb
+      - eureka-server
+
   orchestrator:
     build: ./orchestrator
     container_name: orchestrator
