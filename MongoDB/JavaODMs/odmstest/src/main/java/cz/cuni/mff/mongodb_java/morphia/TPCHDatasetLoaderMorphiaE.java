@@ -330,7 +330,7 @@ public class TPCHDatasetLoaderMorphiaE extends TPCHDatasetLoader {
                             Integer.parseInt(row[0]),
                             Integer.parseInt(row[1]),
                             row[2],
-                            row[4],
+                            Double.parseDouble(row[3]),
                             LocalDate.parse(row[4]),
                             row[5],
                             row[6],

@@ -120,7 +120,7 @@ public class TPCHDatasetLoaderMorphiaR extends TPCHDatasetLoader {
                             Integer.parseInt(row[0]),
                             Integer.parseInt(row[1]),
                             row[2],
-                            row[4],
+                            Double.parseDouble(row[3]),
                             LocalDate.parse(row[4]),
                             row[5],
                             row[6],
@@ -147,7 +147,7 @@ public class TPCHDatasetLoaderMorphiaR extends TPCHDatasetLoader {
         System.out.println("orders inserted!");
     }
 
-    @Deprecated
+    /*@Deprecated
     public static void loadOrdersDEPRECATED(String filePath, Datastore datastore) {
 
         List<String[]> orders = readDataFromCustomSeparator(filePath);
@@ -173,7 +173,7 @@ public class TPCHDatasetLoaderMorphiaR extends TPCHDatasetLoader {
             orderInstances.add(customer);
         }
         datastore.save(orderInstances);
-    }
+    }*/
 
 
     public static void loadLineitems(String filePath, Datastore datastore) {
