@@ -30,7 +30,7 @@ public class MorphiaConfig {
                 .build();
 
         Datastore datastore = Morphia.createDatastore(mongoClient, database, options);
-        datastore.getMapper().mapPackage("cz.cuni.mff.java.microservice.models");
+        datastore.getMapper().mapPackage("cz.cuni.mff.java.microservice.model");
         datastore.ensureIndexes();
         return datastore;
     }

@@ -1,6 +1,6 @@
 package cz.cuni.mff.java.microservice.repository;
 
-import cz.cuni.mff.java.microservice.models.relational.*;
+import cz.cuni.mff.java.microservice.model.relational.*;
 import dev.morphia.Datastore;
 import dev.morphia.aggregation.expressions.*;
 import dev.morphia.aggregation.stages.*;

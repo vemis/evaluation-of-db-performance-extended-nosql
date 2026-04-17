@@ -1,23 +1,18 @@
-package cz.cuni.mff.java.microservice.models.relational;
+package cz.cuni.mff.java.microservice.model.embedded;
 
-import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
-import dev.morphia.annotations.Indexed;
+import dev.morphia.annotations.Embedded;
+import dev.morphia.annotations.Property;
 
 import java.time.LocalDate;
 
-@Entity("lineitemR")
-public class LineitemR {
-    @Id
-    private String l_id;
-    @Indexed
-    private int l_orderkey;
-    @Indexed
-    private int l_partkey;
-    @Indexed
-    private int l_suppkey;
-    @Indexed
-    private String l_ps_id;
+@Embedded
+public class LineitemE {
+    @Property private String l_id;
+    @Property private int l_orderkey;
+    @Property private int l_partkey;
+    @Property private int l_suppkey;
+    @Property private String l_ps_id;
+
     private int l_linenumber;
     private int l_quantity;
     private double l_extendedprice;
@@ -25,7 +20,6 @@ public class LineitemR {
     private double l_tax;
     private String l_returnflag;
     private String l_linestatus;
-    @Indexed
     private LocalDate l_shipdate;
     private LocalDate l_commitdate;
     private LocalDate l_receiptdate;
@@ -33,14 +27,14 @@ public class LineitemR {
     private String l_shipmode;
     private String l_comment;
 
-    public LineitemR() {}
+    public LineitemE() {}
 
-    public LineitemR(int l_orderkey, int l_partkey, int l_suppkey, int l_linenumber,
+    public LineitemE(int l_orderkey, int l_partkey, int l_suppkey, int l_linenumber,
                      int l_quantity, double l_extendedprice, double l_discount, double l_tax,
                      String l_returnflag, String l_linestatus, LocalDate l_shipdate,
                      LocalDate l_commitdate, LocalDate l_receiptdate,
                      String l_shipinstruct, String l_shipmode, String l_comment) {
-        this.l_id = l_orderkey + "_" + l_linenumber;
+        this.l_id = l_orderkey + "" + l_linenumber;
         this.l_ps_id = l_partkey + "|" + l_suppkey;
         this.l_orderkey = l_orderkey;
         this.l_partkey = l_partkey;
@@ -59,4 +53,6 @@ public class LineitemR {
         this.l_shipmode = l_shipmode;
         this.l_comment = l_comment;
     }
+
+    public int get_l_orderkey() { return l_orderkey; }
 }

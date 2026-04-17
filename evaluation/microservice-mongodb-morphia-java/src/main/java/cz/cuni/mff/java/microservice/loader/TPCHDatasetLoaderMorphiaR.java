@@ -4,7 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.InsertManyOptions;
 import cz.cuni.mff.java.kurinna.common.loader.ITPCHDatasetLoaderR;
 import cz.cuni.mff.java.kurinna.common.utils.TPCHDatasetLoader;
-import cz.cuni.mff.java.microservice.models.relational.*;
+import cz.cuni.mff.java.microservice.model.relational.*;
 import dev.morphia.Datastore;
 import org.springframework.stereotype.Component;
 
