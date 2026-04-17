@@ -49,3 +49,19 @@ export const fetchQueryEndpoints = async (): Promise<QueryDescriptionType> => {
   const data = await response.json()
   return data
 }
+
+export const fetchEmbeddedQueryEndpoints = async (): Promise<string[]> => {
+  const response = await fetch(`${orchestratorUrl}/getEmbeddedQueryEndpoints`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error('Network response was not ok')
+  }
+
+  const data = await response.json()
+  return data
+}

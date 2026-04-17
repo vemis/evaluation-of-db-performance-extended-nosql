@@ -9,6 +9,7 @@ import {
   Typography,
 } from 'antd'
 import { useQueryEndpoints } from '../hooks/useQueryEndpoints'
+import { useEmbeddedQueryEndpoints } from '../hooks/useEmbeddedQueryEndpoints'
 import { useState, useEffect } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -21,14 +22,24 @@ export const Route = createFileRoute('/')({
 
 const { Title } = Typography
 
-const options = SERVICES.map(({ id, label }) => ({ label, value: id }))
-
 function Home() {
   const [form] = Form.useForm()
   const { data: queryEndpoints } = useQueryEndpoints()
+  const { data: embeddedQueryEndpoints } = useEmbeddedQueryEndpoints()
   const [selectedQuery, setSelectedQuery] = useState<string | undefined>()
   const [formattedQuery, setFormattedQuery] = useState<string>('')
   const navigate = useNavigate()
+
+  const isEmbeddedQuery =
+    !!selectedQuery &&
+    !!embeddedQueryEndpoints &&
+    embeddedQueryEndpoints.includes(selectedQuery)
+
+  const options = SERVICES.map(({ id, label, supportsEmbedded }) => ({
+    label,
+    value: id,
+    disabled: isEmbeddedQuery && !supportsEmbedded,
+  }))
 
   // useEffect is used, because it is going to make easier to implement
   // 'prettifier' like formators for other than SQL like strings
@@ -45,7 +56,18 @@ function Home() {
     }
   }, [selectedQuery, queryEndpoints])
 
-  const allValues = options.map((opt) => opt.value)
+  // When switching to an embedded query, remove non-supporting services from selection
+  useEffect(() => {
+    if (isEmbeddedQuery) {
+      const current: string[] = form.getFieldValue('items') || []
+      const filtered = current.filter((id) =>
+        SERVICES.find((s) => s.id === id && s.supportsEmbedded),
+      )
+      form.setFieldsValue({ items: filtered })
+    }
+  }, [isEmbeddedQuery, form])
+
+  const allValues: string[] = options.filter((o) => !o.disabled).map((opt) => opt.value)
   const queryOptions = Object.entries(queryEndpoints || {})
     .map(([key]) => ({
       label: key,
@@ -129,10 +151,12 @@ function Home() {
           {({ getFieldValue }) => {
             const querySelected = !!getFieldValue('query')
             const selectedList: string[] = getFieldValue('items') || []
-            const checkedCount = selectedList.length
-            const isAllChecked = checkedCount === allValues.length
+            const enabledSelectedCount = selectedList.filter((id) =>
+              allValues.includes(id),
+            ).length
+            const isAllChecked = enabledSelectedCount === allValues.length && allValues.length > 0
             const isIndeterminate =
-              checkedCount > 0 && checkedCount < allValues.length
+              enabledSelectedCount > 0 && enabledSelectedCount < allValues.length
 
             return (
               <>
