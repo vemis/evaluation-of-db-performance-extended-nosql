@@ -1,5 +1,7 @@
 package cz.cuni.mff.java.kurinna.microservice.utils;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +13,7 @@ public class Utils {
     /** Services that implement the embedded document model (r1–r9). */
     public static final String[] EMBEDDED_SERVICES = new String[] { "morphia" };
 
-    public static final String[] ALL_QUERIES = new String[] {
+    public static final String[] ALL_RELATIONAL_QUERIES = new String[] {
             "q1", "q2", "q3", "q4", "q5",
             "a1", "a2", "a3", "a4",
             "b1", "b2",
@@ -23,6 +25,8 @@ public class Utils {
     public static final String[] ALL_EMBEDDED_QUERIES = new String[] {
             "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9"
     };
+
+    public static final String[] ALL_QUERIES = ArrayUtils.addAll(ALL_RELATIONAL_QUERIES, ALL_EMBEDDED_QUERIES);
 
     public static final Map<String, String> EMBEDDED_QUERY_DESCRIPTIONS = Map.of(
             ALL_EMBEDDED_QUERIES[0], "db.ordersEWithLineitems.aggregate([{$match:{\"o_lineitems.l_quantity\":{$gt:5}}},{$project:{o_orderdate:1,\"o_lineitems.l_partkey\":1}}])",

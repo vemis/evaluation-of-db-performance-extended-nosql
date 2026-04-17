@@ -23,6 +23,11 @@ public class RootController {
         return ResponseEntity.ok(ALL_QUERIES);
     }
 
+    @GetMapping("/getEmbeddedQueryEndpoints")
+    public ResponseEntity<String[]> getEmbeddedQueryRoutes() {
+        return ResponseEntity.ok(ALL_EMBEDDED_QUERIES);
+    }
+
     @GetMapping("/getMicroserviceEndpoints")
     public ResponseEntity<String[]> getMicroserviceRoutes() {
         return ResponseEntity.ok(ALL_SERVICES);

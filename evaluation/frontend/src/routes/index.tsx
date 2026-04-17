@@ -9,7 +9,7 @@ import {
   Typography,
 } from 'antd'
 import { useQueryEndpoints } from '../hooks/useQueryEndpoints'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { format } from 'sql-formatter'
@@ -27,7 +27,23 @@ function Home() {
   const [form] = Form.useForm()
   const { data: queryEndpoints } = useQueryEndpoints()
   const [selectedQuery, setSelectedQuery] = useState<string | undefined>()
+  const [formattedQuery, setFormattedQuery] = useState<string>('')
   const navigate = useNavigate()
+
+  // useEffect is used, because it is going to make easier to implement
+  // 'prettifier' like formators for other than SQL like strings
+  useEffect(() => {
+    if (!selectedQuery || !queryEndpoints) {
+      setFormattedQuery('')
+      return
+    }
+    const raw = queryEndpoints[selectedQuery]
+    try {
+      setFormattedQuery(format(raw, { language: 'mysql' }))
+    } catch {
+      setFormattedQuery(raw)
+    }
+  }, [selectedQuery, queryEndpoints])
 
   const allValues = options.map((opt) => opt.value)
   const queryOptions = Object.entries(queryEndpoints || {})
@@ -71,39 +87,6 @@ function Home() {
         onFinish={onFinish}
         layout="vertical"
       >
-        <Form.Item name="items" initialValue={[]}>
-          <Checkbox.Group options={options} />
-        </Form.Item>
-        <Form.Item
-          noStyle
-          shouldUpdate={(prevValues, currentValues) =>
-            prevValues.items !== currentValues.items
-          }
-        >
-          {({ getFieldValue }) => {
-            const selectedList: string[] = getFieldValue('items') || []
-            const checkedCount = selectedList.length
-            const isAllChecked = checkedCount === allValues.length
-            const isIndeterminate =
-              checkedCount > 0 && checkedCount < allValues.length
-
-            return (
-              <Form.Item>
-                <Checkbox
-                  indeterminate={isIndeterminate}
-                  checked={isAllChecked}
-                  onChange={(e) => {
-                    const nextList = e.target.checked ? allValues : []
-                    form.setFieldsValue({ items: nextList })
-                  }}
-                >
-                  Check all
-                </Checkbox>
-              </Form.Item>
-            )
-          }}
-        </Form.Item>
-
         <div style={{ display: 'flex', gap: '8px' }}>
           <Form.Item
             name="query"
@@ -136,6 +119,49 @@ function Home() {
           </Form.Item>
         </div>
 
+        <Form.Item
+          noStyle
+          shouldUpdate={(prevValues, currentValues) =>
+            prevValues.query !== currentValues.query ||
+            prevValues.items !== currentValues.items
+          }
+        >
+          {({ getFieldValue }) => {
+            const querySelected = !!getFieldValue('query')
+            const selectedList: string[] = getFieldValue('items') || []
+            const checkedCount = selectedList.length
+            const isAllChecked = checkedCount === allValues.length
+            const isIndeterminate =
+              checkedCount > 0 && checkedCount < allValues.length
+
+            return (
+              <>
+                <Form.Item name="items" initialValue={[]}>
+                  <Checkbox.Group
+                    options={options}
+                    disabled={!querySelected}
+                    style={{ opacity: querySelected ? 1 : 0.4 }}
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Checkbox
+                    indeterminate={isIndeterminate}
+                    checked={isAllChecked}
+                    disabled={!querySelected}
+                    style={{ opacity: querySelected ? 1 : 0.4 }}
+                    onChange={(e) => {
+                      const nextList = e.target.checked ? allValues : []
+                      form.setFieldsValue({ items: nextList })
+                    }}
+                  >
+                    Check all
+                  </Checkbox>
+                </Form.Item>
+              </>
+            )
+          }}
+        </Form.Item>
+
         <Form.Item>
           <Button type="primary" htmlType="submit">
             Execute
@@ -155,7 +181,7 @@ function Home() {
               wrapLines={true}
               wrapLongLines={true}
             >
-              {format(queryEndpoints[selectedQuery], { language: 'mysql' })}
+              {formattedQuery}
             </SyntaxHighlighter>
           </Card>
         )}
