@@ -32,6 +32,31 @@ services:
     volumes:
       - mongodb_data:/data/db
 
+  couchbase:
+    build:
+      context: .
+      dockerfile: ./database/couchbase/Dockerfile
+    container_name: couchbase
+    restart: unless-stopped
+    environment:
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+    ulimits:
+      nofile:
+        soft: 200000
+        hard: 200000
+    ports:
+      - "8091:8091"
+      - "8092:8092"
+      - "8093:8093"
+      - "8094:8094"
+      - "8095:8095"
+      - "8096:8096"
+      - "11210:11210"
+      - "11211:11211"
+    volumes:
+      - couchbase_data:/opt/couchbase/var
+
   eureka-server:
     build: ./eureka-server
     container_name: eureka-server
@@ -190,3 +215,4 @@ services:
 volumes:
   mysql_data:
   mongodb_data:
+  couchbase_data:
