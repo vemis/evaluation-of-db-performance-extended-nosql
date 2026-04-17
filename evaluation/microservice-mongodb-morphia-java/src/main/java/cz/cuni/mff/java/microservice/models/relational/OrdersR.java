@@ -1,4 +1,4 @@
-package cz.cuni.mff.java.microservice.models;
+package cz.cuni.mff.java.microservice.models.relational;
 
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;

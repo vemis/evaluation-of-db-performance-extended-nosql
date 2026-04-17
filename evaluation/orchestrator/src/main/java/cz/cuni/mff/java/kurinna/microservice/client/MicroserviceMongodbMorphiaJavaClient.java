@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
-@FeignClient(name = "microservice-mongodb-morphia-java")
+@FeignClient(name = "microservice-mongodb-morphia-java", contextId = "morphiaRelationalClient")
 public interface MicroserviceMongodbMorphiaJavaClient extends OrmClient {
 
     @PostMapping("/load")

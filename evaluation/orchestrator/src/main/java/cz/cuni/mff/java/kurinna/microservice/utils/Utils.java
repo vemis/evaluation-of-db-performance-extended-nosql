@@ -1,11 +1,15 @@
 package cz.cuni.mff.java.kurinna.microservice.utils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Utils {
     public static final String[] ALL_SERVICES = new String[] {
             "ebean", "cayenne", "jdbc", "jooq", "myBatis", "springDataJpa", "morphia"
     };
+
+    /** Services that implement the embedded document model (r1–r9). */
+    public static final String[] EMBEDDED_SERVICES = new String[] { "morphia" };
 
     public static final String[] ALL_QUERIES = new String[] {
             "q1", "q2", "q3", "q4", "q5",
@@ -16,7 +20,24 @@ public class Utils {
             "e1", "e2", "e3"
     };
 
-    public static final Map<String, String> QUERY_DESCRIPTIONS = Map.ofEntries(
+    public static final String[] ALL_EMBEDDED_QUERIES = new String[] {
+            "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9"
+    };
+
+    public static final Map<String, String> EMBEDDED_QUERY_DESCRIPTIONS = Map.of(
+            ALL_EMBEDDED_QUERIES[0], "db.ordersEWithLineitems.aggregate([{$match:{\"o_lineitems.l_quantity\":{$gt:5}}},{$project:{o_orderdate:1,\"o_lineitems.l_partkey\":1}}])",
+            ALL_EMBEDDED_QUERIES[1], "db.ordersEWithLineitems.aggregate([{$match:{\"o_lineitems.l_partkey\":{$gt:20000}}},{$project:{o_orderdate:1,\"o_lineitems.l_partkey\":1}}])",
+            ALL_EMBEDDED_QUERIES[2], "db.ordersEWithLineitemsArrayAsTags.find({o_lineitems_tags:\"MAIL\"},{o_orderdate:1,o_lineitems_tags:1})",
+            ALL_EMBEDDED_QUERIES[3], "db.ordersEWithLineitemsArrayAsTagsIndexed.find({o_lineitems_tags_indexed:\"MAIL\"},{o_orderdate:1,o_lineitems_tags_indexed:1})",
+            ALL_EMBEDDED_QUERIES[4], "db.ordersEWithCustomerWithNationWithRegion.find({\"o_customer.c_nation.n_region.r_name\":\"AMERICA\"})",
+            ALL_EMBEDDED_QUERIES[5], "db.ordersEOnlyOComment.find({o_comment:/furiously/i})",
+            ALL_EMBEDDED_QUERIES[6], "db.ordersEOnlyOCommentIndexed.find({$text:{$search:\"furiously\"}})",
+            ALL_EMBEDDED_QUERIES[7], "db.ordersEWithLineitems.aggregate([{$unwind:\"$o_lineitems\"},{$project:{\"o_lineitems.l_partkey\":1}}])",
+            ALL_EMBEDDED_QUERIES[8], "db.ordersEWithLineitems.aggregate([{$unwind:\"$o_lineitems\"},{$group:{_id:\"$_id\",totalRevenue:{$sum:\"$o_lineitems.l_extendedprice\"}}}])"
+    );
+
+    public static final Map<String, String> RELATIONAL_QUERY_DESCRIPTIONS = Map.ofEntries(
+            Map.entry("test1", "Some non-existant test query"),
             // A queries
             Map.entry("a1", "SELECT * FROM lineitem;"),
             Map.entry("a2", "SELECT * FROM orders WHERE o_orderdate BETWEEN '1996-01-01' AND '1996-12-31';"),
@@ -63,4 +84,13 @@ public class Utils {
                     "SELECT o_orderpriority, COUNT(*) AS order_count FROM orders WHERE o_orderdate >= '1993-07-01' AND o_orderdate < DATE_ADD('1993-07-01', INTERVAL 3 MONTH) AND EXISTS (SELECT * FROM lineitem WHERE l_orderkey = o_orderkey AND l_commitdate < l_receiptdate) GROUP BY o_orderpriority ORDER BY o_orderpriority"),
             Map.entry("q5",
                     "SELECT n.n_name, SUM(l.l_extendedprice * (1 - l.l_discount)) AS revenue FROM customer c, orders o, lineitem l, supplier s, nation n, region r WHERE c.c_custkey = o.o_custkey AND l.l_orderkey = o.o_orderkey AND l.l_suppkey = s.s_suppkey AND c.c_nationkey = s.s_nationkey AND s.s_nationkey = n.n_nationkey AND n.n_regionkey = r.r_regionkey AND r.r_name = 'ASIA' AND o.o_orderdate >= '1994-01-01' AND o.o_orderdate < DATE_ADD('1994-01-01', INTERVAL 1 YEAR) GROUP BY n.n_name ORDER BY revenue DESC"));
+
+
+    public static final Map<String, String> QUERY_DESCRIPTIONS = new HashMap<>();
+    static
+    {
+        QUERY_DESCRIPTIONS.putAll(RELATIONAL_QUERY_DESCRIPTIONS);
+        QUERY_DESCRIPTIONS.putAll(EMBEDDED_QUERY_DESCRIPTIONS);
+    }
+
 }

@@ -5,13 +5,13 @@ export type OrchestratorQueryType = {
 }
 
 export const SERVICES = [
-  { id: 'myBatis',      label: 'MyBatis' },
-  { id: 'jooq',         label: 'JOOQ' },
-  { id: 'jdbc',         label: 'JDBC' },
-  { id: 'ebean',        label: 'Ebean' },
-  { id: 'cayenne',      label: 'Cayenne' },
-  { id: 'springDataJpa', label: 'Spring Data JPA' },
-  { id: 'morphia',      label: 'Morphia (MongoDB)' },
+  { id: 'myBatis',       label: 'MyBatis',           supportsEmbedded: false },
+  { id: 'jooq',          label: 'JOOQ',              supportsEmbedded: false },
+  { id: 'jdbc',          label: 'JDBC',              supportsEmbedded: false },
+  { id: 'ebean',         label: 'Ebean',             supportsEmbedded: false },
+  { id: 'cayenne',       label: 'Cayenne',           supportsEmbedded: false },
+  { id: 'springDataJpa', label: 'Spring Data JPA',   supportsEmbedded: false },
+  { id: 'morphia',       label: 'Morphia (MongoDB)', supportsEmbedded: true  },
 ] as const
 
 export type ServiceId = (typeof SERVICES)[number]['id']

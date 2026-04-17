@@ -9,17 +9,21 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static cz.cuni.mff.java.kurinna.microservice.utils.Utils.ALL_SERVICES;
+import static cz.cuni.mff.java.kurinna.microservice.utils.Utils.EMBEDDED_SERVICES;
+import static cz.cuni.mff.java.kurinna.microservice.utils.Utils.EMBEDDED_QUERY_DESCRIPTIONS;
 
 @RestController
 @RequestMapping("/orchestrator")
 public class OrchestratorController {
 
     private final Map<String, AbstractOrmService> serviceMap;
+    private final Map<String, AbstractEmbeddedOrmService> embeddedServiceMap;
 
     public OrchestratorController(
             CayenneService cayenne, EbeanService ebean, JdbcService jdbc,
             JooqService jooq, MorphiaService morphia, MyBatisService myBatis,
-            SpringDataJpaService springDataJpa) {
+            SpringDataJpaService springDataJpa,
+            MorphiaEmbeddedService morphiaEmbedded) {
         this.serviceMap = Map.of(
                 "cayenne",      cayenne,
                 "ebean",        ebean,
@@ -28,6 +32,8 @@ public class OrchestratorController {
                 "morphia",      morphia,
                 "myBatis",      myBatis,
                 "springDataJpa", springDataJpa);
+        this.embeddedServiceMap = Map.of(
+                "morphia", morphiaEmbedded);
     }
 
     @GetMapping("/health")
@@ -245,7 +251,121 @@ public class OrchestratorController {
                 "SELECT DISTINCT c_nationkey, c_mktsegment FROM customer;");
     }
 
+    // ── R-series (embedded document model — Morphia only) ─────────────────────
+
+    @GetMapping(value = "/r1", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> r1(
+            @RequestParam Optional<String> repetitions,
+            @RequestParam Optional<String> services) {
+        return runEmbedded("r1", repetitions, services,
+                "R1) Embedded Array Filter — Non-Indexed Field",
+                EMBEDDED_QUERY_DESCRIPTIONS.get("r1"));
+    }
+
+    @GetMapping(value = "/r2", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> r2(
+            @RequestParam Optional<String> repetitions,
+            @RequestParam Optional<String> services) {
+        return runEmbedded("r2", repetitions, services,
+                "R2) Embedded Array Filter — Indexed Field",
+                EMBEDDED_QUERY_DESCRIPTIONS.get("r2"));
+    }
+
+    @GetMapping(value = "/r3", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> r3(
+            @RequestParam Optional<String> repetitions,
+            @RequestParam Optional<String> services) {
+        return runEmbedded("r3", repetitions, services,
+                "R3) Array Tags Filter — No Index",
+                EMBEDDED_QUERY_DESCRIPTIONS.get("r3"));
+    }
+
+    @GetMapping(value = "/r4", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> r4(
+            @RequestParam Optional<String> repetitions,
+            @RequestParam Optional<String> services) {
+        return runEmbedded("r4", repetitions, services,
+                "R4) Array Tags Filter — Indexed Field",
+                EMBEDDED_QUERY_DESCRIPTIONS.get("r4"));
+    }
+
+    @GetMapping(value = "/r5", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> r5(
+            @RequestParam Optional<String> repetitions,
+            @RequestParam Optional<String> services) {
+        return runEmbedded("r5", repetitions, services,
+                "R5) Deeply Nested Document Filter",
+                EMBEDDED_QUERY_DESCRIPTIONS.get("r5"));
+    }
+
+    @GetMapping(value = "/r6", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> r6(
+            @RequestParam Optional<String> repetitions,
+            @RequestParam Optional<String> services) {
+        return runEmbedded("r6", repetitions, services,
+                "R6) Regex Text Search — No Text Index",
+                EMBEDDED_QUERY_DESCRIPTIONS.get("r6"));
+    }
+
+    @GetMapping(value = "/r7", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> r7(
+            @RequestParam Optional<String> repetitions,
+            @RequestParam Optional<String> services) {
+        return runEmbedded("r7", repetitions, services,
+                "R7) Text Index Search",
+                EMBEDDED_QUERY_DESCRIPTIONS.get("r7"));
+    }
+
+    @GetMapping(value = "/r8", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> r8(
+            @RequestParam Optional<String> repetitions,
+            @RequestParam Optional<String> services) {
+        return runEmbedded("r8", repetitions, services,
+                "R8) Unwind Embedded Array",
+                EMBEDDED_QUERY_DESCRIPTIONS.get("r8"));
+    }
+
+    @GetMapping(value = "/r9", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> r9(
+            @RequestParam Optional<String> repetitions,
+            @RequestParam Optional<String> services) {
+        return runEmbedded("r9", repetitions, services,
+                "R9) Aggregation on Embedded Array",
+                EMBEDDED_QUERY_DESCRIPTIONS.get("r9"));
+    }
+
     // ── helpers ───────────────────────────────────────────────────────────────
+
+    private ResponseEntity<Map<String, Object>> runEmbedded(
+            String queryId, Optional<String> repetitions, Optional<String> services,
+            String name, String description) {
+        Set<String> selected = parseEmbeddedServices(services);
+        int rep = parseRepetitions(repetitions);
+        Map<String, Object> results = new LinkedHashMap<>();
+        results.put("query", name);
+        results.put("description", description);
+        for (String svc : selected) {
+            AbstractEmbeddedOrmService service = embeddedServiceMap.get(svc);
+            if (service == null) continue;
+            try {
+                Map<String, Object> response = service.executeEmbeddedQuery(queryId, rep);
+                Map<String, Object> mapped = new LinkedHashMap<>();
+                mapped.put("status",               response.getOrDefault("status", "success"));
+                mapped.put("repetition",           response.get("repetitions"));
+                mapped.put("averageExecutionTime", response.get("elapsed"));
+                mapped.put("minExecutionTime",     response.get("minTime"));
+                mapped.put("maxExecutionTime",     response.get("maxTime"));
+                mapped.put("averageMemoryUsage",   response.get("delta"));
+                mapped.put("minMemoryUsage",       response.get("minMemory"));
+                mapped.put("maxMemoryUsage",       response.get("maxMemory"));
+                mapped.put("iterationResults",     response.get("iterationResults"));
+                results.put(svc, mapped);
+            } catch (Exception e) {
+                results.put(svc, Map.of("status", "error", "error", e.getMessage()));
+            }
+        }
+        return ResponseEntity.ok(results);
+    }
 
     private ResponseEntity<Map<String, Object>> run(
             String queryId, Optional<String> repetitions, Optional<String> services,
@@ -286,6 +406,16 @@ public class OrchestratorController {
                         .filter(allServicesList::contains)
                         .collect(Collectors.toCollection(LinkedHashSet::new)))
                 .orElse(new LinkedHashSet<>(allServicesList));
+    }
+
+    private Set<String> parseEmbeddedServices(Optional<String> servicesOpt) {
+        List<String> embeddedServicesList = Arrays.asList(EMBEDDED_SERVICES);
+        return servicesOpt
+                .map(s -> Arrays.stream(s.split(","))
+                        .map(String::trim)
+                        .filter(embeddedServicesList::contains)
+                        .collect(Collectors.toCollection(LinkedHashSet::new)))
+                .orElse(new LinkedHashSet<>(embeddedServicesList));
     }
 
     private int parseRepetitions(Optional<String> repetitions) {

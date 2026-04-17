@@ -1,5 +1,6 @@
 package cz.cuni.mff.java.kurinna.microservice.initializer;
 
+import cz.cuni.mff.java.kurinna.microservice.service.MorphiaEmbeddedService;
 import cz.cuni.mff.java.kurinna.microservice.service.MorphiaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +24,12 @@ public class MongoDbMorphiaInitializer {
     private static final int MAX_ATTEMPTS     = 120; // 10 minutes total
 
     private final MorphiaService morphiaService;
+    private final MorphiaEmbeddedService morphiaEmbeddedService;
 
-    public MongoDbMorphiaInitializer(MorphiaService morphiaService) {
+    public MongoDbMorphiaInitializer(MorphiaService morphiaService,
+                                     MorphiaEmbeddedService morphiaEmbeddedService) {
         this.morphiaService = morphiaService;
+        this.morphiaEmbeddedService = morphiaEmbeddedService;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -43,7 +47,9 @@ public class MongoDbMorphiaInitializer {
                 morphiaService.health();
                 log.info("Morphia microservice is healthy. Triggering data load...");
                 String result = morphiaService.load();
-                log.info("Morphia data load completed: {}", result);
+                log.info("Morphia relational data load completed: {}", result);
+                String embeddedResult = morphiaEmbeddedService.loadEmbedded();
+                log.info("Morphia embedded data load completed: {}", embeddedResult);
                 return;
             } catch (Exception e) {
                 log.info("Morphia not ready yet (attempt {}/{}): {}", attempt, MAX_ATTEMPTS, e.getMessage());
