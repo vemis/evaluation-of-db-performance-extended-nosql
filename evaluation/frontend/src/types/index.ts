@@ -11,7 +11,8 @@ export const SERVICES = [
   { id: 'ebean',         label: 'Ebean',             supportsEmbedded: false },
   { id: 'cayenne',       label: 'Cayenne',           supportsEmbedded: false },
   { id: 'springDataJpa', label: 'Spring Data JPA',   supportsEmbedded: false },
-  { id: 'morphia',       label: 'Morphia (MongoDB)', supportsEmbedded: true  },
+  { id: 'morphia',             label: 'Morphia (MongoDB)',          supportsEmbedded: true  },
+  { id: 'couchbaseSpringData', label: 'Spring Data (Couchbase)',    supportsEmbedded: true  },
 ] as const
 
 export type ServiceId = (typeof SERVICES)[number]['id']

@@ -54,6 +54,12 @@ services:
       - "8096:8096"
       - "11210:11210"
       - "11211:11211"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "-u", "${COUCHBASE_USER}:${COUCHBASE_PASSWORD}", "http://localhost:8091/pools/default/buckets/bucket-main"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 90s
     volumes:
       - couchbase_data:/opt/couchbase/var
 
@@ -190,6 +196,26 @@ services:
     depends_on:
       - mongodb
       - eureka-server
+
+  microservice-couchbase-springdata-java:
+    build:
+      context: .
+      dockerfile: microservice-couchbase-springdata-java/Dockerfile
+    container_name: ms-couchbase-springdata-java
+    restart: unless-stopped
+    environment:
+      COUCHBASE_HOST: couchbase
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+      EUREKA_URL: http://eureka-server:8761/eureka
+      TPCH_DATA_PATH: /data/tpch-data-small
+    ports:
+      - "8087:8087"
+    depends_on:
+      couchbase:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
 
   orchestrator:
     build: ./orchestrator

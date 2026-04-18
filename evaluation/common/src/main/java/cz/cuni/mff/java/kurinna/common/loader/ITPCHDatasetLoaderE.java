@@ -39,10 +39,16 @@ public interface ITPCHDatasetLoaderE {
      */
     default void loadAll(String dataDirectory) {
         loadOrdersEOnlyOComment(dataDirectory);
+        System.gc();
         loadOrdersEOnlyOCommentIndexed(dataDirectory);
+        System.gc();
         loadOrdersEWithLineitemsArrayAsTags(dataDirectory);
+        System.gc();
         loadOrdersEWithLineitemsArrayAsTagsIndexed(dataDirectory);
+        System.gc();
         loadOrdersEWithCustomerWithNationWithRegion(dataDirectory);
+        System.gc();
         loadOrdersEWithLineitems(dataDirectory);
+        System.gc();
     }
 }

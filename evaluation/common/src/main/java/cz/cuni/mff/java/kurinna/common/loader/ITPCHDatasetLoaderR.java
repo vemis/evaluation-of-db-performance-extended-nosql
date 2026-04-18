@@ -40,12 +40,20 @@ public interface ITPCHDatasetLoaderR {
     default void loadAll(String dataDirectory) {
         String sep = dataDirectory.endsWith("/") ? "" : "/";
         loadRegions(dataDirectory + sep + "region.tbl");
+        System.gc();
         loadNations(dataDirectory + sep + "nation.tbl");
+        System.gc();
         loadCustomers(dataDirectory + sep + "customer.tbl");
+        System.gc();
         loadOrders(dataDirectory + sep + "orders.tbl");
+        System.gc();
         loadLineitems(dataDirectory + sep + "lineitem.tbl");
+        System.gc();
         loadPartsupps(dataDirectory + sep + "partsupp.tbl");
+        System.gc();
         loadParts(dataDirectory + sep + "part.tbl");
+        System.gc();
         loadSuppliers(dataDirectory + sep + "supplier.tbl");
+        System.gc();
     }
 }

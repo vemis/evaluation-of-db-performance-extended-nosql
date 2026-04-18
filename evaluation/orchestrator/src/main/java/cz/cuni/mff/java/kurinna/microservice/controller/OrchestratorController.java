@@ -23,17 +23,21 @@ public class OrchestratorController {
             CayenneService cayenne, EbeanService ebean, JdbcService jdbc,
             JooqService jooq, MorphiaService morphia, MyBatisService myBatis,
             SpringDataJpaService springDataJpa,
-            MorphiaEmbeddedService morphiaEmbedded) {
+            MorphiaEmbeddedService morphiaEmbedded,
+            CouchbaseSpringDataService couchbaseSpringData,
+            CouchbaseSpringDataEmbeddedService couchbaseSpringDataEmbedded) {
         this.serviceMap = Map.of(
-                "cayenne",      cayenne,
-                "ebean",        ebean,
-                "jdbc",         jdbc,
-                "jooq",         jooq,
-                "morphia",      morphia,
-                "myBatis",      myBatis,
-                "springDataJpa", springDataJpa);
+                "cayenne",           cayenne,
+                "ebean",             ebean,
+                "jdbc",              jdbc,
+                "jooq",              jooq,
+                "morphia",           morphia,
+                "myBatis",           myBatis,
+                "springDataJpa",     springDataJpa,
+                "couchbaseSpringData", couchbaseSpringData);
         this.embeddedServiceMap = Map.of(
-                "morphia", morphiaEmbedded);
+                "morphia",           morphiaEmbedded,
+                "couchbaseSpringData", couchbaseSpringDataEmbedded);
     }
 
     @GetMapping("/health")

@@ -18,6 +18,7 @@
       <module>microservice-mysql-springdatajpa</module>
       <module>orchestrator</module>
       <module>microservice-mongodb-morphia-java</module>
+      <module>microservice-couchbase-springdata-java</module>
   </modules>
   <properties>
       <java.version>21</java.version>
