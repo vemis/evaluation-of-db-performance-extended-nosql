@@ -67,7 +67,7 @@ public class CouchbaseScopeInitializer {
         log.error("Failed to initialize Couchbase scopes after 120 attempts.");
     }
 
-    private void createScopesCollectionsAndIndexes() {
+    public void createScopesCollectionsAndIndexes() {
         CollectionManager cm = cluster.bucket("bucket-main").collections();
 
         createScopeIfAbsent(cm, "spring_scope_r");

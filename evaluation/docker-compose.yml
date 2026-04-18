@@ -55,7 +55,7 @@ services:
       - "11210:11210"
       - "11211:11211"
     healthcheck:
-      test: ["CMD", "curl", "-sf", "-u", "${COUCHBASE_USER}:${COUCHBASE_PASSWORD}", "http://localhost:8091/pools/default/buckets/bucket-main"]
+      test: ["CMD-SHELL", "curl -sf -u ${COUCHBASE_USER}:${COUCHBASE_PASSWORD} http://localhost:8091/pools/default/buckets/bucket-main && curl -sf http://localhost:8093/admin/ping"]
       interval: 10s
       timeout: 5s
       retries: 30
@@ -180,6 +180,31 @@ services:
       db:
         condition: service_healthy
 
+  microservice-mongodb-morphia-java-loader:
+    build:
+      context: .
+      dockerfile: microservice-mongodb-morphia-java/Dockerfile
+    container_name: ms-mongodb-morphia-java-loader
+    restart: "no"
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DATABASE: morphia_tpch_relational
+      TPCH_DATA_PATH: /data/tpch-data-small
+    entrypoint:
+      - java
+      - -Xms256m
+      - -Xmx6g
+      - -XX:MinHeapFreeRatio=5
+      - -XX:MaxHeapFreeRatio=10
+      - -jar
+      - /app/app.jar
+      - --loader.mode=true
+      - --spring.main.web-application-type=none
+      - --eureka.client.enabled=false
+    depends_on:
+      mongodb:
+        condition: service_started
+
   microservice-mongodb-morphia-java:
     build:
       context: .
@@ -194,8 +219,38 @@ services:
     ports:
       - "8086:8086"
     depends_on:
-      - mongodb
-      - eureka-server
+      mongodb:
+        condition: service_started
+      eureka-server:
+        condition: service_started
+      microservice-mongodb-morphia-java-loader:
+        condition: service_completed_successfully
+
+  microservice-couchbase-springdata-java-loader:
+    build:
+      context: .
+      dockerfile: microservice-couchbase-springdata-java/Dockerfile
+    container_name: ms-couchbase-springdata-java-loader
+    restart: "no"
+    environment:
+      COUCHBASE_HOST: couchbase
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+      TPCH_DATA_PATH: /data/tpch-data-small
+    entrypoint:
+      - java
+      - -Xms256m
+      - -Xmx6g
+      - -XX:MinHeapFreeRatio=5
+      - -XX:MaxHeapFreeRatio=10
+      - -jar
+      - /app/app.jar
+      - --loader.mode=true
+      - --spring.main.web-application-type=none
+      - --eureka.client.enabled=false
+    depends_on:
+      couchbase:
+        condition: service_healthy
 
   microservice-couchbase-springdata-java:
     build:
@@ -216,6 +271,8 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_started
+      microservice-couchbase-springdata-java-loader:
+        condition: service_completed_successfully
 
   orchestrator:
     build: ./orchestrator
