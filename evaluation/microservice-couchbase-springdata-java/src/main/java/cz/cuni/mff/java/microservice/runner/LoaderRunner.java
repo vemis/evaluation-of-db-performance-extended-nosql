@@ -3,44 +3,26 @@ package cz.cuni.mff.java.microservice.runner;
 import com.couchbase.client.core.error.ServiceNotAvailableException;
 import com.couchbase.client.java.Cluster;
 import cz.cuni.mff.java.microservice.config.CouchbaseScopeInitializer;
-import cz.cuni.mff.java.microservice.loader.TPCHDatasetLoaderCouchbaseE;
-import cz.cuni.mff.java.microservice.loader.TPCHDatasetLoaderCouchbaseR;
-import org.springframework.beans.factory.annotation.Value;
+import cz.cuni.mff.java.microservice.controller.EmbeddedLoaderController;
+import cz.cuni.mff.java.microservice.controller.LoaderController;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 @ConditionalOnProperty(name = "loader.mode", havingValue = "true")
 public class LoaderRunner implements ApplicationRunner {
 
-    private static final String R = "`bucket-main`.`spring_scope_r`";
-    private static final String E = "`bucket-main`.`spring_scope_e`";
-
-    private static final List<String> R_COLLECTIONS = List.of(
-            "RegionR", "NationR", "CustomerR", "OrdersR",
-            "LineitemR", "SupplierR", "PartR", "PartsuppR");
-
-    private static final List<String> E_COLLECTIONS = List.of(
-            "OrdersEWithLineitems", "OrdersEWithLineitemsArrayAsTags",
-            "OrdersEWithLineitemsArrayAsTagsIndexed", "OrdersEWithCustomerWithNationWithRegion",
-            "OrdersEOnlyOComment", "OrdersEOnlyOCommentIndexed");
-
-    private final TPCHDatasetLoaderCouchbaseR loaderR;
-    private final TPCHDatasetLoaderCouchbaseE loaderE;
+    private final LoaderController loaderController;
+    private final EmbeddedLoaderController embeddedLoaderController;
     private final Cluster cluster;
     private final CouchbaseScopeInitializer scopeInitializer;
 
-    @Value("${tpch.data.path:/data/tpch-data-small}")
-    private String dataPath;
-
-    public LoaderRunner(TPCHDatasetLoaderCouchbaseR loaderR, TPCHDatasetLoaderCouchbaseE loaderE,
+    public LoaderRunner(LoaderController loaderController, EmbeddedLoaderController embeddedLoaderController,
                         Cluster cluster, CouchbaseScopeInitializer scopeInitializer) {
-        this.loaderR = loaderR;
-        this.loaderE = loaderE;
+        this.loaderController = loaderController;
+        this.embeddedLoaderController = embeddedLoaderController;
         this.cluster = cluster;
         this.scopeInitializer = scopeInitializer;
     }
@@ -51,15 +33,13 @@ public class LoaderRunner implements ApplicationRunner {
         System.out.println("=== LOADER: creating scopes, collections, and indexes ===");
         scopeInitializer.createScopesCollectionsAndIndexes();
 
-        System.out.println("=== LOADER: dropping and reloading relational collections ===");
-        R_COLLECTIONS.forEach(col -> cluster.query("DELETE FROM " + R + ".`" + col + "`"));
-        loaderR.loadAll(dataPath);
+        System.out.println("=== LOADER: loading relational collections ===");
+        System.out.println(loaderController.loadData().getBody());
 
-        System.out.println("=== LOADER: dropping and reloading embedded collections ===");
-        E_COLLECTIONS.forEach(col -> cluster.query("DELETE FROM " + E + ".`" + col + "`"));
-        loaderE.loadAll(dataPath);
+        System.out.println("=== LOADER: loading embedded collections ===");
+        System.out.println(embeddedLoaderController.loadEmbeddedData().getBody());
 
-        System.out.println("=== LOADER: all data loaded, exiting ===");
+        System.out.println("=== LOADER: finished, exiting ===");
         System.exit(0);
     }
 
