@@ -1,7 +1,7 @@
 package cz.cuni.mff.java.kurinna.microservice.service;
 
 import cz.cuni.mff.java.kurinna.microservice.client.MicroserviceCouchbaseSpringdataJavaClient;
-import cz.cuni.mff.java.kurinna.microservice.client.OrmClient;
+import cz.cuni.mff.java.kurinna.microservice.client.IORMClient;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,7 +14,7 @@ public class CouchbaseSpringDataService extends AbstractOrmService {
     }
 
     @Override
-    protected OrmClient client() { return couchbaseClient; }
+    protected IORMClient client() { return couchbaseClient; }
 
     public String health() { return couchbaseClient.health().getBody(); }
 

@@ -2,11 +2,15 @@ package cz.cuni.mff.java.kurinna.microservice.client;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
-public interface EmbeddedOrmClient {
+public interface IODMEmbeddedClient {
+
+    @PostMapping("/loadEmbedded")
+    ResponseEntity<String> loadEmbedded();
 
     @GetMapping("/r1")
     ResponseEntity<Map<String, Object>> getEmbeddedR1(@RequestParam int repetitions);

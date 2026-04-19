@@ -5,8 +5,4 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @FeignClient(name = "microservice-mongodb-morphia-java", contextId = "morphiaRelationalClient")
-public interface MicroserviceMongodbMorphiaJavaClient extends OrmClient {
-
-    @PostMapping("/load")
-    ResponseEntity<String> load();
-}
+public interface MicroserviceMongodbMorphiaJavaClient extends IODMRelationalClient {}

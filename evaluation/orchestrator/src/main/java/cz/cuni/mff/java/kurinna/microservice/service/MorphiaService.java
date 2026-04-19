@@ -1,7 +1,7 @@
 package cz.cuni.mff.java.kurinna.microservice.service;
 
 import cz.cuni.mff.java.kurinna.microservice.client.MicroserviceMongodbMorphiaJavaClient;
-import cz.cuni.mff.java.kurinna.microservice.client.OrmClient;
+import cz.cuni.mff.java.kurinna.microservice.client.IORMClient;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,7 +14,7 @@ public class MorphiaService extends AbstractOrmService {
     }
 
     @Override
-    protected OrmClient client() { return morphiaClient; }
+    protected IORMClient client() { return morphiaClient; }
 
     public String health() { return morphiaClient.health().getBody(); }
 

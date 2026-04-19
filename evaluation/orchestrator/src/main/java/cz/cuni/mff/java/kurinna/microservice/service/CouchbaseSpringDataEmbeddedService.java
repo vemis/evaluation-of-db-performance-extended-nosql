@@ -1,20 +1,20 @@
 package cz.cuni.mff.java.kurinna.microservice.service;
 
-import cz.cuni.mff.java.kurinna.microservice.client.EmbeddedOrmClient;
-import cz.cuni.mff.java.kurinna.microservice.client.MicroserviceCouchbaseSpringdataJavaEmbeddedClient;
+import cz.cuni.mff.java.kurinna.microservice.client.IODMEmbeddedClient;
+import cz.cuni.mff.java.kurinna.microservice.client.MicroserviceCouchbaseSpringdataJavaIODMEmbeddedClient;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CouchbaseSpringDataEmbeddedService extends AbstractEmbeddedOrmService {
 
-    private final MicroserviceCouchbaseSpringdataJavaEmbeddedClient embeddedClient;
+    private final MicroserviceCouchbaseSpringdataJavaIODMEmbeddedClient embeddedClient;
 
-    public CouchbaseSpringDataEmbeddedService(MicroserviceCouchbaseSpringdataJavaEmbeddedClient embeddedClient) {
+    public CouchbaseSpringDataEmbeddedService(MicroserviceCouchbaseSpringdataJavaIODMEmbeddedClient embeddedClient) {
         this.embeddedClient = embeddedClient;
     }
 
     @Override
-    protected EmbeddedOrmClient embeddedClient() { return embeddedClient; }
+    protected IODMEmbeddedClient embeddedClient() { return embeddedClient; }
 
     public String loadEmbedded() { return embeddedClient.loadEmbedded().getBody(); }
 }

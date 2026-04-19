@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
-public interface OrmClient {
+public interface IORMClient {
 
     @GetMapping("/health")
     ResponseEntity<String> health();

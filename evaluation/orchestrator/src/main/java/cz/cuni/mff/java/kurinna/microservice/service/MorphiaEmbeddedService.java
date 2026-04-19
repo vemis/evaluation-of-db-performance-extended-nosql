@@ -1,20 +1,20 @@
 package cz.cuni.mff.java.kurinna.microservice.service;
 
-import cz.cuni.mff.java.kurinna.microservice.client.EmbeddedOrmClient;
-import cz.cuni.mff.java.kurinna.microservice.client.MicroserviceMongodbMorphiaJavaEmbeddedClient;
+import cz.cuni.mff.java.kurinna.microservice.client.IODMEmbeddedClient;
+import cz.cuni.mff.java.kurinna.microservice.client.MicroserviceMongodbMorphiaJavaIODMEmbeddedClient;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MorphiaEmbeddedService extends AbstractEmbeddedOrmService {
 
-    private final MicroserviceMongodbMorphiaJavaEmbeddedClient embeddedClient;
+    private final MicroserviceMongodbMorphiaJavaIODMEmbeddedClient embeddedClient;
 
-    public MorphiaEmbeddedService(MicroserviceMongodbMorphiaJavaEmbeddedClient embeddedClient) {
+    public MorphiaEmbeddedService(MicroserviceMongodbMorphiaJavaIODMEmbeddedClient embeddedClient) {
         this.embeddedClient = embeddedClient;
     }
 
     @Override
-    protected EmbeddedOrmClient embeddedClient() { return embeddedClient; }
+    protected IODMEmbeddedClient embeddedClient() { return embeddedClient; }
 
     public String loadEmbedded() { return embeddedClient.loadEmbedded().getBody(); }
 }

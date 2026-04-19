@@ -1,13 +1,13 @@
 package cz.cuni.mff.java.kurinna.microservice.service;
 
-import cz.cuni.mff.java.kurinna.microservice.client.EmbeddedOrmClient;
+import cz.cuni.mff.java.kurinna.microservice.client.IODMEmbeddedClient;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
 
 public abstract class AbstractEmbeddedOrmService {
 
-    protected abstract EmbeddedOrmClient embeddedClient();
+    protected abstract IODMEmbeddedClient embeddedClient();
 
     private Map<String, Object> fetch(ResponseEntity<Map<String, Object>> response) {
         Map<String, Object> body = response.getBody();
