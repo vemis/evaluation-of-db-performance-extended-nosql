@@ -7,11 +7,11 @@ import java.util.Map;
 
 public class Utils {
     public static final String[] ALL_SERVICES = new String[] {
-            "ebean", "cayenne", "jdbc", "jooq", "myBatis", "springDataJpa", "morphia", "couchbaseSpringData"
+            "ebean", "cayenne", "jdbc", "jooq", "myBatis", "springDataJpa", "morphia", "couchbaseSpringData", "springDataMongoDB"
     };
 
     /** Services that implement the embedded document model (r1–r9). */
-    public static final String[] EMBEDDED_SERVICES = new String[] { "morphia", "couchbaseSpringData" };
+    public static final String[] EMBEDDED_SERVICES = new String[] { "morphia", "couchbaseSpringData", "springDataMongoDB" };
 
     public static final String[] ALL_RELATIONAL_QUERIES = new String[] {
             "q1", "q2", "q3", "q4", "q5",

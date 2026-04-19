@@ -25,7 +25,9 @@ public class OrchestratorController {
             SpringDataJpaService springDataJpa,
             MorphiaEmbeddedService morphiaEmbedded,
             CouchbaseSpringDataService couchbaseSpringData,
-            CouchbaseSpringDataEmbeddedService couchbaseSpringDataEmbedded) {
+            CouchbaseSpringDataEmbeddedService couchbaseSpringDataEmbedded,
+            SpringDataMongoDBService springDataMongoDB,
+            SpringDataMongoDBEmbeddedService springDataMongoDBEmbedded) {
         this.serviceMap = Map.of(
                 "cayenne",           cayenne,
                 "ebean",             ebean,
@@ -34,10 +36,12 @@ public class OrchestratorController {
                 "morphia",           morphia,
                 "myBatis",           myBatis,
                 "springDataJpa",     springDataJpa,
-                "couchbaseSpringData", couchbaseSpringData);
+                "couchbaseSpringData", couchbaseSpringData,
+                "springDataMongoDB", springDataMongoDB);
         this.embeddedServiceMap = Map.of(
                 "morphia",           morphiaEmbedded,
-                "couchbaseSpringData", couchbaseSpringDataEmbedded);
+                "couchbaseSpringData", couchbaseSpringDataEmbedded,
+                "springDataMongoDB", springDataMongoDBEmbedded);
     }
 
     @GetMapping("/health")

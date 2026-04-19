@@ -226,6 +226,52 @@ services:
       microservice-mongodb-morphia-java-loader:
         condition: service_completed_successfully
 
+  microservice-mongodb-springdata-java-loader:
+    build:
+      context: .
+      dockerfile: microservice-mongodb-springdata-java/Dockerfile
+    container_name: ms-mongodb-springdata-java-loader
+    restart: "no"
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DATABASE: springdata_mongodb_tpch
+      TPCH_DATA_PATH: /data/tpch-data-small
+    entrypoint:
+      - java
+      - -Xms256m
+      - -Xmx6g
+      - -XX:MinHeapFreeRatio=5
+      - -XX:MaxHeapFreeRatio=10
+      - -jar
+      - /app/app.jar
+      - --loader.mode=true
+      - --spring.main.web-application-type=none
+      - --eureka.client.enabled=false
+    depends_on:
+      mongodb:
+        condition: service_started
+
+  microservice-mongodb-springdata-java:
+    build:
+      context: .
+      dockerfile: microservice-mongodb-springdata-java/Dockerfile
+    container_name: ms-mongodb-springdata-java
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DATABASE: springdata_mongodb_tpch
+      EUREKA_URL: http://eureka-server:8761/eureka
+      TPCH_DATA_PATH: /data/tpch-data-small
+    ports:
+      - "8088:8088"
+    depends_on:
+      mongodb:
+        condition: service_started
+      eureka-server:
+        condition: service_started
+      microservice-mongodb-springdata-java-loader:
+        condition: service_completed_successfully
+
   microservice-couchbase-springdata-java-loader:
     build:
       context: .
