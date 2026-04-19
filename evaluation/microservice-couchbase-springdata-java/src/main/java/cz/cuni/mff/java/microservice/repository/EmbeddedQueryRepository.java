@@ -23,7 +23,16 @@ public class EmbeddedQueryRepository {
         this.cluster = cluster;
     }
 
-    // R1) Embedded lineitems — filter on non-indexed field l_quantity > 5
+    /**
+     * R1) Embedded Orders with Lineitems Query
+     * <p>
+     * Tests performance of fetching nested documents (1:N relationship embedded).
+     * <pre>
+     * SELECT o.o_orderdate, ARRAY l.l_partkey FOR l IN o.o_lineitems END AS o_lineitems
+     * FROM OrdersEWithLineitems AS o
+     * WHERE ANY l IN o.o_lineitems SATISFIES l.l_quantity &gt; 5 END
+     * </pre>
+     */
     public List<JsonObject> r1() {
         return cluster.query(
                 "SELECT o.o_orderdate," +
@@ -33,7 +42,16 @@ public class EmbeddedQueryRepository {
                 .rowsAsObject();
     }
 
-    // R2) Embedded lineitems — filter on indexed field l_partkey > 20000
+    /**
+     * R2) Embedded Orders with Lineitems Query — Indexed Field
+     * <p>
+     * Tests performance of fetching nested documents (1:N relationship embedded) on an indexed field.
+     * <pre>
+     * SELECT o.o_orderdate, ARRAY l.l_partkey FOR l IN o.o_lineitems END AS o_lineitems
+     * FROM OrdersEWithLineitems AS o
+     * WHERE ANY l IN o.o_lineitems SATISFIES l.l_partkey &gt; 20000 END
+     * </pre>
+     */
     public List<JsonObject> r2() {
         return cluster.query(
                 "SELECT o.o_orderdate," +
@@ -43,7 +61,16 @@ public class EmbeddedQueryRepository {
                 .rowsAsObject();
     }
 
-    // R3) Array tags — non-indexed, find orders tagged with 'MAIL'
+    /**
+     * R3) Array Tags Query — Find Orders by Tag
+     * <p>
+     * Tests array indexing and filtering. Finds orders whose {@code o_lineitems_tags} array contains "MAIL".
+     * <pre>
+     * SELECT o.o_orderdate, o.o_lineitems_tags
+     * FROM OrdersEWithLineitemsArrayAsTags AS o
+     * WHERE ANY tag IN o.o_lineitems_tags SATISFIES tag = 'MAIL' END
+     * </pre>
+     */
     public List<JsonObject> r3() {
         return cluster.query(
                 "SELECT o.o_orderdate, o.o_lineitems_tags" +
@@ -52,7 +79,16 @@ public class EmbeddedQueryRepository {
                 .rowsAsObject();
     }
 
-    // R4) Array tags — indexed, find orders tagged with 'MAIL'
+    /**
+     * R4) Indexed Array Tags Query — Find Orders by Tag
+     * <p>
+     * Tests indexed array filtering. Finds orders whose {@code o_lineitems_tags_indexed} array contains "MAIL".
+     * <pre>
+     * SELECT o.o_orderdate, o.o_lineitems_tags_indexed
+     * FROM OrdersEWithLineitemsArrayAsTagsIndexed AS o
+     * WHERE ANY tag IN o.o_lineitems_tags_indexed SATISFIES tag = 'MAIL' END
+     * </pre>
+     */
     public List<JsonObject> r4() {
         return cluster.query(
                 "SELECT o.o_orderdate, o.o_lineitems_tags_indexed" +
@@ -61,7 +97,16 @@ public class EmbeddedQueryRepository {
                 .rowsAsObject();
     }
 
-    // R5) Deeply nested — filter by region name 'AMERICA'
+    /**
+     * R5) Embedded Customer with Nation with Region — Filter by Region Name
+     * <p>
+     * Tests denormalization vs join simulation in documents. Finds all orders from customers in "AMERICA".
+     * <pre>
+     * SELECT *
+     * FROM OrdersEWithCustomerWithNationWithRegion AS o
+     * WHERE o.o_customer.c_nation.n_region.r_name = 'AMERICA'
+     * </pre>
+     */
     public List<JsonObject> r5() {
         return cluster.query(
                 "SELECT *" +
@@ -70,7 +115,12 @@ public class EmbeddedQueryRepository {
                 .rowsAsObject();
     }
 
-    // R6) Regex text search — no index (REGEXP_CONTAINS)
+    /**
+     * R6) Regex Text Search on Comment Field
+     * <p>
+     * Simulates text search without an index.
+     * <pre>SELECT * FROM OrdersEOnlyOComment AS o WHERE REGEXP_CONTAINS(o.o_comment, '(?i)furiously')</pre>
+     */
     public List<JsonObject> r6() {
         return cluster.query(
                 "SELECT *" +
@@ -79,7 +129,12 @@ public class EmbeddedQueryRepository {
                 .rowsAsObject();
     }
 
-    // R7) Regex text search — B-tree index on o_comment (range-only benefit)
+    /**
+     * R7) Text Index Search on Comment Field
+     * <p>
+     * Simulates text search with a B-tree index on {@code o_comment} (range-only benefit).
+     * <pre>SELECT * FROM OrdersEOnlyOCommentIndexed AS o WHERE REGEXP_CONTAINS(o.o_comment, '(?i)furiously')</pre>
+     */
     public List<JsonObject> r7() {
         return cluster.query(
                 "SELECT *" +
@@ -88,7 +143,16 @@ public class EmbeddedQueryRepository {
                 .rowsAsObject();
     }
 
-    // R8) UNNEST — flatten embedded lineitems array (equivalent of MongoDB $unwind)
+    /**
+     * R8) Unwind Embedded Lineitems
+     * <p>
+     * Tests unwind of embedded objects (array flattening cost). Equivalent of MongoDB {@code $unwind}.
+     * <pre>
+     * SELECT META(o).id AS o_orderkey, l.l_partkey
+     * FROM OrdersEWithLineitems AS o
+     * UNNEST o.o_lineitems AS l
+     * </pre>
+     */
     public List<JsonObject> r8() {
         return cluster.query(
                 "SELECT META(o).id AS o_orderkey, l.l_partkey" +
@@ -97,7 +161,17 @@ public class EmbeddedQueryRepository {
                 .rowsAsObject();
     }
 
-    // R9) Aggregation on embedded array — sum revenue per order
+    /**
+     * R9) Aggregation on Embedded Array — Sum Revenue per Order
+     * <p>
+     * Tests aggregation on embedded arrays (UNNEST + GROUP BY interaction).
+     * <pre>
+     * SELECT META(o).id AS o_orderkey, SUM(l.l_extendedprice) AS totalRevenue
+     * FROM OrdersEWithLineitems AS o
+     * UNNEST o.o_lineitems AS l
+     * GROUP BY META(o).id
+     * </pre>
+     */
     public List<JsonObject> r9() {
         return cluster.query(
                 "SELECT META(o).id AS o_orderkey, SUM(l.l_extendedprice) AS totalRevenue" +

@@ -23,12 +23,25 @@ public class QueryRepository {
         this.datastore = datastore;
     }
 
-    // A1) SELECT * FROM lineitem
+    /**
+     * A1) Non-Indexed Columns
+     * <p>
+     * Selects all records from the lineitem table.
+     * <pre>SELECT * FROM lineitem;</pre>
+     */
     public List<LineitemR> a1() {
         return datastore.find(LineitemR.class).iterator().toList();
     }
 
-    // A2) SELECT * FROM orders WHERE o_orderdate BETWEEN startDate AND endDate
+    /**
+     * A2) Non-Indexed Columns — Range Query
+     * <p>
+     * Selects all records from the orders table where the order date is within the given range.
+     * <pre>
+     * SELECT * FROM orders
+     * WHERE o_orderdate BETWEEN startDate AND endDate;
+     * </pre>
+     */
     public List<OrdersR> a2(LocalDate startDate, LocalDate endDate) {
         return datastore.find(OrdersR.class)
                 .filter(gte("o_orderdate", startDate), lte("o_orderdate", endDate))
@@ -36,12 +49,25 @@ public class QueryRepository {
                 .toList();
     }
 
-    // A3) SELECT * FROM customer
+    /**
+     * A3) Indexed Columns
+     * <p>
+     * Selects all records from the customer table.
+     * <pre>SELECT * FROM customer;</pre>
+     */
     public List<CustomerR> a3() {
         return datastore.find(CustomerR.class).iterator().toList();
     }
 
-    // A4) SELECT * FROM orders WHERE o_orderkey BETWEEN minKey AND maxKey
+    /**
+     * A4) Indexed Columns — Range Query
+     * <p>
+     * Selects all records from the orders table where the order key is within the given range.
+     * <pre>
+     * SELECT * FROM orders
+     * WHERE o_orderkey BETWEEN minOrderKey AND maxOrderKey;
+     * </pre>
+     */
     public List<OrdersR> a4(int minOrderKey, int maxOrderKey) {
         return datastore.find(OrdersR.class)
                 .filter(gte("o_orderkey", minOrderKey), lte("o_orderkey", maxOrderKey))
@@ -49,7 +75,17 @@ public class QueryRepository {
                 .toList();
     }
 
-    // B1) COUNT(o_orderkey) grouped by month
+    /**
+     * B1) COUNT
+     * <p>
+     * Counts the number of orders grouped by order month.
+     * <pre>
+     * SELECT COUNT(o.o_orderkey) AS order_count,
+     *        DATE_FORMAT(o.o_orderdate, '%Y-%m') AS order_month
+     * FROM orders o
+     * GROUP BY order_month;
+     * </pre>
+     */
     public List<Document> b1() {
         return datastore.aggregate(OrdersR.class)
                 .group(
@@ -69,7 +105,17 @@ public class QueryRepository {
                 .toList();
     }
 
-    // B2) MAX(l_extendedprice) grouped by ship month
+    /**
+     * B2) MAX
+     * <p>
+     * Finds the maximum extended price from the lineitem table grouped by ship month.
+     * <pre>
+     * SELECT DATE_FORMAT(l.l_shipdate, '%Y-%m') AS ship_month,
+     *        MAX(l.l_extendedprice) AS max_price
+     * FROM lineitem l
+     * GROUP BY ship_month;
+     * </pre>
+     */
     public List<Document> b2() {
         return datastore.aggregate(LineitemR.class)
                 .group(
@@ -89,7 +135,15 @@ public class QueryRepository {
                 .toList();
     }
 
-    // C1) Cartesian product customer x orders (DNF — limited to 1_500_000 rows)
+    /**
+     * C1) Non-Indexed Columns
+     * <p>
+     * Cartesian product of customer and orders — always DNF, limited to 1,500,000 rows.
+     * <pre>
+     * SELECT c.c_name, o.o_orderdate, o.o_totalprice
+     * FROM customer c, orders o;
+     * </pre>
+     */
     public List<Document> c1() {
         return datastore.aggregate(CustomerR.class)
                 .lookup(
@@ -109,7 +163,16 @@ public class QueryRepository {
                 .toList();
     }
 
-    // C2) Inner join customer -> orders on c_custkey = o_custkey
+    /**
+     * C2) Indexed Columns
+     * <p>
+     * Inner join of customer and orders on {@code c_custkey = o_custkey}.
+     * <pre>
+     * SELECT c.c_name, o.o_orderdate, o.o_totalprice
+     * FROM customer c
+     * JOIN orders o ON c.c_custkey = o.o_custkey;
+     * </pre>
+     */
     public List<Document> c2() {
         return datastore.aggregate(CustomerR.class)
                 .lookup(
@@ -129,7 +192,17 @@ public class QueryRepository {
                 .toList();
     }
 
-    // C3) 3-way join: customer + nation + orders
+    /**
+     * C3) Complex Join 1
+     * <p>
+     * 3-way join: customer + nation + orders.
+     * <pre>
+     * SELECT c.c_name, n.n_name, o.o_orderdate, o.o_totalprice
+     * FROM customer c
+     * JOIN nation n ON c.c_nationkey = n.n_nationkey
+     * JOIN orders o ON c.c_custkey = o.o_custkey;
+     * </pre>
+     */
     public List<Document> c3() {
         return datastore.aggregate(CustomerR.class)
                 .lookup(Lookup.lookup(NationR.class)
@@ -153,7 +226,18 @@ public class QueryRepository {
                 .toList();
     }
 
-    // C4) 4-way join: customer + nation + region + orders
+    /**
+     * C4) Complex Join 2
+     * <p>
+     * 4-way join: customer + nation + region + orders.
+     * <pre>
+     * SELECT c.c_name, n.n_name, r.r_name, o.o_orderdate, o.o_totalprice
+     * FROM customer c
+     * JOIN nation n ON c.c_nationkey = n.n_nationkey
+     * JOIN region r ON n.n_regionkey = r.r_regionkey
+     * JOIN orders o ON c.c_custkey = o.o_custkey;
+     * </pre>
+     */
     public List<Document> c4() {
         return datastore.aggregate(CustomerR.class)
                 .lookup(Lookup.lookup(NationR.class)
@@ -183,7 +267,16 @@ public class QueryRepository {
                 .toList();
     }
 
-    // C5) LEFT OUTER JOIN customer -> orders
+    /**
+     * C5) Left Outer Join
+     * <p>
+     * Returns all customers and their orders, including customers without orders.
+     * <pre>
+     * SELECT c.c_custkey, c.c_name, o.o_orderkey, o.o_orderdate
+     * FROM customer c
+     * LEFT OUTER JOIN orders o ON c.c_custkey = o.o_custkey;
+     * </pre>
+     */
     public List<Document> c5() {
         return datastore.aggregate(CustomerR.class)
                 .lookup(Lookup.lookup(OrdersR.class)
@@ -201,7 +294,16 @@ public class QueryRepository {
                 .toList();
     }
 
-    // D1) UNION customer.c_nationkey and supplier.s_nationkey
+    /**
+     * D1) UNION
+     * <p>
+     * Combines distinct nation keys from customer and supplier tables.
+     * <pre>
+     * (SELECT c_nationkey FROM customer)
+     * UNION
+     * (SELECT s_nationkey FROM supplier);
+     * </pre>
+     */
     public List<Document> d1() {
         return datastore.aggregate(CustomerR.class)
                 .project(Projection.project()
@@ -219,7 +321,17 @@ public class QueryRepository {
                 .toList();
     }
 
-    // D2) INTERSECT: customer keys that appear in supplier keys
+    /**
+     * D2) INTERSECT
+     * <p>
+     * Finds customer keys that also appear as supplier keys.
+     * MySQL does not support INTERSECT directly — simulated via {@code IN}.
+     * <pre>
+     * SELECT DISTINCT c.c_custkey
+     * FROM customer c
+     * WHERE c.c_custkey IN (SELECT s.s_suppkey FROM supplier s);
+     * </pre>
+     */
     public List<Document> d2() {
         return datastore.aggregate(CustomerR.class)
                 .group(Group.group(Group.id(Expressions.field("_id"))))
@@ -235,7 +347,17 @@ public class QueryRepository {
                 .toList();
     }
 
-    // D3) DIFFERENCE: customer keys NOT in supplier keys
+    /**
+     * D3) DIFFERENCE
+     * <p>
+     * Finds customer keys that do not appear in the supplier table.
+     * MySQL does not support EXCEPT/MINUS directly — simulated via {@code NOT IN}.
+     * <pre>
+     * SELECT DISTINCT c.c_custkey
+     * FROM customer c
+     * WHERE c.c_custkey NOT IN (SELECT DISTINCT s.s_suppkey FROM supplier s);
+     * </pre>
+     */
     public List<Document> d3() {
         return datastore.aggregate(CustomerR.class)
                 .lookup(Lookup.lookup(SupplierR.class)
@@ -251,7 +373,16 @@ public class QueryRepository {
                 .toList();
     }
 
-    // E1) ORDER BY c_acctbal DESC
+    /**
+     * E1) Non-Indexed Columns Sorting
+     * <p>
+     * Sorts customer names, addresses, and account balances in descending order of account balance.
+     * <pre>
+     * SELECT c_name, c_address, c_acctbal
+     * FROM customer
+     * ORDER BY c_acctbal DESC;
+     * </pre>
+     */
     public List<CustomerR> e1() {
         return datastore.find(CustomerR.class, new FindOptions()
                         .sort(dev.morphia.query.Sort.descending("c_acctbal"))
@@ -261,7 +392,16 @@ public class QueryRepository {
                 .toList();
     }
 
-    // E2) ORDER BY o_orderkey ASC
+    /**
+     * E2) Indexed Columns Sorting
+     * <p>
+     * Sorts order keys, customer keys, order dates, and total prices in ascending order of order key.
+     * <pre>
+     * SELECT o_orderkey, o_custkey, o_orderdate, o_totalprice
+     * FROM orders
+     * ORDER BY o_orderkey;
+     * </pre>
+     */
     public List<OrdersR> e2() {
         return datastore.find(OrdersR.class, new FindOptions()
                         .sort(dev.morphia.query.Sort.ascending("_id"))
@@ -271,7 +411,15 @@ public class QueryRepository {
                 .toList();
     }
 
-    // E3) SELECT DISTINCT c_nationkey, c_mktsegment FROM customer
+    /**
+     * E3) Distinct
+     * <p>
+     * Selects distinct nation keys and market segments from the customer table.
+     * <pre>
+     * SELECT DISTINCT c_nationkey, c_mktsegment
+     * FROM customer;
+     * </pre>
+     */
     public List<Document> e3() {
         return datastore.aggregate(CustomerR.class)
                 .group(Group.group(Group.id(
@@ -287,7 +435,24 @@ public class QueryRepository {
                 .toList();
     }
 
-    // Q1) Pricing Summary Report
+    /**
+     * Q1) Pricing Summary Report Query
+     * <p>
+     * Reports the amount of business that was billed, shipped, and returned.
+     * <pre>
+     * SELECT l_returnflag, l_linestatus,
+     *   SUM(l_quantity) AS sum_qty,
+     *   SUM(l_extendedprice) AS sum_base_price,
+     *   SUM(l_extendedprice * (1 - l_discount)) AS sum_disc_price,
+     *   SUM(l_extendedprice * (1 - l_discount) * (1 + l_tax)) AS sum_charge,
+     *   AVG(l_quantity) AS avg_qty, AVG(l_extendedprice) AS avg_price,
+     *   AVG(l_discount) AS avg_disc, COUNT(*) AS count_order
+     * FROM lineitem
+     * WHERE l_shipdate &lt;= DATE_SUB('1998-12-01', INTERVAL deltaDays DAY)
+     * GROUP BY l_returnflag, l_linestatus
+     * ORDER BY l_returnflag, l_linestatus;
+     * </pre>
+     */
     public List<Document> q1(int deltaDays) {
         LocalDate cutoff = LocalDate.of(1998, 12, 1).minusDays(deltaDays);
         return datastore.aggregate(LineitemR.class)
@@ -335,7 +500,23 @@ public class QueryRepository {
                 .toList();
     }
 
-    // Q2) Minimum Cost Supplier
+    /**
+     * Q2) Minimum Cost Supplier Query
+     * <p>
+     * Finds which supplier should be selected to place an order for a given part in a given region.
+     * Selects the supplier with the minimum supply cost per part matching the given size, type, and region.
+     * <pre>
+     * SELECT s.s_acctbal, s.s_name, n.n_name, p.p_partkey, p.p_mfgr,
+     *        s.s_address, s.s_phone, s.s_comment
+     * FROM part p, supplier s, partsupp ps, nation n, region r
+     * WHERE p.p_partkey = ps.ps_partkey AND s.s_suppkey = ps.ps_suppkey
+     *   AND p.p_size = size AND p.p_type LIKE '%type'
+     *   AND s.s_nationkey = n.n_nationkey AND n.n_regionkey = r.r_regionkey
+     *   AND r.r_name = region
+     *   AND ps.ps_supplycost = (SELECT MIN(ps.ps_supplycost) ...)
+     * ORDER BY s.s_acctbal DESC, n.n_name, s.s_name, p.p_partkey;
+     * </pre>
+     */
     public List<Document> q2(int size, String type, String region) {
         return datastore.aggregate(PartR.class)
                 .match(Filters.eq("p_size", size), regex("p_type", type.replace("%", "") + "$"))
@@ -380,7 +561,22 @@ public class QueryRepository {
                 .toList();
     }
 
-    // Q3) Shipping Priority
+    /**
+     * Q3) Shipping Priority Query
+     * <p>
+     * Retrieves the 10 unshipped orders with the highest value.
+     * <pre>
+     * SELECT l.l_orderkey, SUM(l.l_extendedprice * (1 - l.l_discount)) AS revenue,
+     *        o.o_orderdate, o.o_shippriority
+     * FROM customer c, orders o, lineitem l
+     * WHERE c.c_mktsegment = segment
+     *   AND c.c_custkey = o.o_custkey AND l.l_orderkey = o.o_orderkey
+     *   AND o.o_orderdate &lt; orderDate AND l.l_shipdate &gt; shipDate
+     * GROUP BY l.l_orderkey, o.o_orderdate, o.o_shippriority
+     * ORDER BY revenue DESC, o.o_orderdate
+     * LIMIT 10;
+     * </pre>
+     */
     public List<Document> q3(String segment, LocalDate orderDate, LocalDate shipDate) {
         return datastore.aggregate(CustomerR.class)
                 .match(Filters.eq("c_mktsegment", segment))
@@ -418,7 +614,23 @@ public class QueryRepository {
                 .toList();
     }
 
-    // Q4) Order Priority Checking
+    /**
+     * Q4) Order Priority Checking Query
+     * <p>
+     * Determines how well the order priority system is working and gives an assessment of customer satisfaction.
+     * <pre>
+     * SELECT o_orderpriority, COUNT(*) AS order_count
+     * FROM orders
+     * WHERE o_orderdate &gt;= orderDate
+     *   AND o_orderdate &lt; DATE_ADD(orderDate, INTERVAL 3 MONTH)
+     *   AND EXISTS (
+     *     SELECT * FROM lineitem
+     *     WHERE l_orderkey = o_orderkey AND l_commitdate &lt; l_receiptdate
+     *   )
+     * GROUP BY o_orderpriority
+     * ORDER BY o_orderpriority;
+     * </pre>
+     */
     public List<Document> q4(LocalDate orderDate) {
         LocalDate orderDateEnd = orderDate.plusMonths(3);
         return datastore.aggregate(OrdersR.class)
@@ -453,7 +665,23 @@ public class QueryRepository {
                 .toList();
     }
 
-    // Q5) Local Supplier Volume
+    /**
+     * Q5) Local Supplier Volume Query
+     * <p>
+     * Lists the revenue volume done through local suppliers (customer and supplier in same nation).
+     * <pre>
+     * SELECT n.n_name, SUM(l.l_extendedprice * (1 - l.l_discount)) AS revenue
+     * FROM customer c, orders o, lineitem l, supplier s, nation n, region r
+     * WHERE c.c_custkey = o.o_custkey AND l.l_orderkey = o.o_orderkey
+     *   AND l.l_suppkey = s.s_suppkey AND c.c_nationkey = s.s_nationkey
+     *   AND s.s_nationkey = n.n_nationkey AND n.n_regionkey = r.r_regionkey
+     *   AND r.r_name = region
+     *   AND o.o_orderdate &gt;= orderDate
+     *   AND o.o_orderdate &lt; DATE_ADD(orderDate, INTERVAL 1 YEAR)
+     * GROUP BY n.n_name
+     * ORDER BY revenue DESC;
+     * </pre>
+     */
     public List<Document> q5(String region, LocalDate orderDate) {
         LocalDate orderDateEnd = orderDate.plusYears(1);
         return datastore.aggregate(CustomerR.class)

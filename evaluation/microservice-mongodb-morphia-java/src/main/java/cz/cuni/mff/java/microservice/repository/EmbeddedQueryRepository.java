@@ -23,7 +23,17 @@ public class EmbeddedQueryRepository {
         this.datastore = datastore;
     }
 
-    // R1) Filter on embedded lineitem array — non-indexed field (l_quantity > 5)
+    /**
+     * R1) Embedded Orders with Lineitems Query
+     * <p>
+     * Tests performance of fetching nested documents (1:N relationship embedded).
+     * <pre>
+     * db.ordersEWithLineitems.aggregate([
+     *   { $match: { "o_lineitems.l_quantity": { $gt: 5 } } },
+     *   { $project: { o_orderdate: 1, "o_lineitems.l_partkey": 1 } }
+     * ])
+     * </pre>
+     */
     public List<Document> r1() {
         return datastore.aggregate(OrdersEWithLineitems.class)
                 .match(Filters.gt("o_lineitems.l_quantity", 5))
@@ -34,7 +44,17 @@ public class EmbeddedQueryRepository {
                 .toList();
     }
 
-    // R2) Filter on embedded lineitem array — indexed field (l_partkey > 20000)
+    /**
+     * R2) Embedded Orders with Lineitems Query — Indexed Field
+     * <p>
+     * Tests performance of fetching nested documents (1:N relationship embedded) on an indexed field.
+     * <pre>
+     * db.ordersEWithLineitems.aggregate([
+     *   { $match: { "o_lineitems.l_partkey": { $gt: 20000 } } },
+     *   { $project: { o_orderdate: 1, "o_lineitems.l_partkey": 1 } }
+     * ])
+     * </pre>
+     */
     public List<Document> r2() {
         return datastore.aggregate(OrdersEWithLineitems.class)
                 .match(Filters.gt("o_lineitems.l_partkey", 20000))
@@ -45,7 +65,17 @@ public class EmbeddedQueryRepository {
                 .toList();
     }
 
-    // R3) Array tags filter — no index (shipmode tag "MAIL")
+    /**
+     * R3) Array Tags Query — Find Orders by Tag
+     * <p>
+     * Tests array indexing and filtering. Finds orders whose {@code o_lineitems_tags} array contains "MAIL".
+     * <pre>
+     * db.ordersEWithLineitemsArrayAsTags.find(
+     *   { o_lineitems_tags: "MAIL" },
+     *   { o_orderdate: 1, o_lineitems_tags: 1 }
+     * )
+     * </pre>
+     */
     public List<OrdersEWithLineitemsArrayAsTags> r3() {
         return datastore.find(OrdersEWithLineitemsArrayAsTags.class)
                 .filter(Filters.eq("o_lineitems_tags", "MAIL"))
@@ -54,7 +84,17 @@ public class EmbeddedQueryRepository {
                 .toList();
     }
 
-    // R4) Array tags filter — indexed field
+    /**
+     * R4) Indexed Array Tags Query — Find Orders by Tag
+     * <p>
+     * Tests indexed array filtering. Finds orders whose {@code o_lineitems_tags_indexed} array contains "MAIL".
+     * <pre>
+     * db.ordersEWithLineitemsArrayAsTagsIndexed.find(
+     *   { o_lineitems_tags_indexed: "MAIL" },
+     *   { o_orderdate: 1, o_lineitems_tags_indexed: 1 }
+     * )
+     * </pre>
+     */
     public List<OrdersEWithLineitemsArrayAsTagsIndexed> r4() {
         return datastore.find(OrdersEWithLineitemsArrayAsTagsIndexed.class)
                 .filter(Filters.eq("o_lineitems_tags_indexed", "MAIL"))
@@ -63,7 +103,16 @@ public class EmbeddedQueryRepository {
                 .toList();
     }
 
-    // R5) Deeply nested document filter — region name "AMERICA"
+    /**
+     * R5) Embedded Customer with Nation with Region — Filter by Region Name
+     * <p>
+     * Tests denormalization vs join simulation in documents. Finds all orders from customers in "AMERICA".
+     * <pre>
+     * db.ordersEWithCustomerWithNationWithRegion.find(
+     *   { "o_customer.c_nation.n_region.r_name": "AMERICA" }
+     * )
+     * </pre>
+     */
     public List<OrdersEWithCustomerWithNationWithRegion> r5() {
         return datastore.find(OrdersEWithCustomerWithNationWithRegion.class)
                 .filter(Filters.eq("o_customer.c_nation.n_region.r_name", "AMERICA"))
@@ -71,7 +120,12 @@ public class EmbeddedQueryRepository {
                 .toList();
     }
 
-    // R6) Regex text search — no text index
+    /**
+     * R6) Regex Text Search on Comment Field
+     * <p>
+     * Simulates text search without an index.
+     * <pre>db.ordersEOnlyOComment.find({ o_comment: /furiously/i })</pre>
+     */
     public List<OrdersEOnlyOComment> r6() {
         return datastore.find(OrdersEOnlyOComment.class)
                 .filter(Filters.regex("o_comment", "furiously").caseInsensitive())
@@ -79,7 +133,12 @@ public class EmbeddedQueryRepository {
                 .toList();
     }
 
-    // R7) Text index search
+    /**
+     * R7) Text Index Search on Comment Field
+     * <p>
+     * Simulates text search with a text index.
+     * <pre>db.ordersEOnlyOCommentIndexed.find({ $text: { $search: "furiously" } })</pre>
+     */
     public List<OrdersEOnlyOCommentIndexed> r7() {
         return datastore.find(OrdersEOnlyOCommentIndexed.class)
                 .filter(Filters.text("furiously"))
@@ -87,7 +146,17 @@ public class EmbeddedQueryRepository {
                 .toList();
     }
 
-    // R8) Unwind embedded array (array flattening cost)
+    /**
+     * R8) Unwind Embedded Lineitems
+     * <p>
+     * Tests unwind of embedded objects (array flattening cost).
+     * <pre>
+     * db.ordersEWithLineitems.aggregate([
+     *   { $unwind: "$o_lineitems" },
+     *   { $project: { _id: 1, "o_lineitems.l_partkey": 1 } }
+     * ])
+     * </pre>
+     */
     public List<Document> r8() {
         return datastore.aggregate(OrdersEWithLineitems.class)
                 .unwind(Unwind.unwind("o_lineitems"))
@@ -97,7 +166,22 @@ public class EmbeddedQueryRepository {
                 .toList();
     }
 
-    // R9) Aggregation on embedded array — sum revenue per order
+    /**
+     * R9) Aggregation on Embedded Array — Sum Revenue per Order
+     * <p>
+     * Tests aggregation on embedded arrays ($unwind + $group interaction).
+     * <pre>
+     * db.ordersEWithLineitems.aggregate([
+     *   { $unwind: "$o_lineitems" },
+     *   {
+     *     $group: {
+     *       _id: "$_id",
+     *       totalRevenue: { $sum: "$o_lineitems.l_extendedprice" }
+     *     }
+     *   }
+     * ])
+     * </pre>
+     */
     public List<Document> r9() {
         return datastore.aggregate(OrdersEWithLineitems.class)
                 .unwind(Unwind.unwind("o_lineitems"))
