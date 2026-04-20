@@ -1,0 +1,14 @@
+{
+  "name": "microservice-mongodb-mongoose-javascript",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/app.js",
+  "dependencies": {
+    "common-js": "file:../common-js",
+    "express": "^4.19.2",
+    "eureka-js-client": "^4.5.0",
+    "mongoose": "^9.0.0",
+    "seedrandom": "^3.0.5",
+    "swagger-ui-express": "^5.0.1"
+  }
+}

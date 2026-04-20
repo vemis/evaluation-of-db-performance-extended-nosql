@@ -69,6 +69,12 @@ services:
     restart: unless-stopped
     ports:
       - "8761:8761"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8761/eureka/apps/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   microservice-mysql-springdatajpa:
     build:
@@ -318,6 +324,42 @@ services:
       eureka-server:
         condition: service_started
       microservice-couchbase-springdata-java-loader:
+        condition: service_completed_successfully
+
+  microservice-mongodb-mongoose-javascript-loader:
+    build:
+      context: .
+      dockerfile: microservice-mongodb-mongoose-javascript/Dockerfile
+    container_name: ms-mongodb-mongoose-javascript-loader
+    restart: "no"
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DATABASE: mongoose_tpch
+      TPCH_DATA_PATH: /data/tpch-data-small
+      LOADER_MODE: "true"
+    depends_on:
+      mongodb:
+        condition: service_started
+
+  microservice-mongodb-mongoose-javascript:
+    build:
+      context: .
+      dockerfile: microservice-mongodb-mongoose-javascript/Dockerfile
+    container_name: ms-mongodb-mongoose-javascript
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DATABASE: mongoose_tpch
+      EUREKA_URL: http://eureka-server:8761/eureka
+      TPCH_DATA_PATH: /data/tpch-data-small
+    ports:
+      - "8089:8089"
+    depends_on:
+      mongodb:
+        condition: service_started
+      eureka-server:
+        condition: service_healthy
+      microservice-mongodb-mongoose-javascript-loader:
         condition: service_completed_successfully
 
   orchestrator:
