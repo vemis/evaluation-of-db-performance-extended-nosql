@@ -5,8 +5,12 @@ WORKDIR /workspace
 # Copy common-js alongside the microservice (package.json references file:../common-js)
 COPY common-js/ ./common-js/
 
+# Install common-js dependencies so its imports resolve when Node runs files from that directory
+WORKDIR /workspace/common-js
+RUN npm install
+
 # Install microservice dependencies (file: reference resolves to ../common-js)
-COPY microservice-mongodb-mongoose-javascript/package*.json ./microservice/
+COPY microservice-mongodb-mongoose-javascript/package*.json /workspace/microservice/
 WORKDIR /workspace/microservice
 RUN npm install
 
