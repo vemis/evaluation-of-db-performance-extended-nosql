@@ -13,7 +13,8 @@ export const SERVICES = [
   { id: 'springDataJpa', label: 'Spring Data JPA',   supportsEmbedded: false },
   { id: 'morphia',             label: 'Morphia (MongoDB)',          supportsEmbedded: true  },
   { id: 'couchbaseSpringData', label: 'Spring Data (Couchbase)',    supportsEmbedded: true  },
-  { id: 'springDataMongoDB',   label: 'Spring Data (MongoDB)',      supportsEmbedded: true  },
+  { id: 'springDataMongoDB',        label: 'Spring Data (MongoDB)',      supportsEmbedded: true  },
+  { id: 'mongooseMongoDBJavascript', label: 'Mongoose (MongoDB)',          supportsEmbedded: true  },
 ] as const
 
 export type ServiceId = (typeof SERVICES)[number]['id']

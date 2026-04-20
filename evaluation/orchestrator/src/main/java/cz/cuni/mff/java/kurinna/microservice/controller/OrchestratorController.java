@@ -27,21 +27,25 @@ public class OrchestratorController {
             CouchbaseSpringDataService couchbaseSpringData,
             CouchbaseSpringDataEmbeddedService couchbaseSpringDataEmbedded,
             SpringDataMongoDBService springDataMongoDB,
-            SpringDataMongoDBEmbeddedService springDataMongoDBEmbedded) {
+            SpringDataMongoDBEmbeddedService springDataMongoDBEmbedded,
+            MongooseMongoDBService mongooseMongoDBJavascript,
+            MongooseMongoDBEmbeddedService mongooseMongoDBJavascriptEmbedded) {
         this.serviceMap = Map.of(
-                "cayenne",           cayenne,
-                "ebean",             ebean,
-                "jdbc",              jdbc,
-                "jooq",              jooq,
-                "morphia",           morphia,
-                "myBatis",           myBatis,
-                "springDataJpa",     springDataJpa,
-                "couchbaseSpringData", couchbaseSpringData,
-                "springDataMongoDB", springDataMongoDB);
+                "cayenne",                   cayenne,
+                "ebean",                     ebean,
+                "jdbc",                      jdbc,
+                "jooq",                      jooq,
+                "morphia",                   morphia,
+                "myBatis",                   myBatis,
+                "springDataJpa",             springDataJpa,
+                "couchbaseSpringData",       couchbaseSpringData,
+                "springDataMongoDB",         springDataMongoDB,
+                "mongooseMongoDBJavascript", mongooseMongoDBJavascript);
         this.embeddedServiceMap = Map.of(
-                "morphia",           morphiaEmbedded,
-                "couchbaseSpringData", couchbaseSpringDataEmbedded,
-                "springDataMongoDB", springDataMongoDBEmbedded);
+                "morphia",                   morphiaEmbedded,
+                "couchbaseSpringData",       couchbaseSpringDataEmbedded,
+                "springDataMongoDB",         springDataMongoDBEmbedded,
+                "mongooseMongoDBJavascript", mongooseMongoDBJavascriptEmbedded);
     }
 
     @GetMapping("/health")
