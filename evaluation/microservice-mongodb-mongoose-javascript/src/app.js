@@ -3,7 +3,7 @@ import { Eureka } from 'eureka-js-client';
 import swaggerUi from 'swagger-ui-express';
 import { connectDb } from './config/db.js';
 import { swaggerSpec } from './config/swagger.js';
-import queryRoutes         from './routes/queryRoutes.js';
+import queryRoutes         from './routes/relationalQueryRoutes.js';
 import embeddedQueryRoutes from './routes/embeddedQueryRoutes.js';
 import loaderRoutes        from './routes/loaderRoutes.js';
 import { runRelationalLoader } from './loader/loaderR.js';

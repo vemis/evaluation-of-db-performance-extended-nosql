@@ -1,6 +1,6 @@
 import express from 'express';
 import { executeWithMeasurement } from 'common-js';
-import * as repo from '../repository/queryRepository.js';
+import * as repo from '../repository/relationalQueryRepository.js';
 
 const router = express.Router();
 
