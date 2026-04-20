@@ -1,12 +1,12 @@
 import path from 'path';
-import RegionR   from '../models/tpc_h_r/region-r.js';
-import NationR   from '../models/tpc_h_r/nation-r.js';
-import CustomerR from '../models/tpc_h_r/customer-r.js';
-import OrdersR   from '../models/tpc_h_r/orders-r.js';
-import PartR     from '../models/tpc_h_r/part-r.js';
-import PartsuppR from '../models/tpc_h_r/partsupp-r.js';
-import SupplierR from '../models/tpc_h_r/supplier-r.js';
-import LineitemR from '../models/tpc_h_r/lineitem-r.js';
+import RegionR   from '../model/relational/region-r.js';
+import NationR   from '../model/relational/nation-r.js';
+import CustomerR from '../model/relational/customer-r.js';
+import OrdersR   from '../model/relational/orders-r.js';
+import PartR     from '../model/relational/part-r.js';
+import PartsuppR from '../model/relational/partsupp-r.js';
+import SupplierR from '../model/relational/supplier-r.js';
+import LineitemR from '../model/relational/lineitem-r.js';
 import mongoose from 'mongoose';
 import { readDataFromCustomSeparator, runLoader, createMongoOps } from 'common-js';
 

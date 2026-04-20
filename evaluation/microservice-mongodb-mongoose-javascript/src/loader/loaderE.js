@@ -1,10 +1,10 @@
 import path from 'path';
-import OrdersEWithLineitems                    from '../models/tpc_h_e/orders-e-with-lineitems.js';
-import OrdersEWithLineitemsArrayAsTags         from '../models/tpc_h_e/orders-e-with-lineitems-array-as-tags.js';
-import OrdersEWithLineitemsArrayAsTagsIndexed  from '../models/tpc_h_e/orders-e-with-lineitems-array-as-tags-indexed.js';
-import OrdersEWithCustomerWithNationWithRegion from '../models/tpc_h_e/orders-e-with-customer-with-nation-with-region.js';
-import OrdersEOnlyOComment                     from '../models/tpc_h_e/orders-e-only-o-comment.js';
-import OrdersEOnlyOCommentIndexed              from '../models/tpc_h_e/orders-e-only-o-comment-indexed.js';
+import OrdersEWithLineitems                    from '../model/embedded/orders-e-with-lineitems.js';
+import OrdersEWithLineitemsArrayAsTags         from '../model/embedded/orders-e-with-lineitems-array-as-tags.js';
+import OrdersEWithLineitemsArrayAsTagsIndexed  from '../model/embedded/orders-e-with-lineitems-array-as-tags-indexed.js';
+import OrdersEWithCustomerWithNationWithRegion from '../model/embedded/orders-e-with-customer-with-nation-with-region.js';
+import OrdersEOnlyOComment                     from '../model/embedded/orders-e-only-o-comment.js';
+import OrdersEOnlyOCommentIndexed              from '../model/embedded/orders-e-only-o-comment-indexed.js';
 import mongoose from 'mongoose';
 import { readDataFromCustomSeparator, createLineitemsTags, shuffleAndTruncate, runLoader, createMongoOps } from 'common-js';
 
