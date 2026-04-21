@@ -31,7 +31,9 @@ public class OrchestratorController {
             MongooseMongoDBService mongooseMongoDBJavascript,
             MongooseMongoDBEmbeddedService mongooseMongoDBJavascriptEmbedded,
             OttomanJSCouchbaseService ottomanJSCouchbase,
-            OttomanJSCouchbaseEmbeddedService ottomanJSCouchbaseEmbedded) {
+            OttomanJSCouchbaseEmbeddedService ottomanJSCouchbaseEmbedded,
+            MongoDBEntitiesCSharpService mongoDBEntitiesCSharp,
+            MongoDBEntitiesCSharpEmbeddedService mongoDBEntitiesCSharpEmbedded) {
         this.serviceMap = Map.ofEntries(
                 Map.entry("cayenne",                      cayenne),
                 Map.entry("ebean",                        ebean),
@@ -43,13 +45,15 @@ public class OrchestratorController {
                 Map.entry("couchbaseSpringData",          couchbaseSpringData),
                 Map.entry("springDataMongoDB",            springDataMongoDB),
                 Map.entry("mongooseMongoDBJavascript",    mongooseMongoDBJavascript),
-                Map.entry("ottomanJSCouchbaseJavascript", ottomanJSCouchbase));
+                Map.entry("ottomanJSCouchbaseJavascript", ottomanJSCouchbase),
+                Map.entry("mongoDBEntitiesCSharp",        mongoDBEntitiesCSharp));
         this.embeddedServiceMap = Map.of(
                 "morphia",                      morphiaEmbedded,
                 "couchbaseSpringData",          couchbaseSpringDataEmbedded,
                 "springDataMongoDB",            springDataMongoDBEmbedded,
                 "mongooseMongoDBJavascript",    mongooseMongoDBJavascriptEmbedded,
-                "ottomanJSCouchbaseJavascript", ottomanJSCouchbaseEmbedded);
+                "ottomanJSCouchbaseJavascript", ottomanJSCouchbaseEmbedded,
+                "mongoDBEntitiesCSharp",        mongoDBEntitiesCSharpEmbedded);
     }
 
     @GetMapping("/health")

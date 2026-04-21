@@ -16,6 +16,7 @@ export const SERVICES = [
   { id: 'springDataMongoDB',        label: 'Spring Data (MongoDB)',      supportsEmbedded: true  },
   { id: 'mongooseMongoDBJavascript',    label: 'Mongoose (MongoDB)',          supportsEmbedded: true  },
   { id: 'ottomanJSCouchbaseJavascript', label: 'Ottoman.js (Couchbase)',      supportsEmbedded: true  },
+  { id: 'mongoDBEntitiesCSharp',        label: 'MongoDB.Entities (C#)',       supportsEmbedded: true  },
 ] as const
 
 export type ServiceId = (typeof SERVICES)[number]['id']

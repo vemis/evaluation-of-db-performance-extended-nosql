@@ -400,6 +400,42 @@ services:
       microservice-couchbase-ottomanjs-javascript-loader:
         condition: service_completed_successfully
 
+  microservice-mongodb-mongodbentities-csharp-loader:
+    build:
+      context: .
+      dockerfile: microservice-mongodb-mongodbentities-csharp/Dockerfile
+    container_name: ms-mongodb-mongodbentities-csharp-loader
+    restart: "no"
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DATABASE: mongodbentities_tpch
+      TPCH_DATA_PATH: /data/tpch-data-small
+      LOADER_MODE: "true"
+    depends_on:
+      mongodb:
+        condition: service_started
+
+  microservice-mongodb-mongodbentities-csharp:
+    build:
+      context: .
+      dockerfile: microservice-mongodb-mongodbentities-csharp/Dockerfile
+    container_name: ms-mongodb-mongodbentities-csharp
+    restart: unless-stopped
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017
+      MONGODB_DATABASE: mongodbentities_tpch
+      TPCH_DATA_PATH: /data/tpch-data-small
+      EUREKA_URL: http://eureka-server:8761/eureka
+    ports:
+      - "8097:8097"
+    depends_on:
+      mongodb:
+        condition: service_started
+      eureka-server:
+        condition: service_healthy
+      microservice-mongodb-mongodbentities-csharp-loader:
+        condition: service_completed_successfully
+
   orchestrator:
     build: ./orchestrator
     container_name: orchestrator
