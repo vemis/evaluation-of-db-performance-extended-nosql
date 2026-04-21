@@ -13,30 +13,21 @@ namespace MongoDBEntitiesMicroservice.Loader
 
         
         
-        
-        
-        public class TPCHDatasetLoaderR : TPCHDatasetLoader
+        public static async Task LoadDatasetAsync<T>(string filePath) where T : class, IEntity
         {
-            public static async Task LoadDatasetAsync<T>(string filePath) where T : class, IEntity
+            List<string[]> dataset = ReadDataFromCustomSeparator(filePath);
+            List<T> entities = new List<T>(dataset.Count);
+
+            for (int i = 0; i < dataset.Count; i++)
             {
-                List<string[]> dataset = ReadDataFromCustomSeparator(filePath);
-                List<T> entities = new List<T>(dataset.Count);
+                if (i % 10_000 == 0)
+                    Console.WriteLine($"Processed {i} / {dataset.Count}");
 
-                for (int i = 0; i < dataset.Count; i++)
-                {
-                    if (i % 10_000 == 0)
-                        Console.WriteLine($"Processed {i} / {dataset.Count}");
-
-                    entities.Add((T)Activator.CreateInstance(typeof(T), new object[] { dataset[i] })!);
-                }
-
-                await DB.InsertAsync(entities);
+                entities.Add((T)Activator.CreateInstance(typeof(T), new object[] { dataset[i] })!);
             }
+
+            await DB.InsertAsync(entities);
         }
-        
-        
-        
-        
         
         
         
@@ -64,19 +55,19 @@ namespace MongoDBEntitiesMicroservice.Loader
             await db.DropCollectionAsync("SupplierR");
 
             Console.WriteLine("Loading RegionR...");
-            await TPCHDatasetLoaderR.LoadDatasetAsync<RegionR>(Path.Combine(dataPath, "region.tbl"));
+            await LoadDatasetAsync<RegionR>(Path.Combine(dataPath, "region.tbl"));
 
             Console.WriteLine("Loading NationR...");
             await DB.Index<NationR>().Key(c => c.n_regionkey, KeyType.Ascending).CreateAsync();
-            await TPCHDatasetLoaderR.LoadDatasetAsync<NationR>(Path.Combine(dataPath, "nation.tbl"));
+            await LoadDatasetAsync<NationR>(Path.Combine(dataPath, "nation.tbl"));
 
             Console.WriteLine("Loading CustomerR...");
             await DB.Index<CustomerR>().Key(c => c.c_nationkey, KeyType.Ascending).CreateAsync();
-            await TPCHDatasetLoaderR.LoadDatasetAsync<CustomerR>(Path.Combine(dataPath, "customer.tbl"));
+            await LoadDatasetAsync<CustomerR>(Path.Combine(dataPath, "customer.tbl"));
 
             Console.WriteLine("Loading OrdersR...");
             await DB.Index<OrdersR>().Key(c => c.o_custkey, KeyType.Ascending).CreateAsync();
-            await TPCHDatasetLoaderR.LoadDatasetAsync<OrdersR>(Path.Combine(dataPath, "orders.tbl"));
+            await LoadDatasetAsync<OrdersR>(Path.Combine(dataPath, "orders.tbl"));
 
             Console.WriteLine("Loading LineitemR...");
             await DB.Index<LineitemR>()
@@ -85,21 +76,21 @@ namespace MongoDBEntitiesMicroservice.Loader
                 .Key(c => c.l_suppkey, KeyType.Ascending)
                 .Key(c => c.l_ps_id, KeyType.Ascending)
                 .CreateAsync();
-            await TPCHDatasetLoaderR.LoadDatasetAsync<LineitemR>(Path.Combine(dataPath, "lineitem.tbl"));
+            await LoadDatasetAsync<LineitemR>(Path.Combine(dataPath, "lineitem.tbl"));
 
             Console.WriteLine("Loading PartR...");
-            await TPCHDatasetLoaderR.LoadDatasetAsync<PartR>(Path.Combine(dataPath, "part.tbl"));
+            await LoadDatasetAsync<PartR>(Path.Combine(dataPath, "part.tbl"));
 
             Console.WriteLine("Loading PartsuppR...");
             await DB.Index<PartsuppR>()
                 .Key(c => c.ps_partkey, KeyType.Ascending)
                 .Key(c => c.ps_suppkey, KeyType.Ascending)
                 .CreateAsync();
-            await TPCHDatasetLoaderR.LoadDatasetAsync<PartsuppR>(Path.Combine(dataPath, "partsupp.tbl"));
+            await LoadDatasetAsync<PartsuppR>(Path.Combine(dataPath, "partsupp.tbl"));
 
             Console.WriteLine("Loading SupplierR...");
             await DB.Index<SupplierR>().Key(c => c.s_nationkey, KeyType.Ascending).CreateAsync();
-            await TPCHDatasetLoaderR.LoadDatasetAsync<SupplierR>(Path.Combine(dataPath, "supplier.tbl"));
+            await LoadDatasetAsync<SupplierR>(Path.Combine(dataPath, "supplier.tbl"));
 
             await meta.InsertOneAsync(new BsonDocument { { "_id", SentinelId } });
             Console.WriteLine("Relational loading complete.");
