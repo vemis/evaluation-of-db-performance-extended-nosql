@@ -4,6 +4,7 @@
   "type": "module",
   "main": "src/index.js",
   "dependencies": {
+    "benchmark": "^2.1.4",
     "seedrandom": "^3.0.5"
   }
 }
