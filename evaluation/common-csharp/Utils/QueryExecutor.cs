@@ -33,6 +33,11 @@ namespace CommonCSharp.Utils
     /// </summary>
     public static class QueryExecutor
     {
+        public static Task<QueryResult> ExecuteWithMeasurement<T>(Func<Task<List<T>>> queryFn, int repetitions)
+        {
+            return ExecuteWithMeasurement(async () => (await queryFn()).Count, repetitions);
+        }
+
         public static Task<QueryResult> ExecuteWithMeasurement(Func<Task<int>> queryFn, int repetitions)
         {
             BenchmarkHolder.Current = queryFn;

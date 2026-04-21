@@ -5,102 +5,83 @@ using MongoDB.Entities;
 
 namespace MongoDBEntitiesMicroservice.Repository
 {
-    public interface IEmbeddedQueryRepository
-    {
-        Task<int> R1();
-        Task<int> R2();
-        Task<int> R3();
-        Task<int> R4();
-        Task<int> R5();
-        Task<int> R6();
-        Task<int> R7();
-        Task<int> R8();
-        Task<int> R9();
-    }
+
 
     public class EmbeddedQueryRepository : IEmbeddedQueryRepository
     {
-        public async Task<int> R1()
+        public async Task<List<BsonDocument>> R1()
         {
-            var result = await DB.Collection<OrdersEWithLineitems>()
+            return await DB.Collection<OrdersEWithLineitems>()
                 .Aggregate()
                 .Match(Builders<OrdersEWithLineitems>.Filter.Gt("o_lineitems.l_quantity", 5))
                 .Project<BsonDocument>(new BsonDocument { { "o_orderdate", 1 }, { "o_lineitems.l_partkey", 1 } })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> R2()
+        public async Task<List<BsonDocument>> R2()
         {
-            var result = await DB.Collection<OrdersEWithLineitems>()
+            return await DB.Collection<OrdersEWithLineitems>()
                 .Aggregate()
                 .Match(Builders<OrdersEWithLineitems>.Filter.Gt("o_lineitems.l_partkey", 20000))
                 .Project<BsonDocument>(new BsonDocument { { "o_orderdate", 1 }, { "o_lineitems.l_partkey", 1 } })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> R3()
+        public async Task<List<OrdersEWithLineitemsArrayAsTags>> R3()
         {
-            var result = await DB.Collection<OrdersEWithLineitemsArrayAsTags>()
+            return await DB.Collection<OrdersEWithLineitemsArrayAsTags>()
                 .Find(Builders<OrdersEWithLineitemsArrayAsTags>.Filter.Eq("o_lineitems_tags", "MAIL"))
                 .Project<OrdersEWithLineitemsArrayAsTags>(
                     Builders<OrdersEWithLineitemsArrayAsTags>.Projection
                         .Include("o_orderdate").Include("o_lineitems_tags"))
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> R4()
+        public async Task<List<OrdersEWithLineitemsArrayAsTagsIndexed>> R4()
         {
-            var result = await DB.Collection<OrdersEWithLineitemsArrayAsTagsIndexed>()
+            return await DB.Collection<OrdersEWithLineitemsArrayAsTagsIndexed>()
                 .Find(Builders<OrdersEWithLineitemsArrayAsTagsIndexed>.Filter.Eq("o_lineitems_tags_indexed", "MAIL"))
                 .Project<OrdersEWithLineitemsArrayAsTagsIndexed>(
                     Builders<OrdersEWithLineitemsArrayAsTagsIndexed>.Projection
                         .Include("o_orderdate").Include("o_lineitems_tags_indexed"))
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> R5()
+        public async Task<List<OrdersEWithCustomerWithNationWithRegion>> R5()
         {
-            var result = await DB.Collection<OrdersEWithCustomerWithNationWithRegion>()
+            return await DB.Collection<OrdersEWithCustomerWithNationWithRegion>()
                 .Find(Builders<OrdersEWithCustomerWithNationWithRegion>.Filter
                     .Eq("o_customer.c_nation.n_region.r_name", "AMERICA"))
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> R6()
+        public async Task<List<OrdersEOnlyOComment>> R6()
         {
-            var result = await DB.Collection<OrdersEOnlyOComment>()
+            return await DB.Collection<OrdersEOnlyOComment>()
                 .Find(Builders<OrdersEOnlyOComment>.Filter.Regex("o_comment",
                     new BsonRegularExpression("furiously", "i")))
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> R7()
+        public async Task<List<OrdersEOnlyOCommentIndexed>> R7()
         {
-            var result = await DB.Collection<OrdersEOnlyOCommentIndexed>()
+            return await DB.Collection<OrdersEOnlyOCommentIndexed>()
                 .Find(Builders<OrdersEOnlyOCommentIndexed>.Filter.Text("furiously"))
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> R8()
+        public async Task<List<BsonDocument>> R8()
         {
-            var result = await DB.Collection<OrdersEWithLineitems>()
+            return await DB.Collection<OrdersEWithLineitems>()
                 .Aggregate()
                 .Unwind("o_lineitems")
                 .Project<BsonDocument>(new BsonDocument { { "o_lineitems.l_partkey", 1 } })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> R9()
+        public async Task<List<BsonDocument>> R9()
         {
-            var result = await DB.Collection<OrdersEWithLineitems>()
+            return await DB.Collection<OrdersEWithLineitems>()
                 .Aggregate()
                 .Unwind("o_lineitems")
                 .Group<BsonDocument>(new BsonDocument
@@ -109,7 +90,6 @@ namespace MongoDBEntitiesMicroservice.Repository
                     { "totalRevenue", new BsonDocument("$sum", "$o_lineitems.l_extendedprice") }
                 })
                 .ToListAsync();
-            return result.Count;
         }
     }
 }

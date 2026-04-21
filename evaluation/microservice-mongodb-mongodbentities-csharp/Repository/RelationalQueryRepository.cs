@@ -5,87 +5,57 @@ using MongoDB.Entities;
 
 namespace MongoDBEntitiesMicroservice.Repository
 {
-    public interface IRelationalQueryRepository
-    {
-        Task<int> A1();
-        Task<int> A2();
-        Task<int> A3();
-        Task<int> A4();
-        Task<int> B1();
-        Task<int> B2();
-        Task<int> C1();
-        Task<int> C2();
-        Task<int> C3();
-        Task<int> C4();
-        Task<int> C5();
-        Task<int> D1();
-        Task<int> D2();
-        Task<int> D3();
-        Task<int> E1();
-        Task<int> E2();
-        Task<int> E3();
-        Task<int> Q1();
-        Task<int> Q2();
-        Task<int> Q3();
-        Task<int> Q4();
-        Task<int> Q5();
-    }
+    
 
     public class RelationalQueryRepository : IRelationalQueryRepository
     {
-        public async Task<int> A1()
+        public async Task<List<LineitemR>> A1()
         {
-            var result = await DB.Find<LineitemR>().ExecuteAsync();
-            return result.Count;
+            return await DB.Find<LineitemR>().ExecuteAsync();
         }
 
-        public async Task<int> A2()
+        public async Task<List<OrdersR>> A2()
         {
-            var result = await DB.Find<OrdersR>()
+            return await DB.Find<OrdersR>()
                 .Match(o => o.o_orderdate.DateTime > DateTime.Parse("1996-01-01")
                          && o.o_orderdate.DateTime < DateTime.Parse("1996-12-31"))
                 .ExecuteAsync();
-            return result.Count;
         }
 
-        public async Task<int> A3()
+        public async Task<List<CustomerR>> A3()
         {
-            var result = await DB.Find<CustomerR>().ExecuteAsync();
-            return result.Count;
+            return await DB.Find<CustomerR>().ExecuteAsync();
         }
 
-        public async Task<int> A4()
+        public async Task<List<OrdersR>> A4()
         {
-            var result = await DB.Find<OrdersR>()
+            return await DB.Find<OrdersR>()
                 .Match(o => o.o_orderkey > 1000 && o.o_orderkey < 50_000)
                 .ExecuteAsync();
-            return result.Count;
         }
 
-        public async Task<int> B1()
+        public async Task<List<BsonDocument>> B1()
         {
-            var result = await DB.Fluent<OrdersR>()
+            return await DB.Fluent<OrdersR>()
                 .Group(x => x.o_orderdate.DateTime.ToString("%Y-%m"),
                     g => new { OrderMonth = g.Key, OrderCount = g.Count() })
                 .Project(x => new BsonDocument { { "OrderMonth", x.OrderMonth }, { "OrderCount", x.OrderCount } })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> B2()
+        public async Task<List<BsonDocument>> B2()
         {
-            var result = await DB.Fluent<LineitemR>()
+            return await DB.Fluent<LineitemR>()
                 .Group(x => x.l_shipdate.DateTime.ToString("%Y-%m"),
                     g => new { ShipMonth = g.Key, MaxPrice = g.Max(x => x.l_extendedprice) })
                 .Project(x => new BsonDocument { { "ShipMonth", x.ShipMonth }, { "MaxPrice", x.MaxPrice } })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> C1()
+        public async Task<List<BsonDocument>> C1()
         {
             var ordersCollection = DB.Collection<OrdersR>();
-            var result = await DB.Fluent<CustomerR>()
+            return await DB.Fluent<CustomerR>()
                 .Lookup<OrdersR, OrdersR, OrdersR[], BsonDocument>(
                     foreignCollection: ordersCollection,
                     let: null,
@@ -99,12 +69,11 @@ namespace MongoDBEntitiesMicroservice.Repository
                     { "o_orderdate", "$orders.o_orderdate" }, { "o_totalprice", "$orders.o_totalprice" }
                 })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> C2()
+        public async Task<List<BsonDocument>> C2()
         {
-            var result = await DB.Fluent<CustomerR>()
+            return await DB.Fluent<CustomerR>()
                 .Lookup(foreignCollectionName: "OrdersR", localField: "_id",
                     foreignField: "o_custkey", @as: "orders")
                 .Unwind("orders")
@@ -114,12 +83,11 @@ namespace MongoDBEntitiesMicroservice.Repository
                     { "o_orderdate", "$orders.o_orderdate" }, { "o_totalprice", "$orders.o_totalprice" }
                 })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> C3()
+        public async Task<List<BsonDocument>> C3()
         {
-            var result = await DB.Fluent<CustomerR>()
+            return await DB.Fluent<CustomerR>()
                 .Lookup(foreignCollectionName: "NationR", localField: "c_nationkey",
                     foreignField: "_id", @as: "nation")
                 .Unwind("nation")
@@ -132,12 +100,11 @@ namespace MongoDBEntitiesMicroservice.Repository
                     { "o_orderdate", "$orders.o_orderdate" }, { "o_totalprice", "$orders.o_totalprice" }
                 })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> C4()
+        public async Task<List<BsonDocument>> C4()
         {
-            var result = await DB.Fluent<CustomerR>()
+            return await DB.Fluent<CustomerR>()
                 .Lookup(foreignCollectionName: "NationR", localField: "c_nationkey",
                     foreignField: "_id", @as: "nation")
                 .Unwind("nation")
@@ -154,12 +121,11 @@ namespace MongoDBEntitiesMicroservice.Repository
                     { "o_orderdate", "$orders.o_orderdate" }, { "o_totalprice", "$orders.o_totalprice" }
                 })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> C5()
+        public async Task<List<BsonDocument>> C5()
         {
-            var result = await DB.Fluent<CustomerR>()
+            return await DB.Fluent<CustomerR>()
                 .Lookup(foreignCollectionName: "OrdersR", localField: "_id",
                     foreignField: "o_custkey", @as: "orders")
                 .Unwind("orders", new AggregateUnwindOptions<BsonDocument> { PreserveNullAndEmptyArrays = true })
@@ -169,56 +135,51 @@ namespace MongoDBEntitiesMicroservice.Repository
                     { "o_orderkey", "$orders._id" }, { "o_orderdate", "$orders.o_orderdate" }
                 })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> D1()
+        public async Task<List<BsonDocument>> D1()
         {
-            var result = await DB.Fluent<CustomerR>()
+            return await DB.Fluent<CustomerR>()
                 .Project(c => new { nationkey = c.c_nationkey })
                 .Group(x => x.nationkey, g => new { nationkey = g.Key })
                 .Project(x => new BsonDocument { { "nationkey", x.nationkey } })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> D2()
+        public async Task<List<BsonDocument>> D2()
         {
-            var result = await DB.Fluent<CustomerR>()
+            return await DB.Fluent<CustomerR>()
                 .Lookup(foreignCollectionName: "SupplierR", localField: "_id",
                     foreignField: "_id", @as: "matched_suppliers")
                 .Match(new BsonDocument { { "matched_suppliers.0", new BsonDocument { { "$exists", true } } } })
                 .Project<BsonDocument>(new BsonDocument { { "_id", 0 }, { "c_custkey", "$_id" } })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> D3()
+        public async Task<List<BsonDocument>> D3()
         {
-            var result = await DB.Fluent<CustomerR>()
+            return await DB.Fluent<CustomerR>()
                 .Lookup(foreignCollectionName: "SupplierR", localField: "_id",
                     foreignField: "_id", @as: "matched_suppliers")
                 .Match(new BsonDocument { { "matched_suppliers", new BsonDocument { { "$size", 0 } } } })
                 .Project<BsonDocument>(new BsonDocument { { "_id", 0 }, { "c_custkey", "$_id" } })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> E1()
+        public async Task<List<BsonDocument>> E1()
         {
-            var result = await DB.Fluent<CustomerR>()
+            return await DB.Fluent<CustomerR>()
                 .Sort(Builders<CustomerR>.Sort.Descending(c => c.c_acctbal))
                 .Project<BsonDocument>(new BsonDocument
                 {
                     { "_id", 0 }, { "c_name", 1 }, { "c_address", 1 }, { "c_acctbal", 1 }
                 })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> E2()
+        public async Task<List<BsonDocument>> E2()
         {
-            var result = await DB.Fluent<OrdersR>()
+            return await DB.Fluent<OrdersR>()
                 .Sort(Builders<OrdersR>.Sort.Ascending(o => o.o_orderkey))
                 .Project<BsonDocument>(new BsonDocument
                 {
@@ -226,12 +187,11 @@ namespace MongoDBEntitiesMicroservice.Repository
                     { "o_orderdate", 1 }, { "o_totalprice", 1 }
                 })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> E3()
+        public async Task<List<BsonDocument>> E3()
         {
-            var result = await DB.Fluent<CustomerR>()
+            return await DB.Fluent<CustomerR>()
                 .Group(x => new { x.c_nationkey, x.c_mktsegment },
                     g => new { c_nationkey = g.Key.c_nationkey, c_mktsegment = g.Key.c_mktsegment })
                 .Project(x => new BsonDocument
@@ -239,13 +199,12 @@ namespace MongoDBEntitiesMicroservice.Repository
                     { "c_nationkey", x.c_nationkey }, { "c_mktsegment", x.c_mktsegment }
                 })
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> Q1()
+        public async Task<List<BsonDocument>> Q1()
         {
             var cutoffDate = new DateTime(1998, 12, 1).Subtract(TimeSpan.FromDays(90));
-            var result = await DB.Fluent<LineitemR>()
+            return await DB.Fluent<LineitemR>()
                 .Match(l => l.l_shipdate.DateTime <= cutoffDate)
                 .Group(x => new { x.l_returnflag, x.l_linestatus },
                     g => new
@@ -271,12 +230,11 @@ namespace MongoDBEntitiesMicroservice.Repository
                 })
                 .Sort(Builders<BsonDocument>.Sort.Ascending("l_returnflag").Ascending("l_linestatus"))
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> Q2()
+        public async Task<List<BsonDocument>> Q2()
         {
-            var result = await DB.Fluent<PartR>()
+            return await DB.Fluent<PartR>()
                 .Match(new BsonDocument
                 {
                     { "p_size", 15 },
@@ -322,13 +280,12 @@ namespace MongoDBEntitiesMicroservice.Repository
                 .Sort(Builders<BsonDocument>.Sort
                     .Descending("s_acctbal").Ascending("n_name").Ascending("s_name").Ascending("p_partkey"))
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> Q3()
+        public async Task<List<BsonDocument>> Q3()
         {
             var date = new DateTime(1995, 3, 15);
-            var result = await DB.Fluent<CustomerR>()
+            return await DB.Fluent<CustomerR>()
                 .Match(c => c.c_mktsegment == "BUILDING")
                 .Lookup(foreignCollectionName: "OrdersR", localField: "_id",
                     foreignField: "o_custkey", @as: "orders")
@@ -359,14 +316,13 @@ namespace MongoDBEntitiesMicroservice.Repository
                 .Sort(Builders<BsonDocument>.Sort.Descending("revenue").Ascending("o_orderdate"))
                 .Limit(10)
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> Q4()
+        public async Task<List<BsonDocument>> Q4()
         {
             var startDate = new DateTime(1993, 7, 1);
             var endDate = startDate.AddMonths(3);
-            var result = await DB.Fluent<OrdersR>()
+            return await DB.Fluent<OrdersR>()
                 .Match(new BsonDocument { { "o_orderdate.DateTime", new BsonDocument
                     { { "$gte", startDate }, { "$lt", endDate } } } })
                 .Lookup(foreignCollectionName: "LineitemR", localField: "_id",
@@ -391,14 +347,13 @@ namespace MongoDBEntitiesMicroservice.Repository
                 .Project(new BsonDocument { { "_id", 0 }, { "o_orderpriority", "$_id" }, { "order_count", 1 } })
                 .Sort(Builders<BsonDocument>.Sort.Ascending("o_orderpriority"))
                 .ToListAsync();
-            return result.Count;
         }
 
-        public async Task<int> Q5()
+        public async Task<List<BsonDocument>> Q5()
         {
             var startDate = new DateTime(1994, 1, 1);
             var endDate = startDate.AddYears(1);
-            var result = await DB.Fluent<CustomerR>()
+            return await DB.Fluent<CustomerR>()
                 .Lookup(foreignCollectionName: "OrdersR", localField: "_id",
                     foreignField: "o_custkey", @as: "orders")
                 .Unwind("orders")
@@ -429,7 +384,6 @@ namespace MongoDBEntitiesMicroservice.Repository
                 .Project(new BsonDocument { { "_id", 0 }, { "n_name", "$_id" }, { "revenue", 1 } })
                 .Sort(Builders<BsonDocument>.Sort.Descending("revenue"))
                 .ToListAsync();
-            return result.Count;
         }
     }
 }
