@@ -2,27 +2,49 @@
 
 ## How to Use
 
+### 0. Go to the project repository
+
+```bash
+cd evaluation/
+```
+
 ### 1. Set up the Environment
 
   - Ensure you have Docker and Docker Compose installed.
-  - Create a `.env` file in the root of the project and set the following variables:
+  - Create a `.env` file in the `evaluation\`:
+    ```bash
+    touch .env
+    ```
+  - set the following variables:
       - `MYSQL_ROOT_PASSWORD`
       - `MYSQL_DATABASE`
       - `MYSQL_USER`
       - `MYSQL_PASSWORD`
+      - `COUCHBASE_USER`
+      - `COUCHBASE_PASSWORD`
+  - Example in `evaluation\.env.template`
 
 ### 2. Run the Application
 
   - To start all the services, run the following command in the root directory:
-
-    ```bash
-    docker-compose up -d
-    ```
+    - If you use older version of Ubuntu/Debian run:
+      ```bash
+      docker-compose up -d
+      ```
+    - Else on more modern versions run:
+      ```bash
+      docker compose up -d
+      ```
+  - ***!WARNING - quite memory demanding!***
+    - if you have < 32 GB RAM, you probably need to load data for each ODM separatelly.
 
 ### 3. Open the Web Application
 
   - To start using the application, navigate to `localhost:3000` in browser
 
+---
+
+## ***THIS PART OF 'README' IS DEPRECATED***
 ## Project Structure
 
 The project is divided into several modules:
