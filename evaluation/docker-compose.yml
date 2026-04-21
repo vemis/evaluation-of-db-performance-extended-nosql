@@ -362,6 +362,44 @@ services:
       microservice-mongodb-mongoose-javascript-loader:
         condition: service_completed_successfully
 
+  microservice-couchbase-ottomanjs-javascript-loader:
+    build:
+      context: .
+      dockerfile: microservice-couchbase-ottomanjs-javascript/Dockerfile
+    container_name: ms-couchbase-ottomanjs-javascript-loader
+    restart: "no"
+    environment:
+      COUCHBASE_HOST: couchbase
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+      TPCH_DATA_PATH: /data/tpch-data-small
+      LOADER_MODE: "true"
+    depends_on:
+      couchbase:
+        condition: service_healthy
+
+  microservice-couchbase-ottomanjs-javascript:
+    build:
+      context: .
+      dockerfile: microservice-couchbase-ottomanjs-javascript/Dockerfile
+    container_name: ms-couchbase-ottomanjs-javascript
+    restart: unless-stopped
+    environment:
+      COUCHBASE_HOST: couchbase
+      COUCHBASE_USER: ${COUCHBASE_USER}
+      COUCHBASE_PASSWORD: ${COUCHBASE_PASSWORD}
+      EUREKA_URL: http://eureka-server:8761/eureka
+      TPCH_DATA_PATH: /data/tpch-data-small
+    ports:
+      - "8090:8090"
+    depends_on:
+      couchbase:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      microservice-couchbase-ottomanjs-javascript-loader:
+        condition: service_completed_successfully
+
   orchestrator:
     build: ./orchestrator
     container_name: orchestrator

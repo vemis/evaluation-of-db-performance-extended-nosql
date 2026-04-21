@@ -29,23 +29,27 @@ public class OrchestratorController {
             SpringDataMongoDBService springDataMongoDB,
             SpringDataMongoDBEmbeddedService springDataMongoDBEmbedded,
             MongooseMongoDBService mongooseMongoDBJavascript,
-            MongooseMongoDBEmbeddedService mongooseMongoDBJavascriptEmbedded) {
-        this.serviceMap = Map.of(
-                "cayenne",                   cayenne,
-                "ebean",                     ebean,
-                "jdbc",                      jdbc,
-                "jooq",                      jooq,
-                "morphia",                   morphia,
-                "myBatis",                   myBatis,
-                "springDataJpa",             springDataJpa,
-                "couchbaseSpringData",       couchbaseSpringData,
-                "springDataMongoDB",         springDataMongoDB,
-                "mongooseMongoDBJavascript", mongooseMongoDBJavascript);
+            MongooseMongoDBEmbeddedService mongooseMongoDBJavascriptEmbedded,
+            OttomanJSCouchbaseService ottomanJSCouchbase,
+            OttomanJSCouchbaseEmbeddedService ottomanJSCouchbaseEmbedded) {
+        this.serviceMap = Map.ofEntries(
+                Map.entry("cayenne",                      cayenne),
+                Map.entry("ebean",                        ebean),
+                Map.entry("jdbc",                         jdbc),
+                Map.entry("jooq",                         jooq),
+                Map.entry("morphia",                      morphia),
+                Map.entry("myBatis",                      myBatis),
+                Map.entry("springDataJpa",                springDataJpa),
+                Map.entry("couchbaseSpringData",          couchbaseSpringData),
+                Map.entry("springDataMongoDB",            springDataMongoDB),
+                Map.entry("mongooseMongoDBJavascript",    mongooseMongoDBJavascript),
+                Map.entry("ottomanJSCouchbaseJavascript", ottomanJSCouchbase));
         this.embeddedServiceMap = Map.of(
-                "morphia",                   morphiaEmbedded,
-                "couchbaseSpringData",       couchbaseSpringDataEmbedded,
-                "springDataMongoDB",         springDataMongoDBEmbedded,
-                "mongooseMongoDBJavascript", mongooseMongoDBJavascriptEmbedded);
+                "morphia",                      morphiaEmbedded,
+                "couchbaseSpringData",          couchbaseSpringDataEmbedded,
+                "springDataMongoDB",            springDataMongoDBEmbedded,
+                "mongooseMongoDBJavascript",    mongooseMongoDBJavascriptEmbedded,
+                "ottomanJSCouchbaseJavascript", ottomanJSCouchbaseEmbedded);
     }
 
     @GetMapping("/health")

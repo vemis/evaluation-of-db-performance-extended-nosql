@@ -14,7 +14,8 @@ export const SERVICES = [
   { id: 'morphia',             label: 'Morphia (MongoDB)',          supportsEmbedded: true  },
   { id: 'couchbaseSpringData', label: 'Spring Data (Couchbase)',    supportsEmbedded: true  },
   { id: 'springDataMongoDB',        label: 'Spring Data (MongoDB)',      supportsEmbedded: true  },
-  { id: 'mongooseMongoDBJavascript', label: 'Mongoose (MongoDB)',          supportsEmbedded: true  },
+  { id: 'mongooseMongoDBJavascript',    label: 'Mongoose (MongoDB)',          supportsEmbedded: true  },
+  { id: 'ottomanJSCouchbaseJavascript', label: 'Ottoman.js (Couchbase)',      supportsEmbedded: true  },
 ] as const
 
 export type ServiceId = (typeof SERVICES)[number]['id']
