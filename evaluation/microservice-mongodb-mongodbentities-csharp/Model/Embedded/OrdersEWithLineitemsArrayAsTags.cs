@@ -1,7 +1,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Entities;
 
-namespace CommonCSharp.Models.TPC_H
+namespace MongoDBEntitiesMicroservice.Model.Embedded 
 {
     public class OrdersEWithLineitemsArrayAsTags : IEntity
     {

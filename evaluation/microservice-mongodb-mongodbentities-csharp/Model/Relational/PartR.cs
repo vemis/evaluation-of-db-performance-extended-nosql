@@ -1,7 +1,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Entities;
 
-namespace CommonCSharp.Models.TPC_H
+namespace MongoDBEntitiesMicroservice.Model.Relational
 {
     public class PartR : IEntity
     {

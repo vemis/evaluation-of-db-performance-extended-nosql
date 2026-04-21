@@ -1,4 +1,4 @@
-namespace CommonCSharp.Models.TPC_H
+namespace MongoDBEntitiesMicroservice.Model.Embedded 
 {
     public class NationEOnlyNNameNRegion
     {

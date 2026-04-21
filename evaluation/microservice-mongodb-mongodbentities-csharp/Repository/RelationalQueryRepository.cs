@@ -1,4 +1,4 @@
-using CommonCSharp.Models.TPC_H;
+using MongoDBEntitiesMicroservice.Model.Relational;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Entities;
