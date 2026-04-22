@@ -11,10 +11,10 @@ cd evaluation/
 ### 1. Set up the Environment
 
   - Ensure you have Docker and Docker Compose installed.
-  - Create a `.env` file in the `evaluation\`:
-    ```bash
-    touch .env
-    ```
+- Create a `.env` file in the `evaluation/`:
+  ```bash
+  touch .env
+  ```
   - set the following variables:
       - `MYSQL_ROOT_PASSWORD`
       - `MYSQL_DATABASE`
@@ -22,7 +22,7 @@ cd evaluation/
       - `MYSQL_PASSWORD`
       - `COUCHBASE_USER`
       - `COUCHBASE_PASSWORD`
-  - Example in `evaluation\.env.template`
+  - Example in `evaluation/.env.template`
 
 ### 2. Run the Application
 
@@ -44,7 +44,7 @@ cd evaluation/
 
 ---
 
-## ***THIS PART OF 'README' IS DEPRECATED***
+# ***THIS PART OF 'README' IS DEPRECATED***
 ## Project Structure
 
 The project is divided into several modules:
