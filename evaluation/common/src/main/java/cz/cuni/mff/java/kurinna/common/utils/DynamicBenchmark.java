@@ -48,6 +48,16 @@ public class DynamicBenchmark {
 
         Collection<?> result = SupplierHolder.current.get();
 
+        //==================================
+        // Print result for testing purposes
+        System.out.println("Query results:");
+        result.stream()
+                .limit(3)
+                .forEach(System.out::println);
+
+        System.out.println("Query size: " + result.size());
+        //==================================
+
         long elapsedNs = System.nanoTime() - t0;
         long allocAfter = THREAD_MX != null ? THREAD_MX.getThreadAllocatedBytes(threadId) : 0L;
         long delta = Math.max(0L, allocAfter - allocBefore);

@@ -55,6 +55,13 @@ export async function executeWithMeasurement(queryFn, repetitions) {
 
                             lastResultSize = Array.isArray(result) ? result.length : 0;
 
+                            //==================================
+                            // Print result for testing purposes
+                            console.log('Query results:');
+                            (Array.isArray(result) ? result : []).slice(0, 3).forEach(row => console.log(row));
+                            console.log('Query size: ' + lastResultSize);
+                            //==================================
+
                             // jfr sub-object matches Java's DynamicBenchmark shape;
                             // only totalAllocated is populated, the rest are zeros as in Java
                             iterationResults.push({

@@ -35,7 +35,18 @@ namespace CommonCSharp.Utils
     {
         public static Task<QueryResult> ExecuteWithMeasurement<T>(Func<Task<List<T>>> queryFn, int repetitions)
         {
-            return ExecuteWithMeasurement(async () => (await queryFn()).Count, repetitions);
+            return ExecuteWithMeasurement(async () =>
+            {
+                //==================================                                                                                                                                                                               
+                // Print result for testing purposes                                                                                                                                                                               
+                var debugResult = await queryFn();                                                                                                                                                                                 
+                Console.WriteLine("Query results:");                                                                                                                                                                               
+                foreach (var item in debugResult.Take(3))                                                                                                                                                                          
+                    Console.WriteLine(item);                                                                                                                                                                                       
+                Console.WriteLine("Query size: " + debugResult.Count);                                                                                                                                                             
+                //==================================
+                return debugResult.Count;
+            }, repetitions);
         }
 
         public static Task<QueryResult> ExecuteWithMeasurement(Func<Task<int>> queryFn, int repetitions)
