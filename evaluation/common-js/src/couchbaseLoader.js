@@ -1,5 +1,13 @@
+export async function insertBatched(Model, docs, batchSize = 2_500) {
+    for (let i = 0; i < docs.length; i += batchSize) {
+        await Promise.all(docs.slice(i, i + batchSize).map(doc => Model.create(doc)));
+        console.log(`  batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(docs.length / batchSize)}`);
+    }
+}
+
 export async function upsertBatch(collection, docs) {
     await Promise.all(docs.map(doc => collection.upsert(String(doc.id), doc)));
+
 }
 
 export async function upsertAll(collection, docs, batchSize = 2_500) {

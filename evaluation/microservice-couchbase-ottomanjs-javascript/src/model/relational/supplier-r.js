@@ -1,0 +1,21 @@
+import { Schema, model } from 'ottoman';
+
+const SupplierRSchema = new Schema({
+    id: String,
+    s_name: String,
+    s_address: String,
+    s_nationkey: String,
+    s_phone: String,
+    s_acctbal: Number,
+    s_comment: String
+});
+
+SupplierRSchema.index.findBy_s_nationkey = { by: 's_nationkey', type: 'n1ql' };
+
+export const SupplierR = model('SupplierR', SupplierRSchema, {
+    idKey: 'id',
+    collectionName: 'SupplierR',
+    scopeName: 'ottoman_scope_r',
+    keyGenerator: ({ metadata }) => '',
+    keyGeneratorDelimiter: ''
+});
