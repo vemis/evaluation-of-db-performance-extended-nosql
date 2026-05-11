@@ -42,4 +42,20 @@ public class OrdersR {
         this.o_shippriority = o_shippriority;
         this.o_comment = o_comment;
     }
+
+    @Override
+    public String toString() {
+        return "OrdersR{" +
+                        "o_orderkey=" + o_orderkey +
+                        ", o_orderkey_field=" + o_orderkey_field +
+                        ", o_custkey=" + o_custkey +
+                        ", o_orderstatus=" + o_orderstatus +
+                        ", o_totalprice=" + o_totalprice +
+                        ", o_orderdate=" + o_orderdate +
+                        ", o_orderpriority=" + o_orderpriority +
+                        ", o_clerk=" + o_clerk +
+                        ", o_shippriority=" + o_shippriority +
+                        ", o_comment=" + o_comment +
+                        '}';
+    }
 }

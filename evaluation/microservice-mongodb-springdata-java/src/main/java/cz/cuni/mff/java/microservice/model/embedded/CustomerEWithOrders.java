@@ -41,4 +41,19 @@ public class CustomerEWithOrders {
         this.c_comment = c_comment;
         this.orders = orders;
     }
+
+    @Override
+    public String toString() {
+        return "CustomerEWithOrders{" +
+                        "c_custkey=" + c_custkey +
+                        ", c_name=" + c_name +
+                        ", c_address=" + c_address +
+                        ", c_nationkey=" + c_nationkey +
+                        ", c_phone=" + c_phone +
+                        ", c_acctbal=" + c_acctbal +
+                        ", c_mktsegment=" + c_mktsegment +
+                        ", c_comment=" + c_comment +
+                        ", orders=" + orders +
+                        '}';
+    }
 }

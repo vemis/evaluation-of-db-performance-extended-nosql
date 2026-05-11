@@ -21,4 +21,13 @@ public class OrdersEWithLineitemsArrayAsTags {
         this.o_orderdate = o_orderdate;
         this.o_lineitems_tags = o_lineitems_tags;
     }
+
+    @Override
+    public String toString() {
+        return "OrdersEWithLineitemsArrayAsTags{" +
+                        "o_orderkey=" + o_orderkey +
+                        ", o_orderdate=" + o_orderdate +
+                        ", o_lineitems_tags=" + o_lineitems_tags +
+                        '}';
+    }
 }

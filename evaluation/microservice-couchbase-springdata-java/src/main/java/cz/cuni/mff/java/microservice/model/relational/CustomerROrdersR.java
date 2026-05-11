@@ -29,4 +29,14 @@ public class CustomerROrdersR {
 
     public double getOTotalPrice() { return oTotalPrice; }
     public void setOTotalPrice(double oTotalPrice) { this.oTotalPrice = oTotalPrice; }
+
+    @Override
+    public String toString() {
+        return "CustomerROrdersR{" +
+                        "id=" + id +
+                        ", cName=" + cName +
+                        ", oOrderDate=" + oOrderDate +
+                        ", oTotalPrice=" + oTotalPrice +
+                        '}';
+    }
 }

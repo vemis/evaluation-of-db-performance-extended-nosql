@@ -23,5 +23,7 @@ namespace MongoDBEntitiesMicroservice.Model.Relational
 
         public object GenerateNewID() => throw new NotImplementedException();
         public bool HasDefaultID() => false;
+
+        public override string ToString() => $"NationR{{n_nationkey={n_nationkey}, n_name={n_name}, n_regionkey={n_regionkey}, n_comment={n_comment}}}";
     }
 }

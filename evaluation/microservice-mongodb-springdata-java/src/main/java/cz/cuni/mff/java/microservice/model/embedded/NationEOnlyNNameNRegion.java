@@ -17,4 +17,14 @@ public class NationEOnlyNNameNRegion {
     }
 
     public int get_n_regionkey() { return n_regionkey; }
+
+    @Override
+    public String toString() {
+        return "NationEOnlyNNameNRegion{" +
+                        "n_nationkey=" + n_nationkey +
+                        ", n_name=" + n_name +
+                        ", n_regionkey=" + n_regionkey +
+                        ", n_region=" + n_region +
+                        '}';
+    }
 }

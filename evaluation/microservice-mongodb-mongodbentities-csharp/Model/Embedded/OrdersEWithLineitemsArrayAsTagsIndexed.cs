@@ -21,5 +21,7 @@ namespace MongoDBEntitiesMicroservice.Model.Embedded
 
         public object GenerateNewID() => throw new NotImplementedException();
         public bool HasDefaultID() => false;
+
+        public override string ToString() => $"OrdersEWithLineitemsArrayAsTagsIndexed{{o_orderkey={o_orderkey}, o_orderdate={o_orderdate}, o_lineitems_tags_indexed={o_lineitems_tags_indexed}}}";
     }
 }

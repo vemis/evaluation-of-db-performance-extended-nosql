@@ -16,5 +16,7 @@ namespace MongoDBEntitiesMicroservice.Model.Embedded
             this.c_nationkey = c_nationkey;
             this.c_nation = c_nation;
         }
+
+        public override string ToString() => $"CustomerEOnlyCNameCNation{{c_custkey={c_custkey}, c_name={c_name}, c_nationkey={c_nationkey}, c_nation={c_nation}}}";
     }
 }

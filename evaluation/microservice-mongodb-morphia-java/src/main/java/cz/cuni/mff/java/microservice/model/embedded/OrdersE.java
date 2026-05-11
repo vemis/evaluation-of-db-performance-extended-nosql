@@ -34,4 +34,17 @@ public class OrdersE {
     }
 
     public int get_o_custkey() { return o_custkey; }
+
+    @Override
+    public String toString() {
+        return "OrdersE{" +
+                        "o_orderstatus=" + o_orderstatus +
+                        ", o_totalprice=" + o_totalprice +
+                        ", o_orderdate=" + o_orderdate +
+                        ", o_orderpriority=" + o_orderpriority +
+                        ", o_clerk=" + o_clerk +
+                        ", o_shippriority=" + o_shippriority +
+                        ", o_comment=" + o_comment +
+                        '}';
+    }
 }

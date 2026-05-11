@@ -24,4 +24,13 @@ public class OrdersEOnlyOCommentIndexed {
         this.o_orderdate = o_orderdate;
         this.o_comment = o_comment;
     }
+
+    @Override
+    public String toString() {
+        return "OrdersEOnlyOCommentIndexed{" +
+                        "o_orderkey=" + o_orderkey +
+                        ", o_orderdate=" + o_orderdate +
+                        ", o_comment=" + o_comment +
+                        '}';
+    }
 }

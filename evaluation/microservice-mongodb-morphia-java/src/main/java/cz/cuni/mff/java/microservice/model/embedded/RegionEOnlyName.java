@@ -13,4 +13,12 @@ public class RegionEOnlyName {
         this.r_regionkey = r_regionkey;
         this.r_name = r_name;
     }
+
+    @Override
+    public String toString() {
+        return "RegionEOnlyName{" +
+                        "r_regionkey=" + r_regionkey +
+                        ", r_name=" + r_name +
+                        '}';
+    }
 }

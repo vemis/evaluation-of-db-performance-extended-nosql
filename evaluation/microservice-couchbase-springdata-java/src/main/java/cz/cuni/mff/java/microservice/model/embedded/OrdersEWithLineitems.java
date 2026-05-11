@@ -41,4 +41,20 @@ public class OrdersEWithLineitems {
         this.o_comment = o_comment;
         this.o_lineitems = o_lineitems;
     }
+
+    @Override
+    public String toString() {
+        return "OrdersEWithLineitems{" +
+                        "o_orderkey=" + o_orderkey +
+                        ", o_custkey=" + o_custkey +
+                        ", o_orderstatus=" + o_orderstatus +
+                        ", o_totalprice=" + o_totalprice +
+                        ", o_orderdate=" + o_orderdate +
+                        ", o_orderpriority=" + o_orderpriority +
+                        ", o_clerk=" + o_clerk +
+                        ", o_shippriority=" + o_shippriority +
+                        ", o_comment=" + o_comment +
+                        ", o_lineitems=" + o_lineitems +
+                        '}';
+    }
 }

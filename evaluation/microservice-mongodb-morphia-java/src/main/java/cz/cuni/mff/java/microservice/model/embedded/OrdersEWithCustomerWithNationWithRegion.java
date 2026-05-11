@@ -20,4 +20,13 @@ public class OrdersEWithCustomerWithNationWithRegion {
         this.o_orderdate = o_orderdate;
         this.o_customer = o_customer;
     }
+
+    @Override
+    public String toString() {
+        return "OrdersEWithCustomerWithNationWithRegion{" +
+                        "o_orderkey=" + o_orderkey +
+                        ", o_orderdate=" + o_orderdate +
+                        ", o_customer=" + o_customer +
+                        '}';
+    }
 }

@@ -21,4 +21,14 @@ public class NationR {
         this.n_regionkey = n_regionkey;
         this.n_comment = n_comment;
     }
+
+    @Override
+    public String toString() {
+        return "NationR{" +
+                        "n_nationkey=" + n_nationkey +
+                        ", n_name=" + n_name +
+                        ", n_regionkey=" + n_regionkey +
+                        ", n_comment=" + n_comment +
+                        '}';
+    }
 }

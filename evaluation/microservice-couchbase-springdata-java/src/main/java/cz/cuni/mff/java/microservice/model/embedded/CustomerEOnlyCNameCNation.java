@@ -19,4 +19,14 @@ public class CustomerEOnlyCNameCNation {
     public int get_c_custkey() {
         return c_custkey;
     }
+
+    @Override
+    public String toString() {
+        return "CustomerEOnlyCNameCNation{" +
+                        "c_custkey=" + c_custkey +
+                        ", c_name=" + c_name +
+                        ", c_nationkey=" + c_nationkey +
+                        ", c_nation=" + c_nation +
+                        '}';
+    }
 }

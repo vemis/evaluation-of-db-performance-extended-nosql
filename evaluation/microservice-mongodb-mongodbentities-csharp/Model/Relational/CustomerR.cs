@@ -35,5 +35,7 @@ namespace MongoDBEntitiesMicroservice.Model.Relational
 
         public object GenerateNewID() => throw new NotImplementedException();
         public bool HasDefaultID() => false;
+
+        public override string ToString() => $"CustomerR{{c_custkey={c_custkey}, c_name={c_name}, c_address={c_address}, c_nationkey={c_nationkey}, c_phone={c_phone}, c_acctbal={c_acctbal}, c_mktsegment={c_mktsegment}, c_commen={c_commen}}}";
     }
 }

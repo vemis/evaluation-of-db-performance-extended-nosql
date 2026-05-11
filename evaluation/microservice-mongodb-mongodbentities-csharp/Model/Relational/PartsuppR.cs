@@ -29,5 +29,7 @@ namespace MongoDBEntitiesMicroservice.Model.Relational
 
         public object GenerateNewID() => throw new NotImplementedException();
         public bool HasDefaultID() => false;
+
+        public override string ToString() => $"PartsuppR{{ps_id={ps_id}, ps_partkey={ps_partkey}, ps_suppkey={ps_suppkey}, ps_availqty={ps_availqty}, ps_supplycost={ps_supplycost}, ps_comment={ps_comment}}}";
     }
 }

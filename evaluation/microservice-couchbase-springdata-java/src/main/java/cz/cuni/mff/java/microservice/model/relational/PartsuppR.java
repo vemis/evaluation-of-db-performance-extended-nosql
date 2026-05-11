@@ -29,4 +29,16 @@ public class PartsuppR {
         this.ps_supplycost = ps_supplycost;
         this.ps_comment = ps_comment;
     }
+
+    @Override
+    public String toString() {
+        return "PartsuppR{" +
+                        "ps_id=" + ps_id +
+                        ", ps_partkey=" + ps_partkey +
+                        ", ps_suppkey=" + ps_suppkey +
+                        ", ps_availqty=" + ps_availqty +
+                        ", ps_supplycost=" + ps_supplycost +
+                        ", ps_comment=" + ps_comment +
+                        '}';
+    }
 }

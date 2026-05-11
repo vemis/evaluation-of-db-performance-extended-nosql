@@ -15,4 +15,12 @@ public class RegionEOnlyName {
     public int get_r_regionkey() {
         return r_regionkey;
     }
+
+    @Override
+    public String toString() {
+        return "RegionEOnlyName{" +
+                        "r_regionkey=" + r_regionkey +
+                        ", r_name=" + r_name +
+                        '}';
+    }
 }

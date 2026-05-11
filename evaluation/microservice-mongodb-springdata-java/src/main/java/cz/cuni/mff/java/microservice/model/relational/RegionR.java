@@ -17,4 +17,13 @@ public class RegionR {
         this.r_name = r_name;
         this.r_comment = r_comment;
     }
+
+    @Override
+    public String toString() {
+        return "RegionR{" +
+                        "r_regionkey=" + r_regionkey +
+                        ", r_name=" + r_name +
+                        ", r_comment=" + r_comment +
+                        '}';
+    }
 }

@@ -53,4 +53,28 @@ public class LineitemE {
     public int get_l_orderkey() {
         return l_orderkey;
     }
+
+    @Override
+    public String toString() {
+        return "LineitemE{" +
+                        "l_id=" + l_id +
+                        ", l_orderkey=" + l_orderkey +
+                        ", l_partkey=" + l_partkey +
+                        ", l_suppkey=" + l_suppkey +
+                        ", l_ps_id=" + l_ps_id +
+                        ", l_linenumber=" + l_linenumber +
+                        ", l_quantity=" + l_quantity +
+                        ", l_extendedprice=" + l_extendedprice +
+                        ", l_discount=" + l_discount +
+                        ", l_tax=" + l_tax +
+                        ", l_returnflag=" + l_returnflag +
+                        ", l_linestatus=" + l_linestatus +
+                        ", l_shipdate=" + l_shipdate +
+                        ", l_commitdate=" + l_commitdate +
+                        ", l_receiptdate=" + l_receiptdate +
+                        ", l_shipinstruct=" + l_shipinstruct +
+                        ", l_shipmode=" + l_shipmode +
+                        ", l_comment=" + l_comment +
+                        '}';
+    }
 }

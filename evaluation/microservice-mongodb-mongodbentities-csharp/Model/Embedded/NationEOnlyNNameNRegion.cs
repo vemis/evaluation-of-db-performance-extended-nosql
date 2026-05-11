@@ -16,5 +16,7 @@ namespace MongoDBEntitiesMicroservice.Model.Embedded
             this.n_regionkey = n_regionkey;
             this.n_region = n_region;
         }
+
+        public override string ToString() => $"NationEOnlyNNameNRegion{{n_nationkey={n_nationkey}, n_name={n_name}, n_regionkey={n_regionkey}, n_region={n_region}}}";
     }
 }

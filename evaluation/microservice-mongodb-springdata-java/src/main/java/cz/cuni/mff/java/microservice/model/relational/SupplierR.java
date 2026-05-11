@@ -28,4 +28,17 @@ public class SupplierR {
         this.s_acctbal = s_acctbal;
         this.s_comment = s_comment;
     }
+
+    @Override
+    public String toString() {
+        return "SupplierR{" +
+                        "s_suppkey=" + s_suppkey +
+                        ", s_name=" + s_name +
+                        ", s_address=" + s_address +
+                        ", s_nationkey=" + s_nationkey +
+                        ", s_phone=" + s_phone +
+                        ", s_acctbal=" + s_acctbal +
+                        ", s_comment=" + s_comment +
+                        '}';
+    }
 }

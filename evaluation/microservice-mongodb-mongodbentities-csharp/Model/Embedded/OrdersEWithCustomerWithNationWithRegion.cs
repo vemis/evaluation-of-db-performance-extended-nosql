@@ -21,5 +21,7 @@ namespace MongoDBEntitiesMicroservice.Model.Embedded
 
         public object GenerateNewID() => throw new NotImplementedException();
         public bool HasDefaultID() => false;
+
+        public override string ToString() => $"OrdersEWithCustomerWithNationWithRegion{{o_orderkey={o_orderkey}, o_orderdate={o_orderdate}, o_customer={o_customer}}}";
     }
 }
