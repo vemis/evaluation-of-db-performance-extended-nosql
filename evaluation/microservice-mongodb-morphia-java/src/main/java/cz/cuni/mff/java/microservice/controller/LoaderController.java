@@ -51,5 +51,6 @@ public class LoaderController extends AbstractLoaderController {
     public void insertSentinel() {
         datastore.getDatabase().getCollection("_metadata")
                 .insertOne(new Document("_id", "load_r_complete"));
+        datastore.ensureIndexes();
     }
 }
