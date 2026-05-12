@@ -251,8 +251,11 @@ namespace MongoDBEntitiesMicroservice.Loader
             Console.WriteLine("Loading OrdersEWithLineitems...");
             await DB.Index<OrdersEWithLineitems>()
                 .Key(c => c.o_custkey, KeyType.Ascending)
+                .Key(c => c.o_lineitems[0].l_id, KeyType.Ascending)
                 .Key(c => c.o_lineitems[0].l_orderkey, KeyType.Ascending)
                 .Key(c => c.o_lineitems[0].l_partkey, KeyType.Ascending)
+                .Key(c => c.o_lineitems[0].l_suppkey, KeyType.Ascending)
+                .Key(c => c.o_lineitems[0].l_ps_id, KeyType.Ascending)
                 .CreateAsync();
             await LoadOrdersEWithLineitems(ordersPath, lineitemsE);
 
@@ -262,6 +265,8 @@ namespace MongoDBEntitiesMicroservice.Loader
             Console.WriteLine("Loading CustomerEWithOrders...");
             await DB.Index<CustomerEWithOrders>()
                 .Key(c => c.c_nationkey, KeyType.Ascending)
+                .Key(c => c.c_orders[0].o_custkey, KeyType.Ascending)
+                .Key(c => c.c_orders[0].o_orderkey, KeyType.Ascending)
                 .CreateAsync();
             await LoadDatasetCustomerEWithOrdersAsync(customerPath, ordersE);
 
