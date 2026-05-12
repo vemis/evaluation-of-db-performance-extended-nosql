@@ -14,7 +14,6 @@ public class OrdersR {
     private int o_custkey;
     private String o_orderstatus;
     private double o_totalprice;
-    @Indexed
     private LocalDate o_orderdate;
     private String o_orderpriority;
     private String o_clerk;

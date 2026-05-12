@@ -25,7 +25,6 @@ public class LineitemR {
     private double l_tax;
     private String l_returnflag;
     private String l_linestatus;
-    @Indexed
     private LocalDate l_shipdate;
     private LocalDate l_commitdate;
     private LocalDate l_receiptdate;
