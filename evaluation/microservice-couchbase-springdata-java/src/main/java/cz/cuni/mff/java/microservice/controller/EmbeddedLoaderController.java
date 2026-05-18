@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 public class EmbeddedLoaderController extends AbstractLoaderController {
 
-    private static final String E = "`bucket-main`.`spring_scope_e`";
+    private static final String E = "`bucket-main`.`spring_scope`";
 
     private static final List<String> EMBEDDED_COLLECTIONS = List.of(
             "OrdersEWithLineitems",

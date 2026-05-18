@@ -17,13 +17,13 @@ import java.util.List;
 
 /**
  * All relational TPC-H queries implemented via Couchbase N1QL against
- * bucket-main / spring_scope_r.  Dates are stored as epoch milliseconds
+ * bucket-main / spring_scope.  Dates are stored as epoch milliseconds
  * by Spring Data Couchbase; all date parameters are converted accordingly.
  */
 @Repository
 public class QueryRepository {
 
-    private static final String R = "`bucket-main`.`spring_scope_r`";
+    private static final String R = "`bucket-main`.`spring_scope`";
 
     private final Cluster cluster;
     private final ReactiveCouchbaseTemplate reactiveCouchbaseTemplate;
