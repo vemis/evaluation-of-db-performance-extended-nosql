@@ -15,7 +15,7 @@ public class MorphiaConfig {
     @Value("${mongodb.uri:mongodb://localhost:27017}")
     private String mongoUri;
 
-    @Value("${mongodb.database:morphia_tpch_relational}")
+    @Value("${mongodb.database:morphia_db}")
     private String database;
 
     @Bean
