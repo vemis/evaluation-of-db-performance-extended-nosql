@@ -9,7 +9,7 @@ const OrdersEWithLineitemsArrayAsTagsSchema = new Schema({
 export const OrdersEWithLineitemsArrayAsTags = model('OrdersEWithLineitemsArrayAsTags', OrdersEWithLineitemsArrayAsTagsSchema, {
     idKey: 'id',
     collectionName: 'OrdersEWithLineitemsArrayAsTags',
-    scopeName: 'ottoman_scope_e',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });

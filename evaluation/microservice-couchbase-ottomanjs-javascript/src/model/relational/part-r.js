@@ -15,7 +15,7 @@ const PartRSchema = new Schema({
 export const PartR = model('PartR', PartRSchema, {
     idKey: 'id',
     collectionName: 'PartR',
-    scopeName: 'ottoman_scope_r',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });

@@ -9,7 +9,7 @@ const RegionRSchema = new Schema({
 export const RegionR = model('RegionR', RegionRSchema, {
     idKey: 'id',
     collectionName: 'RegionR',
-    scopeName: 'ottoman_scope_r',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });

@@ -15,7 +15,7 @@ PartsuppRSchema.index.findBy_ps_suppkey = { by: 'ps_suppkey', type: 'n1ql' };
 export const PartsuppR = model('PartsuppR', PartsuppRSchema, {
     idKey: 'id',
     collectionName: 'PartsuppR',
-    scopeName: 'ottoman_scope_r',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });

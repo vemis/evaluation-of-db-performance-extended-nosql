@@ -1,6 +1,6 @@
 import { getDefaultInstance } from 'ottoman';
 
-const B = '`bucket-main`.`ottoman_scope_e`';
+const B = '`bucket-main`.`ottoman_scope`';
 
 function query(n1ql) {
     return getDefaultInstance().query(n1ql).then(r => r.rows);

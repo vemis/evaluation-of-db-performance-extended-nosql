@@ -9,7 +9,7 @@ const OrdersEOnlyOCommentIndexedSchema = new Schema({
 export const OrdersEOnlyOCommentIndexed = model('OrdersEOnlyOCommentIndexed', OrdersEOnlyOCommentIndexedSchema, {
     idKey: 'id',
     collectionName: 'OrdersEOnlyOCommentIndexed',
-    scopeName: 'ottoman_scope_e',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });
@@ -17,7 +17,7 @@ export const OrdersEOnlyOCommentIndexed = model('OrdersEOnlyOCommentIndexed', Or
 async function createIndexes() {
     await ottoman.getDefaultInstance().query(
         `CREATE INDEX idx_OrdersEOnlyOCommentIndexed_o_comment IF NOT EXISTS
-         ON \`bucket-main\`.\`ottoman_scope_e\`.\`OrdersEOnlyOCommentIndexed\` (o_comment)`
+         ON \`bucket-main\`.\`ottoman_scope\`.\`OrdersEOnlyOCommentIndexed\` (o_comment)`
     );
 }
 

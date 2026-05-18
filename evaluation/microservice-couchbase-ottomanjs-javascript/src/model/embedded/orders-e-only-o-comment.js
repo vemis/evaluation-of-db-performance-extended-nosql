@@ -9,7 +9,7 @@ const OrdersEOnlyOCommentSchema = new Schema({
 export const OrdersEOnlyOComment = model('OrdersEOnlyOComment', OrdersEOnlyOCommentSchema, {
     idKey: 'id',
     collectionName: 'OrdersEOnlyOComment',
-    scopeName: 'ottoman_scope_e',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });

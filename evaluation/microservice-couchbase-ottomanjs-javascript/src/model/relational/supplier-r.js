@@ -15,7 +15,7 @@ SupplierRSchema.index.findBy_s_nationkey = { by: 's_nationkey', type: 'n1ql' };
 export const SupplierR = model('SupplierR', SupplierRSchema, {
     idKey: 'id',
     collectionName: 'SupplierR',
-    scopeName: 'ottoman_scope_r',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });
