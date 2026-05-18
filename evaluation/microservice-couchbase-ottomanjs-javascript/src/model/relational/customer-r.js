@@ -16,7 +16,7 @@ CustomerRSchema.index.findBy_c_nationkey = { by: 'c_nationkey', type: 'n1ql' };
 export const CustomerR = model('CustomerR', CustomerRSchema, {
     idKey: 'id',
     collectionName: 'CustomerR',
-    scopeName: 'ottoman_scope_r',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });

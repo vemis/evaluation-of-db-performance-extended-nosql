@@ -8,7 +8,7 @@ import org.springframework.data.couchbase.repository.Scope;
 import java.time.LocalDate;
 
 @Document
-@Scope("spring_scope_r")
+@Scope("spring_scope")
 @Collection("LineitemR")
 public class LineitemR {
 

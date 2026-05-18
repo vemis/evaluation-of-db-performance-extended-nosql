@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 public class LoaderController extends AbstractLoaderController {
 
-    private static final String R = "`bucket-main`.`spring_scope_r`";
+    private static final String R = "`bucket-main`.`spring_scope`";
 
     private static final List<String> COLLECTIONS = List.of(
             "RegionR", "NationR", "CustomerR", "OrdersR",

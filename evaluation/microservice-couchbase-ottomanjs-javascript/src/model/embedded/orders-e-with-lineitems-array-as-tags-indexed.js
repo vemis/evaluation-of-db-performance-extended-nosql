@@ -9,7 +9,7 @@ const OrdersEWithLineitemsArrayAsTagsIndexedSchema = new Schema({
 export const OrdersEWithLineitemsArrayAsTagsIndexed = model('OrdersEWithLineitemsArrayAsTagsIndexed', OrdersEWithLineitemsArrayAsTagsIndexedSchema, {
     idKey: 'id',
     collectionName: 'OrdersEWithLineitemsArrayAsTagsIndexed',
-    scopeName: 'ottoman_scope_e',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });
@@ -17,7 +17,7 @@ export const OrdersEWithLineitemsArrayAsTagsIndexed = model('OrdersEWithLineitem
 async function createIndexes() {
     await ottoman.getDefaultInstance().query(
         `CREATE INDEX idx_OrdersEWithLineitemsArrayAsTagsIndexed_tags IF NOT EXISTS
-         ON \`bucket-main\`.\`ottoman_scope_e\`.\`OrdersEWithLineitemsArrayAsTagsIndexed\`
+         ON \`bucket-main\`.\`ottoman_scope\`.\`OrdersEWithLineitemsArrayAsTagsIndexed\`
          (DISTINCT ARRAY tag FOR tag IN o_lineitems_tags_indexed END)`
     );
 }

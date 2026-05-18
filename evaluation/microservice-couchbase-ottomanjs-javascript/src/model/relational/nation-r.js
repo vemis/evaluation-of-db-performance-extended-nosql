@@ -12,7 +12,7 @@ NationRSchema.index.findBy_n_regionkey = { by: 'n_regionkey', type: 'n1ql' };
 export const NationR = model('NationR', NationRSchema, {
     idKey: 'id',
     collectionName: 'NationR',
-    scopeName: 'ottoman_scope_r',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });

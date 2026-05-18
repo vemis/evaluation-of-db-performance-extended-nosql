@@ -17,19 +17,19 @@ const OrdersEWithLineitemsSchema = new Schema({
 export const OrdersEWithLineitems = model('OrdersEWithLineitems', OrdersEWithLineitemsSchema, {
     idKey: 'id',
     collectionName: 'OrdersEWithLineitems',
-    scopeName: 'ottoman_scope_e',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });
 
 async function createIndexes() {
     const q = (n1ql) => ottoman.getDefaultInstance().query(n1ql);
-    await q(`CREATE INDEX idx_OrdersEWithLineitems_l_partkey IF NOT EXISTS ON \`bucket-main\`.\`ottoman_scope_e\`.\`OrdersEWithLineitems\` (DISTINCT ARRAY l.l_partkey FOR l IN o_lineitems END)`);
-    await q(`CREATE INDEX idx_OrdersEWithLineitems_l_orderkey IF NOT EXISTS ON \`bucket-main\`.\`ottoman_scope_e\`.\`OrdersEWithLineitems\` (DISTINCT ARRAY l.l_orderkey FOR l IN o_lineitems END)`);
-    await q(`CREATE INDEX idx_OrdersEWithLineitems_l_suppkey IF NOT EXISTS ON \`bucket-main\`.\`ottoman_scope_e\`.\`OrdersEWithLineitems\` (DISTINCT ARRAY l.l_suppkey FOR l IN o_lineitems END)`);
-    await q(`CREATE INDEX idx_OrdersEWithLineitems_l_id IF NOT EXISTS ON \`bucket-main\`.\`ottoman_scope_e\`.\`OrdersEWithLineitems\` (DISTINCT ARRAY l.l_id FOR l IN o_lineitems END)`);
-    await q(`CREATE INDEX idx_OrdersEWithLineitems_l_ps_id IF NOT EXISTS ON \`bucket-main\`.\`ottoman_scope_e\`.\`OrdersEWithLineitems\` (DISTINCT ARRAY l.l_ps_id FOR l IN o_lineitems END)`);
-    await q(`CREATE INDEX idx_OrdersEWithLineitems_o_custkey IF NOT EXISTS ON \`bucket-main\`.\`ottoman_scope_e\`.\`OrdersEWithLineitems\` (o_custkey)`);
+    await q(`CREATE INDEX idx_OrdersEWithLineitems_l_partkey IF NOT EXISTS ON \`bucket-main\`.\`ottoman_scope\`.\`OrdersEWithLineitems\` (DISTINCT ARRAY l.l_partkey FOR l IN o_lineitems END)`);
+    await q(`CREATE INDEX idx_OrdersEWithLineitems_l_orderkey IF NOT EXISTS ON \`bucket-main\`.\`ottoman_scope\`.\`OrdersEWithLineitems\` (DISTINCT ARRAY l.l_orderkey FOR l IN o_lineitems END)`);
+    await q(`CREATE INDEX idx_OrdersEWithLineitems_l_suppkey IF NOT EXISTS ON \`bucket-main\`.\`ottoman_scope\`.\`OrdersEWithLineitems\` (DISTINCT ARRAY l.l_suppkey FOR l IN o_lineitems END)`);
+    await q(`CREATE INDEX idx_OrdersEWithLineitems_l_id IF NOT EXISTS ON \`bucket-main\`.\`ottoman_scope\`.\`OrdersEWithLineitems\` (DISTINCT ARRAY l.l_id FOR l IN o_lineitems END)`);
+    await q(`CREATE INDEX idx_OrdersEWithLineitems_l_ps_id IF NOT EXISTS ON \`bucket-main\`.\`ottoman_scope\`.\`OrdersEWithLineitems\` (DISTINCT ARRAY l.l_ps_id FOR l IN o_lineitems END)`);
+    await q(`CREATE INDEX idx_OrdersEWithLineitems_o_custkey IF NOT EXISTS ON \`bucket-main\`.\`ottoman_scope\`.\`OrdersEWithLineitems\` (o_custkey)`);
 }
 
 OrdersEWithLineitems.createIndexes = createIndexes;

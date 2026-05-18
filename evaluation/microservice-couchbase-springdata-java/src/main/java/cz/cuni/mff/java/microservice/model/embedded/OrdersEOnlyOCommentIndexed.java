@@ -8,7 +8,7 @@ import org.springframework.data.couchbase.repository.Scope;
 import java.time.LocalDate;
 
 @Document
-@Scope("spring_scope_e")
+@Scope("spring_scope")
 @Collection("OrdersEOnlyOCommentIndexed")
 public class OrdersEOnlyOCommentIndexed {
 

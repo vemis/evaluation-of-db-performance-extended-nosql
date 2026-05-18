@@ -10,12 +10,12 @@ import java.util.List;
 
 /**
  * Embedded-model TPC-H queries implemented via Couchbase N1QL against
- * bucket-main / spring_scope_e.
+ * bucket-main / spring_scope.
  */
 @Repository
 public class EmbeddedQueryRepository {
 
-    private static final String E = "`bucket-main`.`spring_scope_e`";
+    private static final String E = "`bucket-main`.`spring_scope`";
 
     private final Cluster cluster;
 

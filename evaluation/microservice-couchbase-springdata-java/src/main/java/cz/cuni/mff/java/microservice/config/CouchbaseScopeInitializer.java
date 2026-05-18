@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Creates Couchbase scopes and collections (spring_scope_r, spring_scope_e) and their
- * primary N1QL indexes on startup. Retries for up to 10 minutes to handle slow
+ * Creates the Couchbase scope (spring_scope) with all relational and embedded collections
+ * and their primary N1QL indexes on startup. Retries for up to 10 minutes to handle slow
  * Couchbase cluster initialization in Docker.
  */
 @Component
@@ -36,6 +36,8 @@ public class CouchbaseScopeInitializer {
             "OrdersEOnlyOComment",
             "OrdersEOnlyOCommentIndexed"
     );
+
+    private static final String SCOPE = "spring_scope";
 
     private final Cluster cluster;
 
@@ -70,14 +72,12 @@ public class CouchbaseScopeInitializer {
     public void createScopesCollectionsAndIndexes() {
         CollectionManager cm = cluster.bucket("bucket-main").collections();
 
-        createScopeIfAbsent(cm, "spring_scope_r");
+        createScopeIfAbsent(cm, SCOPE);
         for (String col : RELATIONAL_COLLECTIONS) {
-            createCollectionIfAbsent(cm, "spring_scope_r", col);
+            createCollectionIfAbsent(cm, SCOPE, col);
         }
-
-        createScopeIfAbsent(cm, "spring_scope_e");
         for (String col : EMBEDDED_COLLECTIONS) {
-            createCollectionIfAbsent(cm, "spring_scope_e", col);
+            createCollectionIfAbsent(cm, SCOPE, col);
         }
 
         createPrimaryIndexes();
@@ -101,46 +101,46 @@ public class CouchbaseScopeInitializer {
 
     private void createPrimaryIndexes() {
         for (String col : RELATIONAL_COLLECTIONS) {
-            cluster.query("CREATE PRIMARY INDEX IF NOT EXISTS ON `bucket-main`.`spring_scope_r`.`" + col + "`");
+            cluster.query("CREATE PRIMARY INDEX IF NOT EXISTS ON `bucket-main`.`" + SCOPE + "`.`" + col + "`");
         }
         for (String col : EMBEDDED_COLLECTIONS) {
-            cluster.query("CREATE PRIMARY INDEX IF NOT EXISTS ON `bucket-main`.`spring_scope_e`.`" + col + "`");
+            cluster.query("CREATE PRIMARY INDEX IF NOT EXISTS ON `bucket-main`.`" + SCOPE + "`.`" + col + "`");
         }
         // Secondary indexes on relational collections for join/filter queries
-        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", "spring_scope_r", "NationR", "n_regionkey");
-        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", "spring_scope_r", "SupplierR", "s_nationkey");
-        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", "spring_scope_r", "PartsuppR", "ps_suppkey");
-        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", "spring_scope_r", "PartsuppR", "ps_partkey");
-        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", "spring_scope_r", "OrdersR", "o_custkey");
-        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", "spring_scope_r", "CustomerR", "c_nationkey");
-        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", "spring_scope_r", "OrdersR", "o_orderkey_field");
-        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", "spring_scope_r", "LineitemR", "l_orderkey");
-        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", "spring_scope_r", "LineitemR", "l_ps_id");
-        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", "spring_scope_r", "LineitemR", "l_partkey");
-        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", "spring_scope_r", "LineitemR", "l_suppkey");
+        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", SCOPE, "NationR", "n_regionkey");
+        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", SCOPE, "SupplierR", "s_nationkey");
+        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", SCOPE, "PartsuppR", "ps_suppkey");
+        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", SCOPE, "PartsuppR", "ps_partkey");
+        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", SCOPE, "OrdersR", "o_custkey");
+        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", SCOPE, "CustomerR", "c_nationkey");
+        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", SCOPE, "OrdersR", "o_orderkey_field");
+        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", SCOPE, "LineitemR", "l_orderkey");
+        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", SCOPE, "LineitemR", "l_ps_id");
+        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", SCOPE, "LineitemR", "l_partkey");
+        SpringDataCouchbaseClusterManagement.createIndex(cluster, "bucket-main", SCOPE, "LineitemR", "l_suppkey");
         // Array indexes on o_lineitems fields inside OrdersEWithLineitems
         cluster.query("CREATE INDEX IF NOT EXISTS idx_OrdersEWithLineitems_l_partkey" +
-                " ON `bucket-main`.`spring_scope_e`.`OrdersEWithLineitems`" +
+                " ON `bucket-main`.`" + SCOPE + "`.`OrdersEWithLineitems`" +
                 " (DISTINCT ARRAY l.l_partkey FOR l IN o_lineitems END)");
         cluster.query("CREATE INDEX IF NOT EXISTS idx_OrdersEWithLineitems_l_orderkey" +
-                " ON `bucket-main`.`spring_scope_e`.`OrdersEWithLineitems`" +
+                " ON `bucket-main`.`" + SCOPE + "`.`OrdersEWithLineitems`" +
                 " (DISTINCT ARRAY l.l_orderkey FOR l IN o_lineitems END)");
         cluster.query("CREATE INDEX IF NOT EXISTS idx_OrdersEWithLineitems_l_suppkey" +
-                " ON `bucket-main`.`spring_scope_e`.`OrdersEWithLineitems`" +
+                " ON `bucket-main`.`" + SCOPE + "`.`OrdersEWithLineitems`" +
                 " (DISTINCT ARRAY l.l_suppkey FOR l IN o_lineitems END)");
         cluster.query("CREATE INDEX IF NOT EXISTS idx_OrdersEWithLineitems_l_id" +
-                " ON `bucket-main`.`spring_scope_e`.`OrdersEWithLineitems`" +
+                " ON `bucket-main`.`" + SCOPE + "`.`OrdersEWithLineitems`" +
                 " (DISTINCT ARRAY l.l_id FOR l IN o_lineitems END)");
         cluster.query("CREATE INDEX IF NOT EXISTS idx_OrdersEWithLineitems_l_ps_id" +
-                " ON `bucket-main`.`spring_scope_e`.`OrdersEWithLineitems`" +
+                " ON `bucket-main`.`" + SCOPE + "`.`OrdersEWithLineitems`" +
                 " (DISTINCT ARRAY l.l_ps_id FOR l IN o_lineitems END)");
         // Array index for R4 — o_lineitems_tags_indexed array
         cluster.query("CREATE INDEX IF NOT EXISTS idx_OrdersEWithLineitemsArrayAsTagsIndexed_tags" +
-                " ON `bucket-main`.`spring_scope_e`.`OrdersEWithLineitemsArrayAsTagsIndexed`" +
+                " ON `bucket-main`.`" + SCOPE + "`.`OrdersEWithLineitemsArrayAsTagsIndexed`" +
                 " (DISTINCT ARRAY tag FOR tag IN o_lineitems_tags_indexed END)");
         // Regular index for R7 — o_comment field
         cluster.query("CREATE INDEX IF NOT EXISTS idx_OrdersEOnlyOCommentIndexed_o_comment" +
-                " ON `bucket-main`.`spring_scope_e`.`OrdersEOnlyOCommentIndexed` (o_comment)");
+                " ON `bucket-main`.`" + SCOPE + "`.`OrdersEOnlyOCommentIndexed` (o_comment)");
         log.info("Primary and secondary indexes created.");
     }
 }

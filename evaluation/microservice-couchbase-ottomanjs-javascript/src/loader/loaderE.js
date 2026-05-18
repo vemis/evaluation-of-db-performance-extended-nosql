@@ -4,7 +4,7 @@ import { readDataFromCustomSeparator, createLineitemsTags, shuffleAndTruncate, r
          ensureCouchbaseScopeAndCollections, createCouchbaseOps, insertBatched } from 'common-js';
 
 const BUCKET       = 'bucket-main';
-const SCOPE        = 'ottoman_scope_e';
+const SCOPE        = 'ottoman_scope';
 const SENTINEL_KEY = 'ottoman_load_e_complete';
 const COLLECTIONS_E = [
     'OrdersEWithLineitems',

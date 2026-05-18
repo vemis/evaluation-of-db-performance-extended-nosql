@@ -29,7 +29,7 @@ LineitemRSchema.index.findBy_l_ps_id    = { by: 'l_ps_id',    type: 'n1ql' };
 export const LineitemR = model('LineitemR', LineitemRSchema, {
     idKey: 'id',
     collectionName: 'LineitemR',
-    scopeName: 'ottoman_scope_r',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });

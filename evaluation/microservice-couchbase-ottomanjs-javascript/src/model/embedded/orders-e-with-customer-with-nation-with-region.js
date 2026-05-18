@@ -10,7 +10,7 @@ const OrdersEWithCustomerWithNationWithRegionSchema = new Schema({
 export const OrdersEWithCustomerWithNationWithRegion = model('OrdersEWithCustomerWithNationWithRegion', OrdersEWithCustomerWithNationWithRegionSchema, {
     idKey: 'id',
     collectionName: 'OrdersEWithCustomerWithNationWithRegion',
-    scopeName: 'ottoman_scope_e',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });

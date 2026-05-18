@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.LongAdder;
 @Component
 public class TPCHDatasetLoaderCouchbaseE extends TPCHDatasetLoader implements ITPCHDatasetLoaderE {
 
-    private static final String SCOPE = "spring_scope_e";
+    private static final String SCOPE = "spring_scope";
     private static final int BATCH_SIZE = 5_000;
 
     private final CouchbaseTemplate template;

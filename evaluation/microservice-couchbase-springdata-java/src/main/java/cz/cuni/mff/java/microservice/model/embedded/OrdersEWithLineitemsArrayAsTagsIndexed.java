@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Document
-@Scope("spring_scope_e")
+@Scope("spring_scope")
 @Collection("OrdersEWithLineitemsArrayAsTagsIndexed")
 public class OrdersEWithLineitemsArrayAsTagsIndexed {
 

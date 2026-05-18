@@ -19,7 +19,7 @@ OrdersRSchema.index.findBy_o_orderkey_field = { by: 'o_orderkey_field', type: 'n
 export const OrdersR = model('OrdersR', OrdersRSchema, {
     idKey: 'id',
     collectionName: 'OrdersR',
-    scopeName: 'ottoman_scope_r',
+    scopeName: 'ottoman_scope',
     keyGenerator: ({ metadata }) => '',
     keyGeneratorDelimiter: ''
 });

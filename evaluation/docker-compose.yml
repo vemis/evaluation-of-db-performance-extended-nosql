@@ -194,7 +194,7 @@ services:
     restart: "no"
     environment:
       MONGODB_URI: mongodb://mongodb:27017
-      MONGODB_DATABASE: morphia_tpch_relational
+      MONGODB_DATABASE: morphia_db
       TPCH_DATA_PATH: /data/tpch-data-small
     entrypoint:
       - java
@@ -219,7 +219,7 @@ services:
     restart: unless-stopped
     environment:
       MONGODB_URI: mongodb://mongodb:27017
-      MONGODB_DATABASE: morphia_tpch_relational
+      MONGODB_DATABASE: morphia_db
       EUREKA_URL: http://eureka-server:8761/eureka
       TPCH_DATA_PATH: /data/tpch-data-small
     ports:

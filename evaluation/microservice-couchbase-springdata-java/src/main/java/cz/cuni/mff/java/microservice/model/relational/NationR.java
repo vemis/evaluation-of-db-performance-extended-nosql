@@ -6,7 +6,7 @@ import org.springframework.data.couchbase.repository.Collection;
 import org.springframework.data.couchbase.repository.Scope;
 
 @Document
-@Scope("spring_scope_r")
+@Scope("spring_scope")
 @Collection("NationR")
 public class NationR {
 

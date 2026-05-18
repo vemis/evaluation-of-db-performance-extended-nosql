@@ -4,7 +4,7 @@ import { readDataFromCustomSeparator, runLoader,
          ensureCouchbaseScopeAndCollections, createCouchbaseOps, insertBatched } from 'common-js';
 
 const BUCKET        = 'bucket-main';
-const SCOPE         = 'ottoman_scope_r';
+const SCOPE         = 'ottoman_scope';
 const SENTINEL_KEY  = 'ottoman_load_r_complete';
 const COLLECTIONS_R = ['RegionR', 'NationR', 'CustomerR', 'OrdersR', 'LineitemR', 'PartsuppR', 'SupplierR', 'PartR'];
 const BATCH         = 2_500;
