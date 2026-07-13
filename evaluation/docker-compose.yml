@@ -457,6 +457,25 @@ services:
     ports:
       - "3000:80"
 
+  # Times how long each "*-loader" container lives (= how long that ODM
+  # microservice takes to load its dataset) and appends a line per loader to
+  # ./load-timer/logs/load-times.log on the host. Language-agnostic: it reads
+  # Docker's own StartedAt/FinishedAt rather than instrumenting each service.
+  load-timer:
+    image: docker:cli
+    container_name: load-timer
+    restart: unless-stopped
+    entrypoint:
+      - /bin/sh
+      - -c
+      - "apk add --no-cache coreutils >/dev/null && exec /bin/sh /monitor-load-times.sh"
+    environment:
+      OUT_DIR: /logs
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./load-timer/monitor-load-times.sh:/monitor-load-times.sh:ro
+      - ./load-timer/logs:/logs
+
 volumes:
   mysql_data:
   mongodb_data:

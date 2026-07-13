@@ -11,3 +11,6 @@ readme/
 
 # ignore Claude memory
 **/.claude
+
+# ignore load-timer output logs
+evaluation/load-timer/logs
