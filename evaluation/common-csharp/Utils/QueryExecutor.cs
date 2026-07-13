@@ -34,8 +34,10 @@ namespace CommonCSharp.Utils
     /// (mirroring how the Java side discards its JMH warmup).
     ///
     /// Memory is measured per-iteration inside DynamicBenchmark using
-    /// GC.GetAllocatedBytesForCurrentThread(), the .NET equivalent of
-    /// ThreadMXBean.getThreadAllocatedBytes().
+    /// GC.GetTotalAllocatedBytes(precise: true) (process-wide cumulative
+    /// allocation). A thread-local counter cannot be used because the queries
+    /// are async and the awaited MongoDB call allocates and resumes across
+    /// threads — see DynamicBenchmark for the full rationale.
     ///
     /// Concurrency note: uses static state in BenchmarkHolder — not safe if two
     /// requests benchmark concurrently. The orchestrator calls microservices

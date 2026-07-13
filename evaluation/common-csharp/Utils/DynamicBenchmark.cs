@@ -14,10 +14,21 @@ namespace CommonCSharp.Utils
     ///
     /// [IterationSetup] forces GC before every iteration, matching JMH's
     /// shouldDoGC(true). Each invocation records elapsed time (Stopwatch) and
-    /// memory allocated (GC.GetAllocatedBytesForCurrentThread, the .NET
-    /// equivalent of ThreadMXBean.getThreadAllocatedBytes) and appends them to
-    /// BenchmarkHolder.IterationResults so the per-iteration detail table in
-    /// the frontend continues to work.
+    /// memory allocated and appends them to BenchmarkHolder.IterationResults so
+    /// the per-iteration detail table in the frontend continues to work.
+    ///
+    /// Memory uses GC.GetTotalAllocatedBytes (process-wide cumulative allocation),
+    /// NOT GetAllocatedBytesForCurrentThread. The query is awaited, and an async
+    /// MongoDB call allocates its result on the driver's I/O / continuation
+    /// threads while the continuation may resume on a different thread than the
+    /// one that captured allocBefore. A thread-local counter therefore compares
+    /// two unrelated threads' totals and frequently yields 0 (negative delta
+    /// clamped). The process-wide counter is immune to that thread hop. This is
+    /// the async-C# analogue of Java's per-thread ThreadMXBean, which is valid
+    /// there only because the Java queries are synchronous. It is safe because
+    /// the orchestrator benchmarks one query at a time, so almost nothing else
+    /// allocates during the measured window. Both counters are cumulative and
+    /// unaffected by GC, so a collection cannot zero the measurement.
     ///
     /// Returning the result from [Benchmark] prevents the JIT from eliminating
     /// the call as dead code, matching JMH's Blackhole.consume().
@@ -35,13 +46,13 @@ namespace CommonCSharp.Utils
         [Benchmark]
         public async Task<int> Run()
         {
-            long allocBefore = GC.GetAllocatedBytesForCurrentThread();
+            long allocBefore = GC.GetTotalAllocatedBytes(precise: true);
             long t0 = Stopwatch.GetTimestamp();
 
             int size = await BenchmarkHolder.Current!();
 
             double elapsedMs = Stopwatch.GetElapsedTime(t0).TotalMilliseconds;
-            long allocAfter = GC.GetAllocatedBytesForCurrentThread();
+            long allocAfter = GC.GetTotalAllocatedBytes(precise: true);
             long delta = Math.Max(0L, allocAfter - allocBefore);
 
             BenchmarkHolder.LastSize = size;
