@@ -8,8 +8,9 @@ namespace CommonCSharp.Utils
     ///
     /// Mirrors Java's DynamicBenchmark: at runtime QueryExecutor sets
     /// BenchmarkHolder.Current to the query lambda, then calls
-    /// BenchmarkRunner.Run() which drives warmup and measurement iterations
-    /// through this method.
+    /// BenchmarkRunner.Run() which drives the warmup and measurement iterations
+    /// through this method. The warmup iteration is therefore recorded as the
+    /// first entry in BenchmarkHolder.IterationResults; QueryExecutor strips it.
     ///
     /// [IterationSetup] forces GC before every iteration, matching JMH's
     /// shouldDoGC(true). Each invocation records elapsed time (Stopwatch) and
