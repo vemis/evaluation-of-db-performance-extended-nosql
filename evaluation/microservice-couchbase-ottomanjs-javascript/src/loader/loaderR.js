@@ -30,12 +30,10 @@ async function createSecondaryIndexes(cluster) {
         `CREATE INDEX idx_r_customer_nationkey  IF NOT EXISTS ON \`${BUCKET}\`.\`${SCOPE}\`.\`CustomerR\`  (c_nationkey)`,
         `CREATE INDEX idx_r_orders_custkey      IF NOT EXISTS ON \`${BUCKET}\`.\`${SCOPE}\`.\`OrdersR\`    (o_custkey)`,
         `CREATE INDEX idx_r_orders_orderkey_num IF NOT EXISTS ON \`${BUCKET}\`.\`${SCOPE}\`.\`OrdersR\`    (o_orderkey_field)`,
-        `CREATE INDEX idx_r_orders_orderdate    IF NOT EXISTS ON \`${BUCKET}\`.\`${SCOPE}\`.\`OrdersR\`    (o_orderdate)`,
         `CREATE INDEX idx_r_lineitem_orderkey   IF NOT EXISTS ON \`${BUCKET}\`.\`${SCOPE}\`.\`LineitemR\`  (l_orderkey)`,
         `CREATE INDEX idx_r_lineitem_partkey    IF NOT EXISTS ON \`${BUCKET}\`.\`${SCOPE}\`.\`LineitemR\`  (l_partkey)`,
         `CREATE INDEX idx_r_lineitem_suppkey    IF NOT EXISTS ON \`${BUCKET}\`.\`${SCOPE}\`.\`LineitemR\`  (l_suppkey)`,
         `CREATE INDEX idx_r_lineitem_ps_id      IF NOT EXISTS ON \`${BUCKET}\`.\`${SCOPE}\`.\`LineitemR\`  (l_ps_id)`,
-        `CREATE INDEX idx_r_lineitem_shipdate   IF NOT EXISTS ON \`${BUCKET}\`.\`${SCOPE}\`.\`LineitemR\`  (l_shipdate)`,
         `CREATE INDEX idx_r_partsupp_partkey    IF NOT EXISTS ON \`${BUCKET}\`.\`${SCOPE}\`.\`PartsuppR\`  (ps_partkey)`,
         `CREATE INDEX idx_r_partsupp_suppkey    IF NOT EXISTS ON \`${BUCKET}\`.\`${SCOPE}\`.\`PartsuppR\`  (ps_suppkey)`,
         `CREATE INDEX idx_r_supplier_nationkey  IF NOT EXISTS ON \`${BUCKET}\`.\`${SCOPE}\`.\`SupplierR\`  (s_nationkey)`
