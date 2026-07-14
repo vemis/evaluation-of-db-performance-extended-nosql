@@ -373,6 +373,7 @@ public class UniversalRepository {
         String sql = """
             SELECT c.c_name, o.o_orderdate, o.o_totalprice
             FROM customer c, orders o
+            LIMIT 1500000
             """;
 
         return jdbcTemplate.queryForList(sql);
