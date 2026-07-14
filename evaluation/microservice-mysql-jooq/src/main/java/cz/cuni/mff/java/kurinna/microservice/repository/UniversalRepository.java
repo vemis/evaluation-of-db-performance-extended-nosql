@@ -116,6 +116,7 @@ public class UniversalRepository {
         String sql = """
             SELECT c_name, o_orderdate, o_totalprice
             FROM customer, orders
+            LIMIT 1500000
             """;
         return dslContext.fetch(sql).intoMaps();
     }

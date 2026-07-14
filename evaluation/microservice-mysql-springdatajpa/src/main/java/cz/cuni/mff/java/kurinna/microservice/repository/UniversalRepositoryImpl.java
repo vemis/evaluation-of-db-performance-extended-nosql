@@ -76,7 +76,8 @@ public class UniversalRepositoryImpl implements UniversalRepository {
     @Override
     public List<Object[]> c1() {
         String sql = "SELECT c.c_name, o.o_orderdate, o.o_totalprice " +
-                "FROM customer c, orders o";
+                "FROM customer c, orders o " +
+                "LIMIT 1500000";
         Query query = entityManager.createNativeQuery(sql);
         return query.getResultList();
     }

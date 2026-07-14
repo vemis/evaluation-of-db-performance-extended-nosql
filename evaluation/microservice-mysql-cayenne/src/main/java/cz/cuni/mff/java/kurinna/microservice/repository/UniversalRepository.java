@@ -128,7 +128,8 @@ public class UniversalRepository {
      */
     public List<DataRow> c1(ObjectContext context) {
         String sql = "SELECT c.c_name, o.o_orderdate, o.o_totalprice " +
-                "FROM customer c, orders o";
+                "FROM customer c, orders o " +
+                "LIMIT 1500000";
         SQLSelect<DataRow> query = SQLSelect.dataRowQuery(sql);
         return query.select(context);
     }
