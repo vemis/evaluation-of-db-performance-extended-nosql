@@ -115,7 +115,8 @@ public class UniversalRepository {
      */
     public List<SqlRow> c1() {
         String sql = "SELECT c.c_name, o.o_orderdate, o.o_totalprice " +
-                "FROM customer c, orders o";
+                "FROM customer c, orders o " +
+                "LIMIT 1500000";
         return executeQueryAndConvertToQueryResults(sql);
     }
 
