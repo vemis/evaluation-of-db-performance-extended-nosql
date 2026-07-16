@@ -1,75 +1,94 @@
 # evaluation-of-db-performance
 
+This repository holds the implementation for the bachelor thesis *Comparison of Performance Characteristics of ODM Frameworks over Document Database Systems* (Michal Šindler, Charles University, MFF, 2026).
+
+It is a microservice-based benchmarking system that measures the execution time and allocated memory of database access frameworks running the same TPC-H–based workload. Each framework runs in its own microservice; an orchestrator fans out the benchmark requests, and a web GUI lets you configure runs and visualise the results directly in the browser.
+
+The system covers **12 frameworks — 6 ODM and 6 ORM**:
+
+- 6 **ODM** (object-document mapping) frameworks over MongoDB and Couchbase, in Java, C#, and JavaScript/Node.js: Morphia, Spring Data MongoDB, Mongoose.js, MongoDB.Entities (C#), Spring Data Couchbase, and Ottoman.js.
+- 6 **ORM** (object-relational mapping) frameworks over MySQL, in Java: JDBC, Spring Data JPA, MyBatis, jOOQ, Ebean, and Apache Cayenne.
+
+## Repository Structure
+
+The repository is split into two independent parts:
+
+- **`bachelor-thesis-odms/`** — a collection of standalone ODM sample projects, organised by database (`MongoDB/`, `Couchbase/`) and then by language (`JavaODMs/`, `CSharpODMs/`, `JavaScript-Node.jsODMs/`). These serve as the **static comparison**: small, self-contained projects that illustrate how each ODM framework models data and expresses queries, independent of the benchmark.
+- **`evaluation/`** — the **benchmarking application** itself: the 12 framework microservices, the orchestrator, the Eureka service registry, the database setup, and the React frontend, wired together via Docker Compose. This is what you run to measure and compare performance (see [How to Use](#how-to-use) below).
+
 ## How to Use
 
-### 0. Go to the project repository
+The whole platform is containerised, so the only software you need on the host is **Docker** together with the **Docker Compose** plugin. Every other dependency — the language runtimes (JDK, Node.js, .NET SDK), the database servers (MongoDB, Couchbase, MySQL), the service registry, the orchestrator, and the frontend — is provided by the images built from `docker-compose.yml`.
+
+### Requirements
+
+- **Docker** and the **Docker Compose** plugin.
+- **32 GB RAM** is the comfortable operating point. The stack also runs on a machine with **16 GB RAM**, but there the loader containers must be started *sequentially* rather than all at once — bringing the whole stack up in a single `docker compose up` spikes memory usage above the 16 GB threshold (see [Note for machines with 16 GB RAM](#note-for-machines-with-16-gb-ram)).
+- All host ports bound by the containers must be free before starting: `3000` (frontend), `3306` (MySQL), `8080`–`8097` (query microservices and Couchbase management interfaces), `8100` (orchestrator), `8761` (Eureka), `11210`–`11211` (Couchbase data service), and `27017` (MongoDB).
+
+### 1. Obtain the platform
 
 ```bash
-cd evaluation/
+git clone https://github.com/vemis/evaluation-of-db-performance-extended-nosql.git
+cd evaluation-of-db-performance-extended-nosql/evaluation
 ```
 
-### 1. Set up the Environment
+The TPC-H benchmark data is bundled with the source as `database/tpch-data-small.zip` and is unpacked into the images at build time, so no separate data-generation step is necessary.
 
-  - Ensure you have Docker and Docker Compose installed.
-- Create a `.env` file in the `evaluation/`:
-  ```bash
-  touch .env
-  ```
-  - set the following variables:
-      - `MYSQL_ROOT_PASSWORD`
-      - `MYSQL_DATABASE`
-      - `MYSQL_USER`
-      - `MYSQL_PASSWORD`
-      - `COUCHBASE_USER`
-      - `COUCHBASE_PASSWORD`
-  - Example in `evaluation/.env.template`
+### 2. Configure credentials
 
-### 2. Run the Application
+Database credentials are read from an `.env` file that is not part of the repository. A template with sensible defaults is provided — copying it is enough to obtain a working configuration:
 
-  - To start all the services, run the following command in the root directory:
-    - If you use older version of Ubuntu/Debian run:
-      ```bash
-      docker-compose up -d
-      ```
-    - Else on more modern versions run:
-      ```bash
-      docker compose up -d
-      ```
-  - ***!WARNING - quite memory demanding!***
-    - if you have < 32 GB RAM, you probably need to load data for each ODM separatelly.
+```bash
+cp .env.template .env
+```
 
-### 3. Open the Web Application
+The file defines the MySQL and Couchbase accounts used by the databases and the microservices that connect to them:
 
-  - To start using the application, navigate to `localhost:3000` in browser
+```bash
+# MYSQL
+MYSQL_USER=admin
+MYSQL_ROOT_PASSWORD=password
+MYSQL_PASSWORD=password
+MYSQL_DATABASE=db
 
----
+# COUCHBASE
+COUCHBASE_USER=Administrator
+COUCHBASE_PASSWORD=password
+```
 
-# ***THIS PART OF 'README' IS DEPRECATED***
-## Project Structure
+The default values are adequate for a local, isolated benchmarking run; change them if the platform is exposed beyond the local machine. No MongoDB credentials are needed — MongoDB is started without access control and is reachable only inside the Docker network (plus a localhost port mapping).
 
-The project is divided into several modules:
+### 3. Build and start the stack
 
-  - `common`: Contains shared code used by other modules.
-  - `database`: Includes the database schema and initialization scripts.
-  - `eureka-server`: A service registry for the microservices.
-  - `frontend`: A React application for interacting with the backend.
-  - `microservice-mysql-cayenne`: A microservice that uses Apache Cayenne for database queries.
-  - `microservice-mysql-ebean`: A microservice that uses Ebean for database queries.
-  - `microservice-mysql-jdbc`: A microservice that uses JDBC for database queries.
-  - `microservice-mysql-jooq`: A microservice that uses jOOQ for database queries.
-  - `microservice-mysql-mybatis`: A microservice that uses MyBatis for database queries.
-  - `microservice-mysql-springdatajpa`: A microservice that uses Spring Data JPA for database queries.
-  - `orchestrator`: A service that orchestrates the different microservices and aggregates the results.
+With the configuration in place, the entire stack — the three databases, the Eureka service registry, the per-framework microservices, the orchestrator, and the frontend — is built and started with a single command:
 
-## Available Queries
+```bash
+docker compose up --build
+```
 
-The application supports a variety of queries, categorized as follows:
+Depending on the Docker version installed on the host, the equivalent hyphenated command may be required instead:
 
-  - **Selection, Projection, Source (of data)**: Basic queries on indexed and non-indexed columns, including range queries.
-  - **Aggregation**: Queries using `COUNT` and `MAX`.
-  - **Joins**: Simple and complex joins, including outer joins.
-  - **Set operations**: `UNION`, `INTERSECT`, and `DIFFERENCE`.
-  - **Result Modification**: Queries involving sorting and `DISTINCT`.
-  - **TPC-H Benchmark Queries**: A set of business-oriented queries for benchmarking.
+```bash
+docker-compose up --build
+```
 
-For more details on the specific queries, refer to the `database/mysql/queries.md` file.
+Compose resolves the startup order through the declared dependencies. Each document store is brought up first and, once healthy, its data is populated by a dedicated *loader* container that runs exactly once and then exits; the corresponding query microservice only starts after its loader has completed successfully. The microservices register themselves with Eureka on startup, which is how the orchestrator later discovers them.
+
+Once the stack is up, the following endpoints are exposed on the host:
+
+- Eureka dashboard — <http://localhost:8761>
+- Orchestrator REST API — <http://localhost:8100>
+- **Frontend — <http://localhost:3000>**
+
+#### Note for machines with 16 GB RAM
+
+Loading all stores at once exceeds the available memory budget on a 16 GB machine. In that case, start the loaders sequentially by hand rather than bringing the whole stack up through a single `docker compose up`.
+
+### 4. Execute benchmarks and inspect results
+
+Benchmarks are driven entirely from the web frontend at <http://localhost:3000> — no manual calls to the orchestrator API are required.
+
+1. **Compose a run.** Pick a query from the *Select Query* dropdown. This enables the checkboxes of the frameworks that support it (frameworks that do not implement the selected query stay disabled) and shows a preview of the underlying query below the form. Set *Repetitions* to control how many times each framework executes the query, and use *Check all* to select every enabled framework at once.
+2. **Execute.** Pressing *Execute* sends the query, repetition count, and framework set to the orchestrator, which discovers the corresponding microservices through Eureka, invokes each of them the requested number of times, and records the execution time and memory usage of every iteration.
+3. **Read the results.** The results table lists, per framework, the number of repetitions together with the average, minimum, and maximum execution time (in milliseconds) and memory usage (in bytes); each row can be expanded to reveal the individual per-iteration measurements. The same figures are visualised below as comparative bar charts. *Export CSV* writes the raw results to a CSV file for further processing, and *Home* returns to the run form.
