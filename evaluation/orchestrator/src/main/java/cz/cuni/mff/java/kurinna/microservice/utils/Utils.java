@@ -41,7 +41,6 @@ public class Utils {
     );
 
     public static final Map<String, String> RELATIONAL_QUERY_DESCRIPTIONS = Map.ofEntries(
-            Map.entry("test1", "Some non-existant test query"),
             // A queries
             Map.entry("a1", "SELECT * FROM lineitem;"),
             Map.entry("a2", "SELECT * FROM orders WHERE o_orderdate BETWEEN '1996-01-01' AND '1996-12-31';"),
